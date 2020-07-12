@@ -94,28 +94,34 @@ internal class Panel_Confirmation_ShowRenamePanel_Pre
     }
 }
 
+
 [HarmonyPatch(typeof(Panel_MainMenu), "AddMenuItem", null)]
 public class Panel_MainMenu_AddMenuItem_Pre
 {
-    private static bool Prefix(int itemIndex, Panel_MainMenu __instance)
+    private static void Postfix(int itemIndex, Panel_MainMenu __instance)
     {
-        if (!InterfaceManager.IsMainMenuActive()) return true;
+        BasicMenu basicMenu = __instance.m_BasicMenu;
 
-        if (itemIndex == 1)
+        Debug.Log("basicMenu.GetItemCount(): " + basicMenu.GetItemCount() + " " + itemIndex);
+
+        if (InterfaceManager.IsMainMenuActive() && itemIndex == 7)
         {
-            string id = __instance.m_MenuItems[itemIndex].m_Type.ToString();
+            Debug.Log("Addition Of RnItem Underway");
+
             int type = (int)__instance.m_MenuItems[itemIndex].m_Type;
             string key = "Relentless Night";
             string key2 = "The earth seems to be slowing down. Days and nights are getting longer. Each night is colder and harsher than the last. How long will you survive?";
-            string secondaryText = "";
             Action actionFromType = new Action(__instance.OnSandbox);
-            BasicMenu basicMenu = __instance.m_BasicMenu;
-            BasicMenu.BasicMenuItemModel firstItem = basicMenu.m_ItemModelList[0];
-            basicMenu.AddItem(id, type, itemIndex, Localization.Get(key), Localization.Get(key2), secondaryText, actionFromType, firstItem.m_NormalTint, firstItem.m_HighlightTint);
-            return false;
-        } 
-                
-        return true; // nvm, go ahead :D
+            BasicMenu.BasicMenuItemModel templateItem = basicMenu.m_ItemModelList[0];
+
+            __instance.m_BasicMenu.AddItem(itemIndex.ToString() + 1, type, itemIndex + 1, Localization.Get(key), Localization.Get(key2), "", actionFromType, templateItem.m_NormalTint, templateItem.m_HighlightTint);
+
+            //BasicMenu.BasicMenuItemModel rnMainMenuItem = new BasicMenu.BasicMenuItemModel(id, type, 7, Localization.Get(key), Localization.Get(key2), "", actionFromType, templateItem.m_NormalTint, templateItem.m_HighlightTint);
+            //basicMenu.m_ItemModelList.Insert(8, rnMainMenuItem);
+
+            Debug.Log("templateItem: " + templateItem.m_Id + " " + templateItem.GetType() + " " + templateItem.m_ItemIndex);
+
+        }
     }
 }
 

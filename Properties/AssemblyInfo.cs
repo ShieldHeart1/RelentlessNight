@@ -36,5 +36,5 @@ using MelonLoader;
 [assembly: AssemblyVersion("3.1.0")]
 [assembly: AssemblyFileVersion("3.1.0")]
 
-[assembly: MelonModInfo(typeof(RelentlessNight.Utility.Mod), "Relentless Night", "3.1.0", "ShieldHeart")]
+[assembly: MelonModInfo(typeof(RelentlessNight.Utility.Mod), "Relentless Night", "3.1.0", "ShieldHeart, zeobviouslyfakeacc, FINDarkside")]
 [assembly: MelonModGame("Hinterland", "TheLongDark")]
