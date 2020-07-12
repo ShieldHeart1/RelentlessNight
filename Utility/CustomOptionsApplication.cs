@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using Harmony;
 using Newtonsoft.Json;
 using RelentlessNight;
 using UnityEngine;
+using Il2CppSystem.Collections.Generic;
+using UnhollowerBaseLib;
 
 [HarmonyPatch(typeof(Panel_CustomXPSetup), "Start", null)]
 internal class Panel_Panel_CustomXPSetup_Start_Pre
@@ -25,8 +26,8 @@ internal class Panel_Panel_CustomXPSetup_Start_Pre
         }
 
         if (rnSaveExists)
-        {
-            List<SlotData> m_SaveSlots = (List<SlotData>)AccessTools.Field(typeof(SaveGameSlots), "m_SaveSlots").GetValue(__instance);
+        {            
+            List<SlotData> m_SaveSlots = SaveGameSlots.m_SaveSlots;
             foreach (SlotData slotData in m_SaveSlots)
             {
                 if (slotData.m_Name.Contains("relentless") && slotData.m_GameMode != RnGl.RnSlotType)

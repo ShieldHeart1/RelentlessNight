@@ -28,12 +28,13 @@ internal class Panel_ChooseSandbox_ProcessMenu_Pos
     }
 }
 
+/*
 [HarmonyPatch(typeof(Panel_ChooseSandbox), "AddSavesOfTypeToMenu", null)]
 internal class Panel_MainMenu_AddSavesOfTypeToMenu_Pos
 {
     public static bool Prefix(Panel_ChooseSandbox __instance)
     {
-        //Debug.Log("Panel_MainMenu_AddSavesOfTypeToMenu_Pos");
+        Debug.Log("Panel_MainMenu_AddSavesOfTypeToMenu_Pos");
         if (!RnGl.rnActive) return true;
 
         string descriptionText = Localization.Get("GAMEPLAY_DescriptionLoadSurvival");
@@ -47,7 +48,7 @@ internal class Panel_MainMenu_AddSavesOfTypeToMenu_Pos
             }
             else if (sandboxSaveSlotInfo.m_GameMode == RnGl.RnSlotType)
             {
-                BasicMenu m_BasicMenu = (BasicMenu)AccessTools.Field(__instance.GetType(), "m_BasicMenu").GetValue(__instance);
+                BasicMenu basicMenu = __instance.m_BasicMenu;
                 string saveSlotName = sandboxSaveSlotInfo.m_SaveSlotName;
                 int value = i;
                 string userDefinedName = sandboxSaveSlotInfo.m_UserDefinedName;
@@ -58,6 +59,7 @@ internal class Panel_MainMenu_AddSavesOfTypeToMenu_Pos
     }
 }
 public delegate void OnSlotClicked();
+*/
 
 [HarmonyPatch(typeof(Panel_MainMenu), "Awake", null)]
 public class Panel_MainMenu_Awake_Pos

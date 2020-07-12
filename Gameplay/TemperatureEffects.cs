@@ -10,23 +10,27 @@ public class Weather_CalculateCurrentTemperature_Pre
         //Debug.Log("Weather_CalculateCurrentTemperature_Pre");
         if (!RnGl.rnActive) return true;
     
-        float curDay = (float)GameManager.GetTimeOfDayComponent().GetDayNumber();
+        float curDay = GameManager.GetTimeOfDayComponent().GetDayNumber();
+        float m_CurrentTemperature = __instance.m_CurrentTemperature;
         int curCelestialHour = GameManager.GetTimeOfDayComponent().GetHour();
         int num2 = curCelestialHour * 60 + GameManager.GetTimeOfDayComponent().GetMinutes();
         float outdoorTempDropCelcius = GameManager.GetExperienceModeManagerComponent().GetOutdoorTempDropCelcius(curDay);
-        float m_CurrentTemperature = (float)AccessTools.Field(typeof(Weather), "m_CurrentTemperature").GetValue(__instance);
-        float m_TempHigh = (float)AccessTools.Field(typeof(Weather), "m_TempHigh").GetValue(__instance);
-        float m_TempLow = (float)AccessTools.Field(typeof(Weather), "m_TempLow").GetValue(__instance);
-        bool m_GenerateNewTempHigh = (bool)AccessTools.Field(typeof(Weather), "m_GenerateNewTempHigh").GetValue(__instance);
-        bool m_GenerateNewTempLow = (bool)AccessTools.Field(typeof(Weather), "m_GenerateNewTempLow").GetValue(__instance);
-        float tempIncrease = (float)RnGl.glRotationDecline * (curDay - 1f) * 0.015f;
+
+
+        float m_TempHigh = __instance.m_TempHigh;
+        float m_TempLow = __instance.m_TempLow;
+
+        bool m_GenerateNewTempHigh = __instance.m_GenerateNewTempHigh;
+        bool m_GenerateNewTempLow = __instance.m_GenerateNewTempLow;
+
+        float tempIncrease = RnGl.glRotationDecline * (curDay - 1f) * 0.015f;
         float tempDecrease = 1.5f * tempIncrease;
    
         if (curCelestialHour >= __instance.m_HourWarmingBegins && curCelestialHour < __instance.m_HourCoolingBegins)
         {
             if (m_GenerateNewTempHigh)
             {
-                AccessTools.Method(typeof(Weather), "GenerateTempHigh", null, null).Invoke(__instance, null);
+                __instance.GenerateTempHigh();                
             }
             int num8 = num2 - __instance.m_HourWarmingBegins * 60;
             float num9 = (float)(__instance.m_HourCoolingBegins - __instance.m_HourWarmingBegins) * 60f;
@@ -40,13 +44,13 @@ public class Weather_CalculateCurrentTemperature_Pre
             {
                 tempIncrease = 2f - m_TempHigh + outdoorTempDropCelcius;
             }
-            m_CurrentTemperature = m_TempLow - tempDecrease + (float)num8 / num9 * (m_TempHigh + (tempIncrease + tempDecrease) - m_TempLow);
+            __instance.m_CurrentTemperature = m_TempLow - tempDecrease + (float)num8 / num9 * (m_TempHigh + (tempIncrease + tempDecrease) - m_TempLow);
         }
         else
         {
             if (m_GenerateNewTempLow)
             {
-                AccessTools.Method(typeof(Weather), "GenerateTempLow", null, null).Invoke(__instance, null);
+                __instance.GenerateTempLow();
             }
             int num10 = num2 - __instance.m_HourCoolingBegins * 60;
       
@@ -80,7 +84,7 @@ public class Weather_CalculateCurrentTemperature_Pre
         //Debug.Log("TEMP2: " + m_CurrentTemperature);
 
         RnGl.glLastOutdoorTempNoBliz = m_CurrentTemperature - outdoorTempDropCelcius;
-        float m_CurrentBlizzardDegreesDrop = (float)AccessTools.Field(typeof(Weather), "m_CurrentBlizzardDegreesDrop").GetValue(__instance);
+        float m_CurrentBlizzardDegreesDrop = __instance.m_CurrentBlizzardDegreesDrop;
 
         bool isCountedIndoors = false;
         if (__instance.IsIndoorEnvironment())
@@ -126,22 +130,20 @@ public class Weather_CalculateCurrentTemperature_Pre
             m_CurrentTemperature -= outdoorTempDropCelcius;
         }
         //Debug.Log("TEMP7: " + m_CurrentTemperature);
-        float m_ArtificalTempIncrease = (float)AccessTools.Field(typeof(Weather), "m_ArtificalTempIncrease").GetValue(__instance);
-        m_CurrentTemperature += m_ArtificalTempIncrease;
-        AccessTools.Field(typeof(Weather), "m_CurrentTemperatureWithoutHeatSources").SetValue(__instance, m_CurrentTemperature); // New Test
-        m_CurrentTemperature += GameManager.GetHeatSourceManagerComponent().GetTemperatureIncrease();
-        m_CurrentTemperature += (float)GameManager.GetFeatColdFusion().GetTemperatureCelsiusBonus();
-        float GetMinAirTemp = (float)AccessTools.Method(typeof(Weather), "GetMinAirTemp", null, null).Invoke(__instance, null);
-        m_CurrentTemperature = Mathf.Max(GetMinAirTemp, m_CurrentTemperature);
-        m_CurrentTemperature = Mathf.Clamp(m_CurrentTemperature, float.NegativeInfinity, (float)__instance.m_MaxAirTemperature);
-        m_CurrentTemperature = Mathf.Clamp(m_CurrentTemperature, (float)__instance.m_MinAirTemperature, (float)__instance.m_MaxAirTemperature);
-        float m_LockedAirTemperature = (float)AccessTools.Field(typeof(Weather), "m_LockedAirTemperature").GetValue(__instance);
+
+        m_CurrentTemperature += __instance.m_ArtificalTempIncrease;
+        __instance.m_CurrentTemperatureWithoutHeatSources = m_CurrentTemperature;
+        m_CurrentTemperature += GameManager.GetHeatSourceManagerComponent().GetTemperatureIncrease(GameManager.GetPlayerTransform().position);
+        m_CurrentTemperature += GameManager.GetFeatColdFusion().GetTemperatureCelsiusBonus();        
+        m_CurrentTemperature = Mathf.Max(__instance.GetMinAirTemp(), m_CurrentTemperature);
+        m_CurrentTemperature = Mathf.Clamp(m_CurrentTemperature, float.NegativeInfinity, __instance.m_MaxAirTemperature);
+        m_CurrentTemperature = Mathf.Clamp(m_CurrentTemperature, __instance.m_MinAirTemperature, __instance.m_MaxAirTemperature);
 
         //Debug.Log("TEMP8: " + m_CurrentTemperature);
 
-        if (m_LockedAirTemperature > -1000f)
+        if (__instance.m_LockedAirTemperature > -1000f)
         {
-            m_CurrentTemperature = m_LockedAirTemperature;
+            m_CurrentTemperature = __instance.m_LockedAirTemperature;
         }       
         if (m_CurrentTemperature < RnGl.glLastOutdoorTempNoBliz - m_CurrentBlizzardDegreesDrop)
         {     
@@ -150,7 +152,8 @@ public class Weather_CalculateCurrentTemperature_Pre
 
         //Debug.Log("TEMP9: " + m_CurrentTemperature);
 
-        AccessTools.Field(typeof(Weather), "m_CurrentTemperature").SetValue(__instance, m_CurrentTemperature);
+        __instance.m_CurrentTemperature = m_CurrentTemperature;
+
         return false;
     }
 }

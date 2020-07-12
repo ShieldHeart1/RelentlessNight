@@ -12,7 +12,7 @@ internal static class WeatherTransition_ChooseNextWeatherSet_Pre
         if (!RnGl.rnActive) return;   
 
         int dayNumber = GameManager.GetTimeOfDayComponent().GetDayNumber();
-        WeatherSet m_CurrentWeatherSet = (WeatherSet)AccessTools.Field(typeof(WeatherTransition), "m_CurrentWeatherSet").GetValue(__instance);
+        WeatherSet m_CurrentWeatherSet = __instance.m_CurrentWeatherSet;
 
         if (RnGl.glRotationDecline * dayNumber > 250)
         {

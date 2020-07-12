@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using Harmony;
 using UnityEngine;
 using RelentlessNight;
+using IL2CPP = Il2CppSystem.Collections.Generic;
 
 [HarmonyPatch(typeof(ConsoleManager), "RegisterCommands", new Type[] {})]
 public class ConsoleManager_RegisterCommands_Pos
@@ -10,22 +10,21 @@ public class ConsoleManager_RegisterCommands_Pos
     private static void Postfix()
     {
         //Debug.Log("ConsoleManager_RegisterCommands_Pos");
-        uConsole.RegisterCommand("rn_help", new uConsole.DebugCommand(RnHelp));
-        uConsole.RegisterCommand("set_endgame_active", new uConsole.DebugCommand(SetEndGameActive));
-        uConsole.RegisterCommand("set_endgame_day", new uConsole.DebugCommand(SetEndGameDay));
-        uConsole.RegisterCommand("set_day_length_change_rate", new uConsole.DebugCommand(SetDayLengthChangeRate));
-        uConsole.RegisterCommand("set_indoor/outdoor_temp", new uConsole.DebugCommand(SetIndoorOutdoorTemp));
-        uConsole.RegisterCommand("set_heat_retention", new uConsole.DebugCommand(SetHeatRetention));
-        uConsole.RegisterCommand("set_realistic_freezing", new uConsole.DebugCommand(SetRealisticFreezing));
-        uConsole.RegisterCommand("set_temp_affects_wildlife", new uConsole.DebugCommand(SetTempAffectsWildlife));
-        uConsole.RegisterCommand("set_wildlife_amount", new uConsole.DebugCommand(SetWildlifeAmount));
-        uConsole.RegisterCommand("set_wildlife_day", new uConsole.DebugCommand(SetWildlifeDay));
-        uConsole.RegisterCommand("set_fire_fuel_burntime", new uConsole.DebugCommand(SetFireFuelBurntime));
-        uConsole.RegisterCommand("set_lantern_fuel_burntime", new uConsole.DebugCommand(SetLanternFuelBurntime));
-
-        uConsole.RegisterCommand("rn_hypertime", new uConsole.DebugCommand(HyperTime));
-        uConsole.RegisterCommand("rn_fires", new uConsole.DebugCommand(Fires));
-        uConsole.RegisterCommand("rn_save", new uConsole.DebugCommand(SaveGame));
+        uConsole.RegisterCommand("rn_help", new Action(RnHelp));
+        uConsole.RegisterCommand("set_endgame_active", new Action(SetEndGameActive));
+        uConsole.RegisterCommand("set_endgame_day", new Action(SetEndGameDay));
+        uConsole.RegisterCommand("set_day_length_change_rate", new Action(SetDayLengthChangeRate));
+        uConsole.RegisterCommand("set_indoor/outdoor_temp", new Action(SetIndoorOutdoorTemp));
+        uConsole.RegisterCommand("set_heat_retention", new Action(SetHeatRetention));
+        uConsole.RegisterCommand("set_realistic_freezing", new Action(SetRealisticFreezing));
+        uConsole.RegisterCommand("set_temp_affects_wildlife", new Action(SetTempAffectsWildlife));
+        uConsole.RegisterCommand("set_wildlife_amount", new Action(SetWildlifeAmount));
+        uConsole.RegisterCommand("set_wildlife_day", new Action(SetWildlifeDay));
+        uConsole.RegisterCommand("set_fire_fuel_burntime", new Action(SetFireFuelBurntime));
+        uConsole.RegisterCommand("set_lantern_fuel_burntime", new Action(SetLanternFuelBurntime));
+        uConsole.RegisterCommand("rn_hypertime", new Action(HyperTime));
+        uConsole.RegisterCommand("rn_fires", new Action(Fires));
+        uConsole.RegisterCommand("rn_save", new Action(SaveGame));
     }
     public static void RnHelp()
     {
@@ -117,7 +116,7 @@ public class ConsoleManager_RegisterCommands_Pos
     }
     public static void Fires()
     {
-        List<HeatSource> heatsources = GameManager.GetHeatSourceManagerComponent().m_HeatSources;
+        IL2CPP.List<HeatSource> heatsources = GameManager.GetHeatSourceManagerComponent().m_HeatSources;
         for (int i = 0; i < heatsources.Count; i++)
         {
             Debug.Log("Fire" + i.ToString() + ": " + heatsources[i].GetTempIncrease(GameManager.GetPlayerTransform().position).ToString());

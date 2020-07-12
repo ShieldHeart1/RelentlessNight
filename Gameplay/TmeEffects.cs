@@ -39,22 +39,22 @@ internal static class PlayerManager_TeleportPlayerAfterSceneLoad_Pos
 {
     private static void Postfix()
     {
-        //Debug.Log("PlayerManager_TeleportPlayerAfterSceneLoad_Pos");
+        //Debug.Log("PlayerManager_TeleportPlayerAfterSceneLoad_Pos"); // Hands up, this is a Harmony patch method name list robbery! // god for it if it helps
         if (!RnGl.rnActive) return;
 
         if (RnGl.glEndgameActive && RnGl.glEndgameDay == 0) GameManager.GetTimeOfDayComponent().SetNormalizedTime(0f);       
     }
 }
 
-[HarmonyPatch(typeof(UniStormWeatherSystem), "SetNormalizedTime", null)]
+[HarmonyPatch(typeof(UniStormWeatherSystem), "SetNormalizedTime", new[] { typeof(float) })]
 internal static class UniStormWeatherSystem_SetNormalizedTime_Pre
 {
     private static bool Prefix(UniStormWeatherSystem __instance, ref float time)
     {
         //Debug.Log("UniStormWeatherSystem_SetNormalizedTime_Pre");
         if (!RnGl.rnActive) return true;
-     
-        float m_DeltaTime = (float)AccessTools.Field(typeof(UniStormWeatherSystem), "m_DeltaTime").GetValue(__instance);
+
+        float m_DeltaTime = __instance.m_DeltaTime;
         RnGl.rnNormNum5 = m_DeltaTime / Mathf.Clamp((7200f * __instance.m_DayLengthScale / RnGl.rnTimeAccel) * GameManager.GetExperienceModeManagerComponent().GetTimeOfDayScale(), 1f, float.PositiveInfinity) * 24f;
 
         if (RnGl.glEndgameActive && __instance.m_DayCounter >= RnGl.glEndgameDay && GameManager.GetTimeOfDayComponent().IsNight())
@@ -107,8 +107,8 @@ internal static class UniStormWeatherSystem_Update_Pre
         float curDay = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() / 24f;
         __instance.m_DayLength = ((7200f + curDay * dayLengthFactor) / RnGl.rnTimeAccel) * GameManager.GetExperienceModeManagerComponent().GetTimeOfDayScale();
 
-        RnGl.rnElapsedHoursAccumulator = (float)AccessTools.Field(typeof(UniStormWeatherSystem), "m_ElapsedHoursAccumulator").GetValue(__instance);
-        RnGl.rnElapsedHours = (float)AccessTools.Field(typeof(UniStormWeatherSystem), "m_ElapsedHours").GetValue(__instance);            
+        RnGl.rnElapsedHoursAccumulator = __instance.m_ElapsedHoursAccumulator;
+        RnGl.rnElapsedHours = __instance.m_ElapsedHours;            
     }
 }
 
@@ -129,8 +129,8 @@ internal static class UniStormWeatherSystem_Update_Pos
             __instance.SetMoonPhase();
         }
 
-        AccessTools.Field(typeof(UniStormWeatherSystem), "m_ElapsedHoursAccumulator").SetValue(__instance, RnGl.rnElapsedHoursAccumulator);
-        AccessTools.Field(typeof(UniStormWeatherSystem), "m_ElapsedHours").SetValue(__instance, RnGl.rnElapsedHours);
+        __instance.m_ElapsedHoursAccumulator = RnGl.rnElapsedHoursAccumulator;
+        __instance.m_ElapsedHours = RnGl.rnElapsedHours;
 
         __instance.m_DayCounter = 1 + (int)(GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() / 24f);
         RnGl.glDayNum = __instance.m_DayCounter;

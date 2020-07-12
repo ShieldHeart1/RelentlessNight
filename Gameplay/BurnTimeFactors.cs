@@ -14,7 +14,7 @@ internal static class FuelSourceItem_GetModifiedBurnDurationHours_Pos
     }
 }
 
-[HarmonyPatch(typeof(KeroseneLampItem), "GetModifiedFuelBurnLitersPerHour", null)]
+[HarmonyPatch(typeof(KeroseneLampItem), "GetModifiedFuelBurnLitersPerHour", null)] //May Not Work
 internal static class KeroseneLampItem_GetModifiedFuelBurnLitersPerHour_Pos
 {
     private static void Postfix(ref float __result)

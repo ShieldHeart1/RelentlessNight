@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Harmony;
 using RelentlessNight;
 
@@ -23,12 +24,12 @@ public class Panel_Panel_FeedFire_Pre
         //Debug.Log("Panel_Panel_FeedFire_Pre");
         if (!RnGl.rnActive || !RnGl.glHeatRetention) return true;
 
-        if ((bool)AccessTools.Method(typeof(Panel_FeedFire), "ProgressBarIsActive", null, null).Invoke(__instance, null)) 
+        if (__instance.ProgressBarIsActive()) 
         {
             GameAudioManager.PlayGUIError();
             return false;
         }
-        GearItem selectedFuelSource = (GearItem)AccessTools.Method(typeof(Panel_FeedFire), "GetSelectedFuelSource", null, null).Invoke(__instance, null);
+        GearItem selectedFuelSource = __instance.GetSelectedFuelSource();
         if (selectedFuelSource == null)
         {
             GameAudioManager.PlayGUIError();
@@ -40,13 +41,13 @@ public class Panel_Panel_FeedFire_Pre
             GameAudioManager.PlayGUIError();
             return false;
         }
-        GameObject m_FireContainer = (GameObject)AccessTools.Field(typeof(Panel_FeedFire), "m_FireContainer").GetValue(__instance);
+        GameObject m_FireContainer = __instance.m_FireContainer;
         if (!m_FireContainer)
         {
             GameAudioManager.PlayGUIError();
             return false;
         }
-        Fire m_Fire = (Fire)AccessTools.Field(typeof(Panel_FeedFire), "m_Fire").GetValue(__instance);
+        Fire m_Fire = __instance.m_Fire;
         if (!m_Fire)
         {
             return false;
@@ -57,8 +58,8 @@ public class Panel_Panel_FeedFire_Pre
             GameAudioManager.PlayGUIError();
             return false;
         }
-                
-        bool FireInForge = (bool)AccessTools.Method(typeof(Panel_FeedFire), "FireInForge", null, null).Invoke(__instance, null);
+        
+        bool FireInForge = __instance.FireInForge();
         if (!FireInForge)
         {
             float num = fuelSourceItem.GetModifiedBurnDurationHours(selectedFuelSource.GetNormalizedCondition()) * 60f;
@@ -72,14 +73,16 @@ public class Panel_Panel_FeedFire_Pre
             }
         }
         if (selectedFuelSource.m_ResearchItem && !selectedFuelSource.m_ResearchItem.IsResearchComplete())
-        {            
-            AccessTools.Field(typeof(Panel_FeedFire), "m_ResearchItemToBurn").SetValue(__instance, selectedFuelSource);
-            InterfaceManager.m_Panel_Confirmation.ShowBurnResearchNotification(() => { AccessTools.Method(typeof(Panel_FeedFire), "ForceBurnResearchItem", null, null).Invoke(__instance, null); });
+        {
+            __instance.m_ResearchItemToBurn = selectedFuelSource;
+
+            InterfaceManager.m_Panel_Confirmation.ShowBurnResearchNotification(new Action(() => __instance.ForceBurnResearchItem()));
             return false;
         }
         GameAudioManager.PlaySound(__instance.m_FeedFireAudio, InterfaceManager.GetSoundEmitter());
         m_Fire.AddFuel(selectedFuelSource, FireInForge);
         GameManager.GetPlayerManagerComponent().ConsumeUnitFromInventory(fuelSourceItem.gameObject);
+
         return false;
     }
 }
@@ -106,10 +109,9 @@ public class Fire_Deserialize_Pos
         //Debug.Log("Fire_Deserialize_Pos");
         if (!RnGl.rnActive || !RnGl.glHeatRetention) return;
 
-        float m_ElapsedOnTODSeconds = (float)AccessTools.Field(typeof(Fire), "m_ElapsedOnTODSeconds").GetValue(__instance);
-        float m_EmberDurationSecondsTOD = (float)AccessTools.Field(typeof(Fire), "m_EmberDurationSecondsTOD").GetValue(__instance);
-        float m_MaxOnTODSeconds = (float)AccessTools.Field(typeof(Fire), "m_MaxOnTODSeconds").GetValue(__instance);
-        FireState m_FireState = (FireState)AccessTools.Field(typeof(Fire), "m_FireState").GetValue(__instance);
+        float m_ElapsedOnTODSeconds = __instance.m_ElapsedOnTODSeconds;
+        float m_MaxOnTODSeconds = __instance.m_MaxOnTODSeconds;
+        FireState m_FireState = __instance.m_FireState;
 
         float hourAfterburnOut = (m_ElapsedOnTODSeconds - m_MaxOnTODSeconds) / 3600f;
         float heatRemaining = __instance.m_HeatSource.m_MaxTempIncrease - hourAfterburnOut * 2.5f;      
@@ -118,7 +120,7 @@ public class Fire_Deserialize_Pos
         {       
             if (heatRemaining > 0f)
             {
-                AccessTools.Field(typeof(HeatSource), "m_TempIncrease").SetValue(__instance.m_HeatSource, heatRemaining);
+                __instance.m_HeatSource.m_TempIncrease = heatRemaining;
                 GameManager.GetHeatSourceManagerComponent().AddHeatSource(__instance.m_HeatSource);
             }
         }
@@ -135,7 +137,7 @@ public class Fire_TurnOn_Pos
         if (!RnGl.rnActive || !RnGl.glHeatRetention) return;
        
         __instance.m_HeatSource.m_MaxTempIncrease += RnGl.rnCurrentRetainedHeat;
-        AccessTools.Field(typeof(Fire), "m_FuelHeatIncrease").SetValue(__instance, __instance.m_HeatSource.m_MaxTempIncrease);
+        __instance.m_FuelHeatIncrease = __instance.m_HeatSource.m_MaxTempIncrease;
   
         if (RnGl.rnFireShouldHeatWholeScene)
         {
@@ -157,7 +159,7 @@ public class Fire_TurnOn_Pre
   
         if (!GameManager.GetFireManagerComponent().PointInRadiusOfBurningFire(GameManager.GetPlayerTransform().position))
         {
-            RnGl.rnCurrentRetainedHeat = GameManager.GetHeatSourceManagerComponent().GetTemperatureIncrease();
+            RnGl.rnCurrentRetainedHeat = GameManager.GetHeatSourceManagerComponent().GetTemperatureIncrease(GameManager.GetPlayerTransform().position);
         }        
     }
 }
@@ -176,20 +178,22 @@ public class Fire_Update_Pre
         {
             __instance.m_HeatSource.m_MaxTempIncreaseInnerRadius = 2;
             __instance.m_HeatSource.m_MaxTempIncreaseOuterRadius = 30;
-        }   
+        }
 
-    FireState fireState = (FireState)AccessTools.Field(typeof(Fire), "m_FireState").GetValue(__instance);  
+        FireState fireState = __instance.m_FireState;  
         if (fireState == FireState.Off)
         {
-            float m_ElapsedOnTODSeconds = (float)AccessTools.Field(typeof(Fire), "m_ElapsedOnTODSeconds").GetValue(__instance);
-            m_ElapsedOnTODSeconds += GameManager.GetTimeOfDayComponent().GetTODSeconds(Time.deltaTime);
-            AccessTools.Field(typeof(Fire), "m_ElapsedOnTODSeconds").SetValue(__instance, m_ElapsedOnTODSeconds);
-        }       
+            //float m_ElapsedOnTODSeconds = __instance.m_ElapsedOnTODSeconds;
+            //m_ElapsedOnTODSeconds += GameManager.GetTimeOfDayComponent().GetTODSeconds(Time.deltaTime);
+            //__instance.m_ElapsedOnTODSeconds = m_ElapsedOnTODSeconds;
+
+            __instance.m_ElapsedOnTODSeconds += GameManager.GetTimeOfDayComponent().GetTODSeconds(Time.deltaTime);
+        }
     }
 }
 
 // Makes sure if the fire still has retained heat, that the heatsource is not turned off
-[HarmonyPatch(typeof(HeatSource), "TurnOff", null)]
+[HarmonyPatch(typeof(HeatSource), "TurnOff", null)] //inlined everywhere, HeatSource.TurnOffImmediate?
 public class HeatSource_TurnOff_Pre
 {
     private static bool Prefix(HeatSource __instance)
@@ -199,9 +203,6 @@ public class HeatSource_TurnOff_Pre
        
         FireState fireState = (FireState)AccessTools.Field(typeof(Fire), "m_FireState").GetValue(__instance);
         float m_MaxOnTODSeconds = (float)AccessTools.Field(typeof(Fire), "m_MaxOnTODSeconds").GetValue(__instance);
-
-        //Debug.Log("TempIncrease: " + __instance.m_MaxTempIncrease);
-        //Debug.Log("m_MaxOnTODSeconds: " + m_MaxOnTODSeconds);
 
         if (fireState == FireState.Off && __instance.m_MaxTempIncrease > 0f && m_MaxOnTODSeconds > 0f)
         {
@@ -226,8 +227,7 @@ public class HeatSource_TurnOffImmediate_Pre
         //Debug.Log("HeatSource_TurnOffImmediate_Pre");
         if (!RnGl.rnActive || !RnGl.glHeatRetention) return true;
 
-        float m_TempIncrease = (float)AccessTools.Field(typeof(HeatSource), "m_TempIncrease").GetValue(__instance);
-        if (m_TempIncrease > 0f) return false;
+        if (__instance.m_TempIncrease > 0f) return false;
         return true;
     }
 }
@@ -243,7 +243,7 @@ public class HeatSource_Update_Pre
 
         if (GameManager.m_IsPaused) return false;
         
-        float m_TempIncrease = (float)AccessTools.Field(typeof(HeatSource), "m_TempIncrease").GetValue(__instance);
+        float m_TempIncrease = __instance.m_TempIncrease;
     
         if (Mathf.Approximately(__instance.m_TimeToReachMaxTempMinutes, 0f))
         {
@@ -252,7 +252,7 @@ public class HeatSource_Update_Pre
         else
         {
             float todminutes = GameManager.GetTimeOfDayComponent().GetTODMinutes(Time.deltaTime);
-            bool m_TurnedOn = (bool)AccessTools.Field(typeof(HeatSource), "m_TurnedOn").GetValue(__instance);
+            bool m_TurnedOn = __instance.m_TurnedOn;
        
             if (m_TurnedOn)
             {
@@ -272,7 +272,8 @@ public class HeatSource_Update_Pre
                 m_TempIncrease = Mathf.Clamp(m_TempIncrease, __instance.m_MaxTempIncrease, 0f);
             }
         }
-        AccessTools.Field(typeof(HeatSource), "m_TempIncrease").SetValue(__instance, m_TempIncrease);
+        __instance.m_TempIncrease = m_TempIncrease;
+
         return false;
     }
 }

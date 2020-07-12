@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Harmony;
 using RelentlessNight;
 using UnityEngine;
+using IL2CPP = Il2CppSystem.Collections.Generic;
 
 [HarmonyPatch(typeof(BasicMenu), "InternalClickAction", null)]
 internal class BasicMenu_InternalClickAction_Pre
@@ -10,7 +11,7 @@ internal class BasicMenu_InternalClickAction_Pre
     private static void Prefix(int index, BasicMenu __instance)
     {
         //Debug.Log("BasicMenu_InternalClickAction_Pre");
-        List<BasicMenu.BasicMenuItemModel> list = (List<BasicMenu.BasicMenuItemModel>)AccessTools.Field(typeof(BasicMenu), "m_ItemModelList").GetValue(__instance);
+        IL2CPP.List<BasicMenu.BasicMenuItemModel> list = __instance.m_ItemModelList;
 
         if (list[index].m_LabelText == "Relentless Night")
         {
@@ -63,7 +64,7 @@ internal class Panel_ChooseSandbox_ConfigureMenu_Pos
         //Debug.Log("Panel_ChooseSandbox_ConfigureMenu_Pos");
         if (!RnGl.rnActive) return;
 
-        BasicMenu basicMenu = (BasicMenu)AccessTools.Field(__instance.GetType(), "m_BasicMenu").GetValue(__instance);
+        BasicMenu basicMenu = __instance.m_BasicMenu;
         basicMenu.UpdateTitle("Relentless Night Mode", string.Empty, Vector3.zero);        
     }
 }
@@ -108,29 +109,31 @@ public class Panel_MainMenu_AddMenuItem_Pre
             string key2 = "The earth seems to be slowing down. Days and nights are getting longer. Each night is colder and harsher than the last. How long will you survive?";
             string secondaryText = "";
             Action actionFromType = new Action(__instance.OnSandbox);
-            BasicMenu basicMenu = (BasicMenu)AccessTools.Field(__instance.GetType(), "m_BasicMenu").GetValue(__instance);
-            basicMenu.AddItem(id, type, itemIndex, Localization.Get(key), Localization.Get(key2), secondaryText, actionFromType);
+            BasicMenu basicMenu = __instance.m_BasicMenu;
+            BasicMenu.BasicMenuItemModel firstItem = basicMenu.m_ItemModelList[0];
+            basicMenu.AddItem(id, type, itemIndex, Localization.Get(key), Localization.Get(key2), secondaryText, actionFromType, firstItem.m_NormalTint, firstItem.m_HighlightTint);
             return false;
-        }
-        return true;
+        } 
+                
+        return true; // nvm, go ahead :D
     }
 }
 
-[HarmonyPatch(typeof(Panel_MainMenu), "OnSandbox", null)]
+[HarmonyPatch(typeof(Panel_MainMenu), "OnSandbox", null)] //inlined everwhere
 internal class Panel_MainMenu_OnSandbox_Pre
 {
     private static bool Prefix(Panel_MainMenu __instance)
     {
         //Debug.Log("Panel_MainMenu_OnSandbox_Pre");
-        if (!RnGl.rnActive) return true;
-        
-        List<SlotData> m_SaveSlots = (List<SlotData>)AccessTools.Field(typeof(SaveGameSlots), "m_SaveSlots").GetValue(__instance);
+        if (!RnGl.rnActive) return true;        
+
+        IL2CPP.List<SlotData> m_SaveSlots = SaveGameSlots.m_SaveSlots;
         foreach (SlotData slotData in m_SaveSlots)
         {
             if (slotData.m_Name.Contains("relentless") && slotData.m_GameMode != RnGl.RnSlotType) slotData.m_GameMode = RnGl.RnSlotType;
         }
 
-        bool m_Quit = (bool)AccessTools.Field(typeof(Panel_MainMenu), "m_Quit").GetValue(__instance);
+        bool m_Quit = __instance.m_Quit;
         if (m_Quit) return false;            
      
         if (SaveGameSlots.SlotsAreLoading(RnGl.RnSlotType))
@@ -139,14 +142,12 @@ internal class Panel_MainMenu_OnSandbox_Pre
             GameAudioManager.PlayGUIError();
             return false;
         }
-        
-        List<SaveSlotInfo> sortedSaveSlots = SaveGameSystem.GetSortedSaveSlots(Episode.One, RnGl.RnSlotType);
-        AccessTools.Field(typeof(Panel_MainMenu), "m_SandboxSlots").SetValue(__instance, sortedSaveSlots);
+
+        IL2CPP.List<SaveSlotInfo> sortedSaveSlots = SaveGameSystem.GetSortedSaveSlots(Episode.One, RnGl.RnSlotType);
+        __instance.m_SandboxSlots = sortedSaveSlots;
         GameAudioManager.PlayGUIButtonClick();
         SaveSlotType saveSlotType = RnGl.RnSlotType;
-        AccessTools.Field(typeof(Panel_MainMenu), "m_SlotTypeSelected").SetValue(__instance, saveSlotType);
-        //__instance.m_SlotTypeLabel.text = Localization.Get("GAMEPLAY_Sandbox");
-        //__instance.m_SlotListXPModeLabel.text = Localization.Get("GAMEPLAY_XPMode");
+        __instance.m_SlotTypeSelected = saveSlotType;
         __instance.m_AllObjects.SetActive(false);
         InterfaceManager.m_Panel_Sandbox.Enable(true);
         return false;    
@@ -161,7 +162,6 @@ internal static class Panel_MainMenu_OnSelectSurvivorBack_Pre
         //Debug.Log("Panel_MainMenu_OnSelectSurvivorBack_Pre");
         if (!RnGl.rnActive) return true;
       
-        SaveSlotType saveSlotType = (SaveSlotType)AccessTools.Field(typeof(Panel_MainMenu), "m_SlotTypeSelected").GetValue(__instance);
         InterfaceManager.m_Panel_SelectExperience.Enable(true);
         return false;
     }
@@ -176,16 +176,16 @@ internal static class Panel_MainMenu_OnSelectSurvivorContinue_Pre
         if (!RnGl.rnActive) return true;
      
         GameAudioManager.PlayGuiConfirm();
-        int numUnlockedFeats = (int)AccessTools.Method(typeof(Panel_MainMenu), "GetNumUnlockedFeats", null, null).Invoke(__instance, null);
-   
+        int numUnlockedFeats = __instance.GetNumUnlockedFeats();
+
         if (numUnlockedFeats > 0)
         {
-            AccessTools.Method(typeof(Panel_MainMenu), "SelectWindow", null, null).Invoke(__instance, new object[] {__instance.m_SelectFeatWindow});
+            __instance.SelectWindow(__instance.m_SelectFeatWindow);
         }
         else
         {
-            FeatEnabledTracker.m_FeatsEnabledThisSandbox = new List<FeatType>();
-            AccessTools.Method(typeof(Panel_MainMenu), "ShowNameSaveSlotPopup", null, null).Invoke(__instance, null);
+            FeatEnabledTracker.m_FeatsEnabledThisSandbox = new IL2CPP.List<FeatType>();
+            __instance.ShowNameSaveSlotPopup();
         }
         return false;
     }
@@ -225,12 +225,14 @@ internal class Panel_PauseMenu_ConfigureMenu_Pos
             "FIRE FUEL BURNTIME: " + RnGl.glFireFuelFactor.ToString() + "X",
             "LANTERN FUEL BURNTIME: " + RnGl.glLanternFuelFactor.ToString() + "X"
         };
+
         string rnSettings = "";
         for (int i = 0; i < array.Length; i++)
         {
             rnSettings = rnSettings + array[i] + "\n";
         }
-        BasicMenu basicMenu = (BasicMenu)AccessTools.Field(__instance.GetType(), "m_BasicMenu").GetValue(__instance);
+        
+        BasicMenu basicMenu = __instance.m_BasicMenu;
         basicMenu.UpdateTitle("Relentless Night Mode", rnSettings, new Vector3(0f, -145f, 0f));
         basicMenu.m_TitleHeaderLabel.fontSize = 14;
         basicMenu.m_TitleHeaderLabel.capsLock = true;
@@ -246,13 +248,13 @@ internal class Panel_Sandbox_ConfigureMenu_Pos
     {
         //Debug.Log("Panel_Sandbox_ConfigureMenu_Pos");
         if (!RnGl.rnActive) return;
-       
-        BasicMenu basicMenu = (BasicMenu)AccessTools.Field(__instance.GetType(), "m_BasicMenu").GetValue(__instance);
+
+        BasicMenu basicMenu = __instance.m_BasicMenu;
         basicMenu.UpdateTitle("Relentless Night Mode", string.Empty, Vector3.zero);       
     }
 }
 
-[HarmonyPatch(typeof(Panel_Sandbox), "OnClickFeats", null)]
+[HarmonyPatch(typeof(Panel_Sandbox), "OnClickFeats", null)] // got inlined everywhere
 internal class Panel_Sandbox_OnClickFeats_Pre
 {    
     private static void Prefix()
@@ -269,8 +271,8 @@ internal class Panel_Sandbox_Panel_SelectExperience_Pos
     {
         //Debug.Log("Panel_Sandbox_Panel_SelectExperience_Pos");
         if (!RnGl.rnActive) return;
-        
-        BasicMenu basicMenu = (BasicMenu)AccessTools.Field(__instance.GetType(), "m_BasicMenu").GetValue(__instance);
+
+        BasicMenu basicMenu = __instance.m_BasicMenu;
         basicMenu.UpdateTitle("Relentless Night Mode", "Choose custom to start a Relentless Night game\nwhere you can customize the mod features.\n\nChoosing one of the standard difficulties " +
             "will\nstart a game with the settings of your last\nRelentless Night save. If no previous saves\nexist, the default Relentless Night settings\nwill be used.\n\nYou can pause your " +
             "game any time to see the\nRelentless Night settings for the current run.", new Vector3(0f, -150f, 0f));      

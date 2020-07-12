@@ -18,7 +18,7 @@ public class FirstPersonLightSource_TurnOnEffects_Pos
     }
 }
 
-[HarmonyPatch(typeof(Rest), "ShouldInterruptSleep", null)]
+[HarmonyPatch(typeof(Rest), "ShouldInterruptSleep", null)] // "certainly does not work"
 internal static class Rest_ShouldInterruptSleep_Pos
 {
     private static void Postfix(Rest __instance, ref bool __result)
@@ -28,7 +28,7 @@ internal static class Rest_ShouldInterruptSleep_Pos
 
         if (GameManager.GetFreezingComponent().IsFreezing() && GameManager.GetFreezingComponent().CalculateBodyTemperature() < 0f && !__result)
         {
-            AccessTools.Field(typeof(Rest), "m_ShouldInterruptWhenFreezing").SetValue(__instance, true);
+            __instance.m_ShouldInterruptWhenFreezing = true;
     
             if (InterfaceManager.m_Panel_HUD.m_Sprite_SystemFadeOverlay.alpha < 1f)
             {

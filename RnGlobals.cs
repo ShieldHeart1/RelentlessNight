@@ -4,19 +4,19 @@ namespace RelentlessNight
 {    
     internal class RnGl
     {
-        public const string RnVersion = "v3.02";
+        public const string RnVersion = "v3.10";
         public const string RnSlotPrefix = "relentless";
         public const Panel_MainMenu.MainMenuItem.MainMenuItemType MY_MENU_ITEM_TYPE = (Panel_MainMenu.MainMenuItem.MainMenuItemType)7;
         public const SaveSlotType RnSlotType = (SaveSlotType)21070;
 
         public static bool glEndgameActive = true;
-        public static int glEndgameDay = 200;
+        public static int glEndgameDay = 100;
         public static int glRotationDecline = 15;
         public static int glTemperatureEffect = 50;
         public static bool glHeatRetention = true;
-        public static bool glRealisticFreezing = true;
+        public static bool glRealisticFreezing = false;
         public static bool glWildlifeFreezing = true;
-        public static int glMinWildlifeDay = 200;
+        public static int glMinWildlifeDay = 120;
         public static int glMinWildlifeAmount = 10;
         public static float glFireFuelFactor = 1.5f;
         public static float glLanternFuelFactor = 1.5f;

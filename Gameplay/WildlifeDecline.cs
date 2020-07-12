@@ -11,7 +11,7 @@ internal static class SpawnRegion_Start_Pre
         //Debug.Log("SpawnRegion_Start_Pre");
         if (!RnGl.rnActive || GameManager.IsStoryMode()) return;
 
-        bool m_StartHasBeenCalled = (bool)AccessTools.Field(typeof(SpawnRegion), "m_StartHasBeenCalled").GetValue(__instance);
+        bool m_StartHasBeenCalled = __instance.m_StartHasBeenCalled;
         if (m_StartHasBeenCalled) return;
         
         int glDayNum = RnGl.glDayNum;

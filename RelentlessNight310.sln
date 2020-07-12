@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RelentlessNight302", "RelentlessNight302.csproj", "{E8E9CD58-FA51-4AA6-841D-86DBE0295AFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RelentlessNight310", "RelentlessNight310.csproj", "{E8E9CD58-FA51-4AA6-841D-86DBE0295AFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {2C95FFBF-5B61-491A-BB99-5E82F92CEF8C}
+		SolutionGuid = {8D652331-EECA-4BE8-9268-B99ACE5AD2DF}
 	EndGlobalSection
 EndGlobal

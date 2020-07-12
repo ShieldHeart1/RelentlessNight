@@ -10,7 +10,7 @@ internal static class CharcoalItem_StartDetailSurvey_Pre
         //Debug.Log("CharcoalItem_StartDetailSurvey_Pre");
         if (!RnGl.rnActive) return true;      
                 
-        if ((bool)AccessTools.Field(typeof(CharcoalItem), "m_IsActive").GetValue(__instance)) return false;
+        if (__instance.m_IsActive) return false;
 
         if (!GameManager.GetPlayerAnimationComponent().CanTransitionToState(PlayerAnimation.State.Stowing)) return false;
            
@@ -28,12 +28,15 @@ internal static class CharcoalItem_StartDetailSurvey_Pre
             HUDMessage.AddMessage(Localization.Get("GAMEPLAY_DetailSurveyNoVisibility"), false);
             return false;
         }
-                      
-        AccessTools.Field(typeof(CharcoalItem), "m_IsActive").SetValue(__instance, true);
+
+        __instance.m_IsActive = true;                      
+        
         CharcoalItem.m_CharcoalItemInUseForSurvey = __instance;
-        AccessTools.Field(typeof(CharcoalItem), "m_TimeSpentSurveying").SetValue(__instance, 0f);
-        AccessTools.Method(typeof(CharcoalItem), "AccelerateTimeOfDay", null, null).Invoke(__instance, null);
-        AccessTools.Field(typeof(CharcoalItem), "m_SurveyAudioID").SetValue(__instance, GameAudioManager.PlaySound(__instance.m_SurveyLoopAudio, InterfaceManager.GetSoundEmitter()));
+
+        __instance.m_TimeSpentSurveying = 0f;
+        __instance.AccelerateTimeOfDay();
+        __instance.m_SurveyAudioID = GameAudioManager.PlaySound(__instance.m_SurveyLoopAudio, InterfaceManager.GetSoundEmitter());
+        
         return false;    
     }
 }
@@ -62,10 +65,10 @@ internal static class InteriorLightingManager_Update_Pos
     {
         //Debug.Log("InteriorLightingManager_Update_Pos");
         if (!RnGl.rnActive || GameManager.m_IsPaused) return;
-        
-        float m_AuroraFade = (float)AccessTools.Field(typeof(InteriorLightingManager), "m_AuroraFade").GetValue(__instance);
-        float m_ScrubTimer = (float)AccessTools.Field(typeof(InteriorLightingManager), "m_ScrubTimer").GetValue(__instance);  
-     
+
+        float m_AuroraFade = __instance.m_AuroraFade;
+        float m_ScrubTimer = __instance.m_ScrubTimer;
+
         if (GameManager.GetTimeOfDayComponent().IsNight())
         {       
             if (GameManager.GetWeatherComponent().IsClear())
@@ -73,14 +76,13 @@ internal static class InteriorLightingManager_Update_Pos
                 int moonPhaseIndex = GameManager.GetTimeOfDayComponent().m_WeatherSystem.GetMoonPhaseIndex();            
                 if (moonPhaseIndex >= 3 && moonPhaseIndex <= 5)
                 {
-                    object[] parameters = new object[] {m_ScrubTimer, 0f, 0.25f, m_AuroraFade};
-                    AccessTools.Method(typeof(InteriorLightingManager), "UpdateLights", null, null).Invoke(__instance, parameters);
+                    __instance.UpdateLights(m_ScrubTimer, 0f, 0.25f, m_AuroraFade);
                 }
                 else
                 {
                     float intensity = GameManager.GetUniStorm().m_MoonLight.intensity;
-                    object[] parameters2 = new object[] {m_ScrubTimer, 0f, Mathf.Lerp(0.02f, 0.1f, intensity), m_AuroraFade};
-                    AccessTools.Method(typeof(InteriorLightingManager), "UpdateLights", null, null).Invoke(__instance, parameters2);
+
+                    __instance.UpdateLights(m_ScrubTimer, 0f, Mathf.Lerp(0.02f, 0.1f, intensity), m_AuroraFade);
                 }
             }
         }       
