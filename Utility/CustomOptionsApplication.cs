@@ -2,9 +2,7 @@
 using Harmony;
 using Newtonsoft.Json;
 using RelentlessNight;
-using UnityEngine;
 using Il2CppSystem.Collections.Generic;
-using UnhollowerBaseLib;
 
 [HarmonyPatch(typeof(Panel_CustomXPSetup), "Start", null)]
 internal class Panel_Panel_CustomXPSetup_Start_Pre
@@ -38,6 +36,7 @@ internal class Panel_Panel_CustomXPSetup_Start_Pre
             List<SaveSlotInfo> sortedSaveSlots = SaveGameSystem.GetSortedSaveSlots(Episode.One, RnGl.RnSlotType);
             string text = SaveGameSlots.LoadDataFromSlot(sortedSaveSlots[0].m_SaveSlotName, "RelentlessNight");
 
+            // RN save is found, populate globals from save data
             if (text != null)
             {
                 RnSd rnSd = JsonConvert.DeserializeObject<RnSd>(text);
@@ -55,21 +54,19 @@ internal class Panel_Panel_CustomXPSetup_Start_Pre
                 RnGl.glDayTidallyLocked = rnSd.sdDayTidallyLocked;
                 RnGl.glDayNum = rnSd.sdDayNum;
                 RnGl.glLastOutdoorTempNoBliz = rnSd.sdLastOutdoorTempNoBliz;
-            }
-            /*
-            BuildcustomizationList.customOptionsProxy.coEndgameActive = RnGl.glEndgameActive;
-            BuildcustomizationList.customOptionsProxy.coEndgameDay = RnGl.glEndgameDay;
-            BuildcustomizationList.customOptionsProxy.coRotationDecline = RnGl.glRotationDecline;
-            BuildcustomizationList.customOptionsProxy.coTemperatureEffect = RnGl.glTemperatureEffect;
-            BuildcustomizationList.customOptionsProxy.coHeatRetention = RnGl.glHeatRetention;
-            BuildcustomizationList.customOptionsProxy.coExtraFreezing = RnGl.glRealisticFreezing;
-            BuildcustomizationList.customOptionsProxy.coWildlifeFreezing = RnGl.glWildlifeFreezing;
-            BuildcustomizationList.customOptionsProxy.coMinWildlifeAmount = RnGl.glMinWildlifeAmount;
-            BuildcustomizationList.customOptionsProxy.coMinWildlifeDay = RnGl.glMinWildlifeDay;
-            BuildcustomizationList.customOptionsProxy.coFireFuelFactor = RnGl.glFireFuelFactor;
-            BuildcustomizationList.customOptionsProxy.coLanternFuelFactor = RnGl.glLanternFuelFactor;
-            */
-        }
-        //CustomMode.RegisterOptionsObject(BuildcustomizationList.customOptionsProxy, Position.BeforeAll);
+            }       
+            
+            Settings.options.coEndgameActive = RnGl.glEndgameActive;
+            Settings.options.coEndgameDay = RnGl.glEndgameDay;
+            Settings.options.coRotationDecline = RnGl.glRotationDecline;
+            Settings.options.coTemperatureEffect = RnGl.glTemperatureEffect;
+            Settings.options.coHeatRetention = RnGl.glHeatRetention;
+            Settings.options.coExtraFreezing = RnGl.glRealisticFreezing;
+            Settings.options.coWildlifeFreezing = RnGl.glWildlifeFreezing;
+            Settings.options.coMinWildlifeAmount = RnGl.glMinWildlifeAmount;
+            Settings.options.coMinWildlifeDay = RnGl.glMinWildlifeDay;
+            Settings.options.coFireFuelFactor = RnGl.glFireFuelFactor;
+            Settings.options.coLanternFuelFactor = RnGl.glLanternFuelFactor;            
+        }        
     }
 }

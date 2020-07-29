@@ -1,29 +1,26 @@
 ﻿using Harmony;
-using UnityEngine;
 using ModSettings;
-using RelentlessNight;
 
-namespace ModCustomization
+namespace RelentlessNight
 {
-    public class CustomizationList : ModSettingsBase {
-
-        [Section("Relentless Night Settings")]
+    public class RelentlessNightSettings : JsonModSettings
+    {       
         [Name("Perpetual night endgame")]
-        [Description("Enables the relentless night endgame where the earth eventually becomes tidally locked with the sun and you're left to survive in perpetual darkness for the rest of the game.\n\nIf disabled, the earth's spin will simply keep slowing down forever and the duration of days and nights will increase indefinitely.")]
+        [Description("Enables the relentless night endgame where the earth eventually becomes tidally locked with the sun and you're left to survive in perpetual darkness for the rest of the game.\n\nIf disabled, the earth's spin will simply keep slowing down indefinitely.")]
         public bool coEndgameActive = RnGl.glEndgameActive;
 
         [Name("Day after which endgame starts")]
-        [Description("The endgame will start during the next nightfall after this many days survived.\n\nSetting this day to 0 will start the endgame right away and the entire run will be in darkness. This setting can be ignored if the endgame is disabled.\n\nNote that your journal will still track days survived in regular 24-hour days no matter how long the earth takes to make one full rotation, just as if the player is keeping track of days with a watch.")]
+        [Description("The endgame will start on the next nightfall after this many days survived.\n\nSetting this to zero will begin the endgame immidiately and the entire run will be in darkness. This setting can be ignored if the endgame is disabled.\n\nYour journal will still track days survived in regular 24-hour days no matter how long the earth takes to make one full rotation.")]
         [Slider(0f, 500f, 251)]
         public int coEndgameDay = RnGl.glEndgameDay;
 
         [Name("How fast days and nights get longer")]
-        [Description("Controls how fast the earth's spin will slow down, and so how quickly the duration of days and nights will increase.\n\n0% - The earth's spin will not slow down, this feature will essentially be disabled.\n\n50% - After every 24 hours survived, the earth will take 50% of a 24 hour day longer to complete one rotation. In other words 12 hours will be added to the original day length every 24 hours.")]
+        [Description("Controls how fast the earth's spin will slow down, and so how quickly the duration of days and nights will increase.\n\n0% - The earth's spin will not slow down, this feature will essentially be disabled.\n\n50% - After 24 hours survived, the earth will be spinning 50% slower, and the second day will take roughly 36 hours.")]
         [Slider(0f, 100f, 101, NumberFormat = "{0,3:D}%")]
         public int coRotationDecline = RnGl.glRotationDecline;
 
         [Name("Outdoor effect on indoor temperatures")]
-        [Description("Controls how much of an effect outdoor temperature will have on indoor temperatures.\n\n0% - No effect, disables this feature entirely.\n\n100% - 100% of the current outdoor air temperature will be subtracted from the indoor environment's base temperature, making indoor temprerature heavily dependant on temperature outside.")]
+        [Description("Controls how much of an effect outdoor temperature will have on indoor temperatures.\n\n0% - No effect, disables this feature.\n\n100% - 100% of the current outdoor air temperature will be subtracted from the indoor environment's base temperature, making indoor temprerature heavily dependant on temperature outside.")]
         [Slider(0f, 100f, 101, NumberFormat = "{0,3:D}%")]
         public int coTemperatureEffect = RnGl.glTemperatureEffect;
 
@@ -40,7 +37,7 @@ namespace ModCustomization
         public bool coWildlifeFreezing = RnGl.glWildlifeFreezing;
 
         [Name("Wildlife final minimum population")]
-        [Description("The wildlife population will decline over time as longer nights make temperatures outside harsher for you and wildlife alike. This setting determines the minimum amount that the wildlife population can decline to.\n\n100% - Wildlife populations will not decline over time, disables this feature.\n\n5% - Only 5% of the normal wildlife population will remain once wildlife decline reaches the minimum population.")]
+        [Description("The wildlife population will decline over time as longer nights make temperatures outside harsher for you and wildlife alike. This setting determines the minimum amount that the wildlife population can decline to.\n\n100% - Wildlife populations will not decline over time, disables this feature.\n\n5% - Only 5% of the normal wildlife numbers will remain once wildlife decline reaches the minimum population.")]
         [Slider(0f, 100f, 21, NumberFormat = "{0,3:D}%")]
         public int coMinWildlifeAmount = RnGl.glMinWildlifeAmount;
 
@@ -58,38 +55,39 @@ namespace ModCustomization
         [Description("Determines how long lantern fuel will last while in use.\n\n1x - No change in lantern fuel burn time.\n\n3x - Lantern fuel will burn for 3 times longer than normal.")]
         [Slider(1f, 3f, 21, NumberFormat = "{0,2:F1}x")]
         public float coLanternFuelFactor = RnGl.glLanternFuelFactor;
+
     }
 
-    public class BuildcustomizationList
+    internal static class Settings
     {
-        private static CustomizationList settings;
+        public static RelentlessNightSettings options;
 
         public static void OnLoad()
         {
-            settings = new CustomizationList();
-            settings.AddToCustomModeMenu(Position.AboveAll);
-        }
+            options = new RelentlessNightSettings();
+            options.AddToModSettings("Relentless Night Settings");
+        }        
+    }
 
-        [HarmonyPatch(typeof(Panel_MainMenu), "OnSandboxFinal", null)]
-        public static class CustomGameStartedPatch
+    [HarmonyPatch(typeof(Panel_MainMenu), "OnSandboxFinal", null)]
+    public static class CustomGameStartedPatch
+    {
+        public static void Postfix()
         {
-            public static void Postfix()
-            {
-                //Debug.Log("--- CustomGameStartedPatch");
-                if (!RnGl.rnActive || !GameManager.InCustomMode()) return;
+            //Debug.Log("--- CustomGameStartedPatch");
+            if (!RnGl.rnActive) return;
 
-                RnGl.glEndgameActive = settings.coEndgameActive;
-                RnGl.glEndgameDay = settings.coEndgameDay;
-                RnGl.glRotationDecline = settings.coRotationDecline;
-                RnGl.glTemperatureEffect = settings.coTemperatureEffect;
-                RnGl.glHeatRetention = settings.coHeatRetention;
-                RnGl.glRealisticFreezing = settings.coExtraFreezing;
-                RnGl.glWildlifeFreezing = settings.coWildlifeFreezing;
-                RnGl.glMinWildlifeDay = settings.coMinWildlifeDay;
-                RnGl.glMinWildlifeAmount = settings.coMinWildlifeAmount;
-                RnGl.glFireFuelFactor = settings.coFireFuelFactor;
-                RnGl.glLanternFuelFactor = settings.coLanternFuelFactor;
-            }
+            RnGl.glEndgameActive = Settings.options.coEndgameActive;
+            RnGl.glEndgameDay = Settings.options.coEndgameDay;
+            RnGl.glRotationDecline = Settings.options.coRotationDecline;
+            RnGl.glTemperatureEffect = Settings.options.coTemperatureEffect;
+            RnGl.glHeatRetention = Settings.options.coHeatRetention;
+            RnGl.glRealisticFreezing = Settings.options.coExtraFreezing;
+            RnGl.glWildlifeFreezing = Settings.options.coWildlifeFreezing;
+            RnGl.glMinWildlifeDay = Settings.options.coMinWildlifeDay;
+            RnGl.glMinWildlifeAmount = Settings.options.coMinWildlifeAmount;
+            RnGl.glFireFuelFactor = Settings.options.coFireFuelFactor;
+            RnGl.glLanternFuelFactor = Settings.options.coLanternFuelFactor;
         }
     }
 }

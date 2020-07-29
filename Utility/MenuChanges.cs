@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Harmony;
+using MelonLoader;
 using RelentlessNight;
 using UnityEngine;
 using IL2CPP = Il2CppSystem.Collections.Generic;
@@ -16,6 +17,7 @@ internal class BasicMenu_InternalClickAction_Pre
         if (list[index].m_LabelText == "Relentless Night")
         {
             RnGl.rnActive = true;
+            Debug.Log("RN ENABLED");
         }
     }
 }
@@ -64,8 +66,7 @@ internal class Panel_ChooseSandbox_ConfigureMenu_Pos
         //Debug.Log("Panel_ChooseSandbox_ConfigureMenu_Pos");
         if (!RnGl.rnActive) return;
 
-        BasicMenu basicMenu = __instance.m_BasicMenu;
-        basicMenu.UpdateTitle("Relentless Night Mode", string.Empty, Vector3.zero);        
+        __instance.m_BasicMenu.UpdateTitle("Relentless Night Mode", string.Empty, Vector3.zero);        
     }
 }
 
@@ -74,10 +75,20 @@ internal class Panel_ChooseSandbox_ProcessMenu_Pre
 {
     private static void Prefix()
     {
-        //Debug.Log("Panel_ChooseSandbox_ProcessMenu_Pre");
+        Debug.Log("Panel_ChooseSandbox_ProcessMenu_Pre");
         if (!RnGl.rnActive) return;
-        
-        SaveGameSlots.SANDBOX_SLOT_PREFIX = "relentless";        
+
+        SaveGameSlots.SANDBOX_SLOT_PREFIX = RnGl.RnSlotPrefix;
+    }
+}
+
+[HarmonyPatch(typeof(Panel_ChooseSandbox), "Update", null)]
+internal class Panel_ChooseSandbox_Update_Pre
+{
+    private static void Prefix()
+    {
+        Debug.Log("Panel_ChooseSandbox_Update_Pre");
+        if (!RnGl.rnActive) return;
     }
 }
 
@@ -94,43 +105,81 @@ internal class Panel_Confirmation_ShowRenamePanel_Pre
     }
 }
 
+[HarmonyPatch(typeof(Panel_MainMenu), "Awake", null)]
+public class Panel_MainMenu_Awake_Pos
+{
+    public static void Postfix(Panel_MainMenu __instance)
+    {
+        //Debug.Log("Panel_MainMenu_Awake_Pos");
+        Panel_MainMenu.MainMenuItem mainMenuItem = new Panel_MainMenu.MainMenuItem();
+        __instance.m_MenuItems.Add(mainMenuItem);
+        
+        mainMenuItem.m_LabelLocalizationId = "Relentless Night";
+        mainMenuItem.m_Type = Panel_MainMenu.MainMenuItem.MainMenuItemType.Sandbox;
+        __instance.m_MenuItems.Insert(2, mainMenuItem);        
+    }
+}
+
+[HarmonyPatch(typeof(Panel_MainMenu), "Start", null)]
+public class Panel_MainMenu_Start_Pos
+{
+    public static void Postfix(Panel_MainMenu __instance)
+    {
+        //Debug.Log("Panel_MainMenu_Start_Pos");
+        if (!InterfaceManager.IsMainMenuActive()) return;
+
+        int numOfMainMenuItems = Convert.ToInt16(__instance.m_BasicMenu.m_MenuItems.Count.ToString());
+
+        GameObject.Find("Panel_MainMenu/MainPanel/Main/TLD_wordmark").transform.localPosition += new Vector3(0, (numOfMainMenuItems - 7) * 30, 0);
+    }
+}
+
 
 [HarmonyPatch(typeof(Panel_MainMenu), "AddMenuItem", null)]
 public class Panel_MainMenu_AddMenuItem_Pre
 {
-    private static void Postfix(int itemIndex, Panel_MainMenu __instance)
+    private static bool Prefix(int itemIndex, Panel_MainMenu __instance)
     {
-        BasicMenu basicMenu = __instance.m_BasicMenu;
+        //Debug.Log("Panel_MainMenu_AddMenuItem_Pre");
+        if (!InterfaceManager.IsMainMenuActive()) return true;
 
-        Debug.Log("basicMenu.GetItemCount(): " + basicMenu.GetItemCount() + " " + itemIndex);
-
-        if (InterfaceManager.IsMainMenuActive() && itemIndex == 7)
+        if (itemIndex == 2)
         {
-            Debug.Log("Addition Of RnItem Underway");
-
+            string id = __instance.m_MenuItems[itemIndex].m_Type.ToString();
             int type = (int)__instance.m_MenuItems[itemIndex].m_Type;
             string key = "Relentless Night";
             string key2 = "The earth seems to be slowing down. Days and nights are getting longer. Each night is colder and harsher than the last. How long will you survive?";
+            string secondaryText = "";
             Action actionFromType = new Action(__instance.OnSandbox);
-            BasicMenu.BasicMenuItemModel templateItem = basicMenu.m_ItemModelList[0];
+            BasicMenu basicMenu = __instance.m_BasicMenu;
+            BasicMenu.BasicMenuItemModel firstItem = basicMenu.m_ItemModelList[0];
 
-            __instance.m_BasicMenu.AddItem(itemIndex.ToString() + 1, type, itemIndex + 1, Localization.Get(key), Localization.Get(key2), "", actionFromType, templateItem.m_NormalTint, templateItem.m_HighlightTint);
+            basicMenu.AddItem(id, type, itemIndex, Localization.Get(key), Localization.Get(key2), secondaryText, actionFromType, Color.gray, Color.white);            
 
-            //BasicMenu.BasicMenuItemModel rnMainMenuItem = new BasicMenu.BasicMenuItemModel(id, type, 7, Localization.Get(key), Localization.Get(key2), "", actionFromType, templateItem.m_NormalTint, templateItem.m_HighlightTint);
-            //basicMenu.m_ItemModelList.Insert(8, rnMainMenuItem);
-
-            Debug.Log("templateItem: " + templateItem.m_Id + " " + templateItem.GetType() + " " + templateItem.m_ItemIndex);
-
+            return false;
         }
+        return true;
     }
 }
 
-[HarmonyPatch(typeof(Panel_MainMenu), "OnSandbox", null)] //inlined everwhere
+[HarmonyPatch(typeof(Panel_MainMenu), "ConfigureMenu", null)]
+internal class Panel_Panel_MainMenu_ConfigureMenu_Pos
+{
+    private static void Postfix(Panel_MainMenu __instance)
+    {
+        //Debug.Log("Panel_ChooseSandbox_ConfigureMenu_Pos");
+        if (!RnGl.rnActive) return;
+
+        __instance.m_BasicMenu.UpdateTitle("Relentless Night Mode", string.Empty, Vector3.zero);
+    }
+}
+
+[HarmonyPatch(typeof(Panel_MainMenu), "OnSandbox", null)]
 internal class Panel_MainMenu_OnSandbox_Pre
 {
     private static bool Prefix(Panel_MainMenu __instance)
     {
-        //Debug.Log("Panel_MainMenu_OnSandbox_Pre");
+        Debug.Log("Panel_MainMenu_OnSandbox_Pre");
         if (!RnGl.rnActive) return true;        
 
         IL2CPP.List<SlotData> m_SaveSlots = SaveGameSlots.m_SaveSlots;
@@ -156,6 +205,7 @@ internal class Panel_MainMenu_OnSandbox_Pre
         __instance.m_SlotTypeSelected = saveSlotType;
         __instance.m_AllObjects.SetActive(false);
         InterfaceManager.m_Panel_Sandbox.Enable(true);
+
         return false;    
     }
 }
@@ -200,11 +250,13 @@ internal static class Panel_MainMenu_OnSelectSurvivorContinue_Pre
 [HarmonyPatch(typeof(Panel_MainMenu), "ConfigureMenu", null)]
 internal class Panel_PanelMainMenu_ConfigureMenu_Pos
 {
-    private static void Postfix(Panel_MainMenu __instance)
-    {  
+    private static void Prefix(Panel_MainMenu __instance)
+    {
+        //Debug.Log("Panel_PanelMainMenu_ConfigureMenu_Pos");
         if (InterfaceManager.IsMainMenuActive() && !__instance.IsSubMenuEnabled())
         {
             RnGl.rnActive = false;
+            Debug.Log("RN DISABLED");
         }            
     }
 }
@@ -255,8 +307,7 @@ internal class Panel_Sandbox_ConfigureMenu_Pos
         //Debug.Log("Panel_Sandbox_ConfigureMenu_Pos");
         if (!RnGl.rnActive) return;
 
-        BasicMenu basicMenu = __instance.m_BasicMenu;
-        basicMenu.UpdateTitle("Relentless Night Mode", string.Empty, Vector3.zero);       
+        __instance.m_BasicMenu.UpdateTitle("Relentless Night Mode", string.Empty, Vector3.zero);       
     }
 }
 
@@ -271,17 +322,14 @@ internal class Panel_Sandbox_OnClickFeats_Pre
 }
 
 [HarmonyPatch(typeof(Panel_SelectExperience), "ConfigureMenu", null)]
-internal class Panel_Sandbox_Panel_SelectExperience_Pos
+internal class Panel_SelectExperience_ConfigureMenu_Pos
 {    
     private static void Postfix(Panel_SelectExperience __instance)
     {
-        //Debug.Log("Panel_Sandbox_Panel_SelectExperience_Pos");
+        //Debug.Log("Panel_SelectExperience_ConfigureMenu_Pos");
         if (!RnGl.rnActive) return;
 
-        BasicMenu basicMenu = __instance.m_BasicMenu;
-        basicMenu.UpdateTitle("Relentless Night Mode", "Choose custom to start a Relentless Night game\nwhere you can customize the mod features.\n\nChoosing one of the standard difficulties " +
-            "will\nstart a game with the settings of your last\nRelentless Night save. If no previous saves\nexist, the default Relentless Night settings\nwill be used.\n\nYou can pause your " +
-            "game any time to see the\nRelentless Night settings for the current run.", new Vector3(0f, -150f, 0f));      
+        __instance.m_BasicMenu.UpdateTitle("Relentless Night Mode", "Choose custom to start a Relentless Night game\nwhere you can customize the mod features.\n\nChoosing one of the standard difficulties " +
+            "will\nstart a game with the settings of your last\nRelentless Night save.", new Vector3(0f, -150f, 0f));      
     }
 }
-

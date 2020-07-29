@@ -28,7 +28,6 @@ internal class Panel_ChooseSandbox_ProcessMenu_Pos
     }
 }
 
-/*
 [HarmonyPatch(typeof(Panel_ChooseSandbox), "AddSavesOfTypeToMenu", null)]
 internal class Panel_MainMenu_AddSavesOfTypeToMenu_Pos
 {
@@ -41,10 +40,11 @@ internal class Panel_MainMenu_AddSavesOfTypeToMenu_Pos
         int numSandboxSaveSlots = InterfaceManager.m_Panel_MainMenu.GetNumSandboxSaveSlots();      
         for (int i = 0; i < numSandboxSaveSlots; i++)
         {
-            SaveSlotInfo sandboxSaveSlotInfo = InterfaceManager.m_Panel_MainMenu.GetSandboxSaveSlotInfo(i);          
+            SaveSlotInfo sandboxSaveSlotInfo = InterfaceManager.m_Panel_MainMenu.GetSandboxSaveSlotInfo(i);
+
             if (sandboxSaveSlotInfo == null)
             {
-                Debug.LogWarningFormat("Missing save slot {0}", new object[] {i});
+                //Debug.LogWarningFormat("Missing save slot {0}", new object[] { i });
             }
             else if (sandboxSaveSlotInfo.m_GameMode == RnGl.RnSlotType)
             {
@@ -52,49 +52,40 @@ internal class Panel_MainMenu_AddSavesOfTypeToMenu_Pos
                 string saveSlotName = sandboxSaveSlotInfo.m_SaveSlotName;
                 int value = i;
                 string userDefinedName = sandboxSaveSlotInfo.m_UserDefinedName;
-                m_BasicMenu.AddItem(saveSlotName, value, i, userDefinedName, descriptionText, null, () => { AccessTools.Method(typeof(Panel_ChooseSandbox), "OnSlotClicked", null, null).Invoke(__instance, null); });
+                basicMenu.AddItem(saveSlotName, value, i, userDefinedName, descriptionText, null, new System.Action(() => __instance.OnSlotClicked()), Color.gray, Color.white);
             }           
         }
         return false;
     }
 }
-public delegate void OnSlotClicked();
-*/
 
-[HarmonyPatch(typeof(Panel_MainMenu), "Awake", null)]
-public class Panel_MainMenu_Awake_Pos
-{
-    public static void Postfix(Panel_MainMenu __instance)
-    {
-        //Debug.Log("Panel_MainMenu_Awake_Pos");
-        Panel_MainMenu.MainMenuItem mainMenuItem = new Panel_MainMenu.MainMenuItem();
-        mainMenuItem.m_LabelLocalizationId = "Relentless Night";
-        mainMenuItem.m_Type = (Panel_MainMenu.MainMenuItem.MainMenuItemType)7;
-        __instance.m_MenuItems.Insert(1, mainMenuItem);
-    }
-}
+public delegate void OnSlotClicked();
+
 
 [HarmonyPatch(typeof(Panel_MainMenu), "OnLoadGame", null)]
 public class Panel_MainMenu_OnLoadGame_Pos
 {
     private static void Postfix()
     {
-        //Debug.Log("Panel_MainMenu_OnLoadGame_Pos");
+        Debug.Log("Panel_MainMenu_OnLoadGame_Pos");
+
         if (!RnGl.rnActive) return;
-        
+
+        Debug.Log("Panel_MainMenu_OnLoadGame_Pos, RN Active");
+
         string currentSaveName = SaveGameSystem.GetCurrentSaveName();
         string rnSaveData = SaveGameSlots.LoadDataFromSlot(currentSaveName, "RelentlessNight");
  
         if (rnSaveData == null)
         {
             RnGl.glEndgameActive = true;
-            RnGl.glEndgameDay = 300;
-            RnGl.glRotationDecline = 12;
-            RnGl.glTemperatureEffect = 30;
+            RnGl.glEndgameDay = 100;
+            RnGl.glRotationDecline = 15;
+            RnGl.glTemperatureEffect = 50;
             RnGl.glHeatRetention = true;
-            RnGl.glRealisticFreezing = true;
+            RnGl.glRealisticFreezing = false;
             RnGl.glWildlifeFreezing = true;
-            RnGl.glMinWildlifeDay = 300;
+            RnGl.glMinWildlifeDay = 100;
             RnGl.glMinWildlifeAmount = 10;
             RnGl.glFireFuelFactor = 1f;
             RnGl.glLanternFuelFactor = 1f;
@@ -104,6 +95,7 @@ public class Panel_MainMenu_OnLoadGame_Pos
         else
         {
             RnSd rnSd = JsonConvert.DeserializeObject<RnSd>(rnSaveData);
+
             RnGl.glEndgameActive = rnSd.sdEndgameActive;
             RnGl.glEndgameDay = rnSd.sdEndgameDay;
             RnGl.glRotationDecline = rnSd.sdRotationDecline;
@@ -175,7 +167,7 @@ internal class SaveGameSlots_GetSaveSlotTypeFromName_Pre
     public static bool Prefix(string name, ref SaveSlotType __result)
     {
         //Debug.Log("SaveGameSlots_GetSaveSlotTypeFromName_Pre");
-        if (!name.Contains(RnGl.RnSlotPrefix)) return true;
+        if (name != null && !name.Contains(RnGl.RnSlotPrefix)) return true;
        
         __result = RnGl.RnSlotType;
         return false;        
@@ -188,7 +180,7 @@ internal class SaveGameSlots_GetSlotPrefix_Pre
     public static bool Prefix(SaveSlotType slotType, ref string __result)
     {
         //Debug.Log("SaveGameSlots_GetSlotPrefix_Pre");
-        if (slotType != RnGl.RnSlotType) return true;
+        if (slotType != null && slotType != RnGl.RnSlotType) return true;
       
         __result = RnGl.RnSlotPrefix;
         return false;        

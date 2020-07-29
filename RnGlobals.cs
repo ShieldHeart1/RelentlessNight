@@ -35,6 +35,7 @@ namespace RelentlessNight
         public static bool rnActive = false;
         public static int rnTimeAccel = 1;
         public static bool rnFeatsActive = false;
+        public static bool rnWordMarkSet = false;
 
         public static float rnElapsedHours;
         public static float rnElapsedHoursAccumulator;
