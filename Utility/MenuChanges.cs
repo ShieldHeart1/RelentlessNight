@@ -291,7 +291,7 @@ internal class Panel_PauseMenu_ConfigureMenu_Pos
         }
         
         BasicMenu basicMenu = __instance.m_BasicMenu;
-        basicMenu.UpdateTitle("Relentless Night Mode", rnSettings, new Vector3(0f, -145f, 0f));
+        basicMenu.UpdateTitle("Relentless Night", rnSettings, new Vector3(0f, -145f, 0f));
         basicMenu.m_TitleHeaderLabel.fontSize = 14;
         basicMenu.m_TitleHeaderLabel.capsLock = true;
         basicMenu.m_TitleHeaderLabel.useFloatSpacing = true;
@@ -307,7 +307,7 @@ internal class Panel_Sandbox_ConfigureMenu_Pos
         //Debug.Log("Panel_Sandbox_ConfigureMenu_Pos");
         if (!RnGl.rnActive) return;
 
-        __instance.m_BasicMenu.UpdateTitle("Relentless Night Mode", string.Empty, Vector3.zero);       
+        __instance.m_BasicMenu.UpdateTitle("Relentless Night", string.Empty, Vector3.zero);       
     }
 }
 
@@ -329,7 +329,6 @@ internal class Panel_SelectExperience_ConfigureMenu_Pos
         //Debug.Log("Panel_SelectExperience_ConfigureMenu_Pos");
         if (!RnGl.rnActive) return;
 
-        __instance.m_BasicMenu.UpdateTitle("Relentless Night Mode", "Choose custom to start a Relentless Night game\nwhere you can customize the mod features.\n\nChoosing one of the standard difficulties " +
-            "will\nstart a game with the settings of your last\nRelentless Night save.", new Vector3(0f, -150f, 0f));      
+        __instance.m_BasicMenu.UpdateTitle("Relentless Night Mode", "", new Vector3(0f, -150f, 0f));      
     }
 }

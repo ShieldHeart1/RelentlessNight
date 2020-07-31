@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gameplay\CarcassMoving.cs" />
     <Compile Include="Gameplay\BurnTimeFactors.cs" />
     <Compile Include="Gameplay\VanillaBugFixes.cs" />
     <Compile Include="Gameplay\ExtraFreezing.cs" />

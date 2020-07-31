@@ -57,6 +57,7 @@ namespace RelentlessNight
                 }
                 else
                 {
+                    // Update Buildings here
                     bool flag3 = text.Contains("whalingwarehouse") || text.Contains("dam") || text.Contains("damtransitionzone") || 
                         text.Contains("whalingship") || text.Contains("barnhouse") || text.Contains("maintenanceshed");
                     if (flag3)

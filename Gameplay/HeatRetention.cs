@@ -111,7 +111,7 @@ public class Fire_Deserialize_Pos
 
         float m_ElapsedOnTODSeconds = __instance.m_ElapsedOnTODSeconds;
         float m_MaxOnTODSeconds = __instance.m_MaxOnTODSeconds;
-        FireState m_FireState = __instance.m_FireState;
+        FireState m_FireState = __instance.m_FireStatete;
 
         float hourAfterburnOut = (m_ElapsedOnTODSeconds - m_MaxOnTODSeconds) / 3600f;
         float heatRemaining = __instance.m_HeatSource.m_MaxTempIncrease - hourAfterburnOut * 2.5f;      
@@ -199,7 +199,7 @@ public class HeatSource_TurnOff_Pre
     private static bool Prefix(HeatSource __instance)
     {
         //Debug.Log("HeatSource_TurnOff_Pre");
-        if (!RnGl.rnActive || !RnGl.glHeatRetention) return true;       
+        if (!RnGl.rnActive || !RnGl.glHeatRetention) return true;    
        
         FireState fireState = (FireState)AccessTools.Field(typeof(Fire), "m_FireState").GetValue(__instance);
         float m_MaxOnTODSeconds = (float)AccessTools.Field(typeof(Fire), "m_MaxOnTODSeconds").GetValue(__instance);

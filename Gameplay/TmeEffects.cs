@@ -72,7 +72,7 @@ internal static class TimeWidget_Start_Pos
     private static void Postfix(TimeWidget __instance)
     {
         //Debug.Log("TimeWidget_Start_Pos");
-        if (RnGl.rnActive && RnGl.glEndgameActive && RnGl.glDayTidallyLocked != -1)
+        if (RnGl.rnActive && RnGl.glEndgameActive && RnGl.glDayTidallyLocked != -1 && RnGl.glDayTidallyLocked > Settings.options.coEndgameDay)
         {
             __instance.m_MoonSprite.color = new Color(0.2f, 0.2f, 0.6f, 1f);
         }
