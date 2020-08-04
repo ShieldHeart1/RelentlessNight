@@ -2,17 +2,19 @@
 
 namespace RelentlessNight
 {    
-    internal class RnGl
+    public class RnGl
     {
-        public const string RnVersion = "v3.10";
+        public const string RnVersion = "v4.00";
         public const string RnSlotPrefix = "relentless";
         public const Panel_MainMenu.MainMenuItem.MainMenuItemType MY_MENU_ITEM_TYPE = (Panel_MainMenu.MainMenuItem.MainMenuItemType)7;
         public const SaveSlotType RnSlotType = (SaveSlotType)21070;
 
         public static bool glEndgameActive = true;
         public static int glEndgameDay = 100;
+        public static bool glEndgameAurora = false;
         public static int glRotationDecline = 15;
         public static int glTemperatureEffect = 50;
+        public static int glMinimumTemperature = -80;
         public static bool glHeatRetention = true;
         public static bool glRealisticFreezing = false;
         public static bool glWildlifeFreezing = true;
@@ -41,14 +43,18 @@ namespace RelentlessNight
         public static float rnElapsedHoursAccumulator;
         public static float rnNormNum5;
 
+        public static bool IsRnActive()
+        {
+            return rnActive;
+        }
+
         public static void UpdateRnGlobalsForScene()
         {
-            string text = GameManager.m_ActiveScene;
-            text = text.ToLower();
-            bool flag = GameManager.GetWeatherComponent().IsIndoorScene();
-            if (flag)
+            string activeScene = GameManager.m_ActiveScene.ToLower();
+            
+            if (GameManager.GetWeatherComponent().IsIndoorScene())
             {
-                bool flag2 = text.Contains("cave") || text.Contains("mine");
+                bool flag2 = activeScene.Contains("cave") || activeScene.Contains("mine");
                 if (flag2)
                 {
                     rnIndoorTempFactor = 0.80f;
@@ -58,8 +64,8 @@ namespace RelentlessNight
                 else
                 {
                     // Update Buildings here
-                    bool flag3 = text.Contains("whalingwarehouse") || text.Contains("dam") || text.Contains("damtransitionzone") || 
-                        text.Contains("whalingship") || text.Contains("barnhouse") || text.Contains("maintenanceshed");
+                    bool flag3 = activeScene.Contains("whalingwarehouse") || activeScene.Contains("dam") || activeScene.Contains("damtransitionzone") ||
+                        activeScene.Contains("whalingship") || activeScene.Contains("barnhouse") || activeScene.Contains("maintenanceshed");
                     if (flag3)
                     {
                         rnIndoorTempFactor = 1f;
@@ -86,8 +92,10 @@ namespace RelentlessNight
     {
         public bool sdEndgameActive;
         public int sdEndgameDay;
+        public bool sdEndgameAurora;
         public int sdRotationDecline;
         public int sdTemperatureEffect;
+        public int sdMinimumTemperature;
         public bool sdHeatRetenion;
         public bool sdRealisticFreezing;
         public bool sdWildlifeFreezing;

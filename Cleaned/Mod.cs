@@ -1,5 +1,4 @@
 ﻿using MelonLoader;
-using UnityEngine;
 
 namespace RelentlessNight
 {
@@ -8,8 +7,6 @@ namespace RelentlessNight
         public override void OnApplicationStart()
         {
             Settings.OnLoad();
-
-            //Debug.Log("[house-lights] Version " + Assembly.GetExecutingAssembly().GetName().Version);
         }
     }
 }

@@ -6,6 +6,12 @@ namespace RelentlessNight
 {
     public class CarcassMoving : MonoBehaviour
     {
+        static CarcassMoving()
+        {
+            UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<CarcassMoving>();
+        }
+        public CarcassMoving(System.IntPtr ptr) : base(ptr) { }
+
         public const float carryFatigueMultiplier = 0.05f;              //% fatigue rate increase per kilo of carcass being carried
         public const float carrySlowDownMultiplier = 0.05f;             //% Player speed slow down per kilo of carcass being carried
         public const float carryCaloryBurnRateMultiplier = 15f;         //Additional calories burned per hour for every kilo of the carcass being carried
@@ -74,7 +80,12 @@ namespace RelentlessNight
             if (HasInjuryPreventingCarry())
             {
                 GameAudioManager.PlayGUIError();
-                AccessTools.Method(typeof(Panel_BodyHarvest), "DisplayErrorMessage", null, null).Invoke(currentHarvestPanel, new object[] { "CANNOT MOVE CARCASS WHILE INJURED" });
+
+                //AccessTools.Method(typeof(Panel_BodyHarvest), "DisplayErrorMessage", null, null).Invoke(currentHarvestPanel, new object[] { "CANNOT MOVE CARCASS WHILE INJURED" });
+
+                Panel_BodyHarvest panel_BodyHarvest = new Panel_BodyHarvest();
+                panel_BodyHarvest.DisplayErrorMessage("CANNOT MOVE CARCASS WHILE INJURED");
+
                 return;
             }
             PickUpCarcass();
@@ -314,21 +325,28 @@ namespace RelentlessNight
 
         // Below two patches prevent game from displaying TooFrozenHarvestError when first enabling harvest panel on a frozen carcass
         [HarmonyPatch(typeof(Panel_BodyHarvest), "DisplayCarcassToFrozenMessage", null)]
-        internal class Panel_BodyHarvest_DisplayCarcassToFrozenMessage
+        internal class Panel_BodyHarvest_DisplayCarcassToFrozenMessage_Pos
         {
-            private static bool Prefix(Panel_BodyHarvest __instance)
+            private static void Prefix(Panel_BodyHarvest __instance)
             {
-                if (!RnGl.rnActive || __instance.m_MenuItem_Meat == null || __instance.m_MenuItem_Hide == null || __instance.m_MenuItem_Gut == null) return true;
+                Debug.Log("Display 1");
+
+                if (!RnGl.rnActive) return;
+
+                Debug.Log("Display 2");
 
                 if (!HarvestAmmountsAreSelected(__instance))
                 {
-                    return false;
+                    Debug.Log("Display 3");
+
+                    return;
                 }
-                return true;
+
+                Debug.Log("Display 4");
             }
         }
         [HarmonyPatch(typeof(GameAudioManager), "PlayGUIError", null)]
-        internal class GameAudioManager_PlayGUIError
+        internal class GameAudioManager_PlayGUIError_Pre
         {
             private static bool Prefix()
             {

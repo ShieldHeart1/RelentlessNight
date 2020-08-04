@@ -68,24 +68,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gameplay\CarcassMoving.cs" />
-    <Compile Include="Gameplay\BurnTimeFactors.cs" />
-    <Compile Include="Gameplay\VanillaBugFixes.cs" />
-    <Compile Include="Gameplay\ExtraFreezing.cs" />
-    <Compile Include="Gameplay\DisableCabinFever.cs" />
-    <Compile Include="Gameplay\MoonlitActions.cs" />
-    <Compile Include="Gameplay\TmeEffects.cs" />
-    <Compile Include="Gameplay\WeatherEffects.cs" />
-    <Compile Include="Gameplay\TemperatureEffects.cs" />
+    <Compile Include="Cleaned\BurnTimes.cs" />
+    <Compile Include="Cleaned\ElectricTorchLighting.cs" />
+    <Compile Include="Cleaned\VanillaBugFix.cs" />
+    <Compile Include="Cleaned\RealisticFreezing.cs" />
+    <Compile Include="Cleaned\Affliction.cs" />
+    <Compile Include="Cleaned\NightChange.cs" />
+    <Compile Include="Cleaned\TimeChange.cs" />
+    <Compile Include="Cleaned\WeatherChange.cs" />
+    <Compile Include="Cleaned\TemperatureEffects.cs" />
     <Compile Include="Gameplay\HeatRetention.cs" />
     <Compile Include="Gameplay\WildlifeDecline.cs" />
     <Compile Include="RnGlobals.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\Mod.cs" />
-    <Compile Include="Utility\Settings.cs" />
-    <Compile Include="Utility\CustomOptionsApplication.cs" />
-    <Compile Include="Utility\SaveSystem.cs" />
-    <Compile Include="Utility\MenuChanges.cs" />
+    <Compile Include="Cleaned\Debug.cs" />
+    <Compile Include="Cleaned\Mod.cs" />
+    <Compile Include="Cleaned\Settings.cs" />
+    <Compile Include="Cleaned\SaveSystem.cs" />
+    <Compile Include="Cleaned\MenuChange.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Utility\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
