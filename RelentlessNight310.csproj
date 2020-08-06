@@ -74,9 +74,9 @@
     <Compile Include="Cleaned\RealisticFreezing.cs" />
     <Compile Include="Cleaned\Affliction.cs" />
     <Compile Include="Cleaned\NightChange.cs" />
-    <Compile Include="Cleaned\TimeChange.cs" />
-    <Compile Include="Cleaned\WeatherChange.cs" />
-    <Compile Include="Cleaned\TemperatureEffects.cs" />
+    <Compile Include="Gameplay\TimeChange.cs" />
+    <Compile Include="Gameplay\WeatherChange.cs" />
+    <Compile Include="Gameplay\TemperatureEffects.cs" />
     <Compile Include="Gameplay\HeatRetention.cs" />
     <Compile Include="Gameplay\WildlifeDecline.cs" />
     <Compile Include="RnGlobals.cs" />
@@ -84,8 +84,8 @@
     <Compile Include="Cleaned\Debug.cs" />
     <Compile Include="Cleaned\Mod.cs" />
     <Compile Include="Cleaned\Settings.cs" />
-    <Compile Include="Cleaned\SaveSystem.cs" />
-    <Compile Include="Cleaned\MenuChange.cs" />
+    <Compile Include="Gameplay\SaveSystem.cs" />
+    <Compile Include="Gameplay\MenuChange.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utility\" />

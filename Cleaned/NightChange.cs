@@ -22,7 +22,7 @@ namespace RelentlessNight
             if (GameManager.GetWeatherComponent().IsDenseFog() || GameManager.GetWeatherComponent().IsBlizzard() ||
                 (GameManager.GetTimeOfDayComponent().IsNight() && !GameManager.GetWeatherComponent().IsClear()))
             {
-                GameAudioManager.PlayGUIError();
+                GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                 HUDMessage.AddMessage(Localization.Get("GAMEPLAY_DetailSurveyNoVisibility"), false);
                 return false;
             }

@@ -29,25 +29,25 @@ namespace RelentlessNight
 
                 if (__instance.ProgressBarIsActive())
                 {
-                    GameAudioManager.PlayGUIError();
+                    GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     return false;
                 }
                 GearItem selectedFuelSource = __instance.GetSelectedFuelSource();
                 if (selectedFuelSource == null)
                 {
-                    GameAudioManager.PlayGUIError();
+                    GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     return false;
                 }
                 FuelSourceItem fuelSourceItem = selectedFuelSource.m_FuelSourceItem;
                 if (fuelSourceItem == null)
                 {
-                    GameAudioManager.PlayGUIError();
+                    GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     return false;
                 }
                 GameObject m_FireContainer = __instance.m_FireContainer;
                 if (!m_FireContainer)
                 {
-                    GameAudioManager.PlayGUIError();
+                    GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     return false;
                 }
                 Fire m_Fire = __instance.m_Fire;
@@ -58,7 +58,7 @@ namespace RelentlessNight
                 if (m_Fire.FireShouldBlowOutFromWind())
                 {
                     HUDMessage.AddMessage(Localization.Get("GAMEPLAY_TooWindyToAddFuel"), false);
-                    GameAudioManager.PlayGUIError();
+                    GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     return false;
                 }
 
@@ -70,7 +70,7 @@ namespace RelentlessNight
                     float num3 = (num + num2) / 60f;
                     if (num3 > GameManager.GetFireManagerComponent().m_MaxDurationHoursOfFire && m_Fire.GetCurrentTempIncrease() == m_Fire.m_HeatSource.m_MaxTempIncrease)
                     {
-                        GameAudioManager.PlayGUIError();
+                        GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                         HUDMessage.AddMessage(Localization.Get("GAMEPLAY_CannotAddMoreFuel"), false);
                         return false;
                     }

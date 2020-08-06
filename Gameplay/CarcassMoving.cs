@@ -24,7 +24,7 @@ namespace RelentlessNight
         public static UIButton moveCarcassUIBtn;
         public static Panel_BodyHarvest currentHarvestPanel;
 
-        public static bool PlayerIsCarryingCarcass;
+        public static bool PlayerIsCarryingCarcass = false;
         public static string carcassOriginalScene;
         public static float carcassWeight;
 
@@ -79,15 +79,11 @@ namespace RelentlessNight
         {
             if (HasInjuryPreventingCarry())
             {
-                GameAudioManager.PlayGUIError();
-
-                //AccessTools.Method(typeof(Panel_BodyHarvest), "DisplayErrorMessage", null, null).Invoke(currentHarvestPanel, new object[] { "CANNOT MOVE CARCASS WHILE INJURED" });
-
-                Panel_BodyHarvest panel_BodyHarvest = new Panel_BodyHarvest();
-                panel_BodyHarvest.DisplayErrorMessage("CANNOT MOVE CARCASS WHILE INJURED");
-
+                GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
+                currentHarvestPanel.DisplayErrorMessage("CANNOT MOVE CARCASS WHILE INJURED");
                 return;
             }
+
             PickUpCarcass();
         }
 
@@ -95,6 +91,9 @@ namespace RelentlessNight
         {
             PlayerIsCarryingCarcass = true;
             carcassWeight = currentBodyHarvest.m_MeatAvailableKG + currentBodyHarvest.GetGutsAvailableWeightKg() + currentBodyHarvest.GetHideAvailableWeightKg();
+
+            Debug.Log(carcassWeight.ToString());
+
             currentHarvestPanel.OnBack();
             carcassOriginalScene = GameManager.m_ActiveScene;
 
@@ -108,7 +107,7 @@ namespace RelentlessNight
 
             DisplayDropCarcassPopUp();
             HideCarcassFromView();
-            PlayCarcassPickUpAudio();
+            PlayCarcassPickUpAudio();       
         }
 
         internal static void DropCarcass()
@@ -116,21 +115,24 @@ namespace RelentlessNight
             PlayerIsCarryingCarcass = false;
             MoveCarcassToPlayerPosition();
             BringCarcassBackIntoView();
+
             if (GameManager.m_ActiveScene != carcassOriginalScene)
             {
                 AddCarcassToSceneSaveData(currentBodyHarvest);
             }
+
             PlayCarcassDropAudio();
         }
 
         internal static void HideCarcassFromView()
         {
-            currentCarryObj.transform.localScale = new Vector3(0, 0, 0);
+            currentCarryObj.transform.localScale = new Vector3(0f, 0f, 0f);
         }
 
         internal static void BringCarcassBackIntoView()
         {
-            currentCarryObj.transform.localScale = new Vector3(1, 1, 1);
+            currentCarryObj.transform.localScale = new Vector3(1f, 1f, 1f);
+            currentBodyHarvest.transform.localScale = new Vector3(1f, 1f, 1f);
         }
 
         internal static void DisplayDropCarcassPopUp()
@@ -147,13 +149,19 @@ namespace RelentlessNight
         internal static void MoveCarcassToPlayerPosition()
         {
             currentCarryObj.transform.position = GameManager.GetPlayerTransform().position;
-            currentCarryObj.transform.rotation = GameManager.GetPlayerTransform().rotation * Quaternion.Euler(0, 90, 0);
+            currentCarryObj.transform.rotation = GameManager.GetPlayerTransform().rotation * Quaternion.Euler(0f, 90f, 0f);
         }
 
         internal static void AddCarcassToSceneSaveData(BodyHarvest bodyHarvest)
         {
             BodyHarvestManager.AddBodyHarvest(currentBodyHarvest);
             UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(currentCarryObj, UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+        }
+
+        internal static void ApplyPickUpMovement()
+        {
+            vp_Spring m_RotationSpring = GameManager.m_vpFPSCamera.m_RotationSpring;
+            m_RotationSpring.AddForce(new Vector3(0f, 0f, 2f));
         }
 
         internal static void PlayCarcassPickUpAudio()
@@ -194,8 +202,9 @@ namespace RelentlessNight
                 MaybeAddCarcassMoveButton(__instance, bh);
             }
         }
+
         [HarmonyPatch(typeof(LoadScene), "Activate", null)]
-        internal class LoadScene_Activate
+        internal class LoadScene_Activate_Pos
         {
             private static void Postfix(LoadScene __instance)
             {
@@ -205,8 +214,9 @@ namespace RelentlessNight
                 currentBodyHarvest.enabled = false; //Disable Carcass Object to prevent its saving in the scene being left
             }
         }
+
         [HarmonyPatch(typeof(GameManager), "TriggerSurvivalSaveAndDisplayHUDMessage", null)]
-        internal class GameManager_TriggerSurvivalSaveAndDisplayHUDMessage
+        internal class GameManager_TriggerSurvivalSaveAndDisplayHUDMessage_Pre
         {
             private static void Prefix()
             {
@@ -217,8 +227,9 @@ namespace RelentlessNight
                 AddCarcassToSceneSaveData(currentBodyHarvest);
             }
         }
+
         [HarmonyPatch(typeof(MissionServicesManager), "SceneLoadCompleted", null)]
-        internal class MissionServicesManager_SceneLoadCompleted
+        internal class MissionServicesManager_SceneLoadCompleted_Pos
         {
             private static void Postfix()
             {
@@ -227,8 +238,9 @@ namespace RelentlessNight
                 currentBodyHarvest.enabled = true;
             }
         }
+
         [HarmonyPatch(typeof(PlayerManager), "ShouldSaveGameAfterTeleport", null)]
-        internal class PlayerManager_ShouldSaveGameAfterTeleport
+        internal class PlayerManager_ShouldSaveGameAfterTeleport_Pre
         {
             private static bool Prefix(ref bool __result)
             {
@@ -242,7 +254,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(PlayerManager), "PlayerCanSprint", null)]
-        public static class MaybeChangeWhetherPlayerCanSprint
+        public static class MaybeChangeWhetherPlayerCanSprint_Pos
         {
             private static void Postfix(ref bool __result)
             {
@@ -251,6 +263,7 @@ namespace RelentlessNight
                 __result = false;
             }
         }
+
         [HarmonyPatch(typeof(Fatigue), "CalculateFatigueIncrease", null)]
         internal class Fatigue_CalculateFatigueIncrease_Pos
         {
@@ -261,6 +274,7 @@ namespace RelentlessNight
                 __result *= (1f + carcassWeight * carryFatigueMultiplier);
             }
         }
+
         [HarmonyPatch(typeof(PlayerManager), "CalculateModifiedCalorieBurnRate")]
         internal static class PlayerManager_CalculateModifiedCalorieBurnRate_Pos
         {
@@ -271,7 +285,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Encumber), "GetEncumbranceSlowdownMultiplier", null)]
-        internal class MaybeAdjustEncumbranceSlowDown
+        internal class MaybeAdjustEncumbranceSlowDown_Pos
         {
             private static void Postfix(ref float __result)
             {
@@ -280,8 +294,9 @@ namespace RelentlessNight
                 __result *= Mathf.Clamp((1f - carcassWeight * carrySlowDownMultiplier), 0.1f, 0.8f);
             }
         }
+
         [HarmonyPatch(typeof(EquipItemPopup), "ShouldHideEquipPopup", null)]
-        internal class EquipItemPopup_ShouldHideEquipAndAmmoPopups
+        internal class EquipItemPopup_ShouldHideEquipAndAmmoPopups_Pos
         {
             private static void Postfix(ref bool __result)
             {
@@ -290,8 +305,9 @@ namespace RelentlessNight
                 __result = false;
             }
         }
+
         [HarmonyPatch(typeof(Panel_BodyHarvest), "CanEnable", null)]
-        internal class Panel_BodyHarvest_CarcassTooFrozenToHarvestBareHands
+        internal class Panel_BodyHarvest_CarcassTooFrozenToHarvestBareHands_Pos
         {
             private static void Postfix(BodyHarvest bodyHarvest, ref bool __result)
             {
@@ -300,20 +316,22 @@ namespace RelentlessNight
                 if (IsMovableCarcass(bodyHarvest) && !(bodyHarvest.GetCondition() < 0.5f)) __result = true;
             }
         }
+
         [HarmonyPatch(typeof(PlayerManager), "EquipItem", null)]
-        internal class PlayerManager_EquipItem
+        internal class PlayerManager_EquipItem_Pre
         {
             private static bool Prefix()
             {
                 if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return true;
 
                 HUDMessage.AddMessage("CANNOT EQUIP ITEM WHILE CARRYING CARCASS", false);
-                GameAudioManager.PlayGUIError();
+                GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                 return false;
             }
         }
+
         [HarmonyPatch(typeof(Panel_HUD), "Update", null)]
-        internal class Panel_HUD_Update
+        internal class Panel_HUD_Update_Pos
         {
             private static void Postfix(Panel_HUD __instance)
             {
@@ -323,28 +341,6 @@ namespace RelentlessNight
             }
         }
 
-        // Below two patches prevent game from displaying TooFrozenHarvestError when first enabling harvest panel on a frozen carcass
-        [HarmonyPatch(typeof(Panel_BodyHarvest), "DisplayCarcassToFrozenMessage", null)]
-        internal class Panel_BodyHarvest_DisplayCarcassToFrozenMessage_Pos
-        {
-            private static void Prefix(Panel_BodyHarvest __instance)
-            {
-                Debug.Log("Display 1");
-
-                if (!RnGl.rnActive) return;
-
-                Debug.Log("Display 2");
-
-                if (!HarvestAmmountsAreSelected(__instance))
-                {
-                    Debug.Log("Display 3");
-
-                    return;
-                }
-
-                Debug.Log("Display 4");
-            }
-        }
         [HarmonyPatch(typeof(GameAudioManager), "PlayGUIError", null)]
         internal class GameAudioManager_PlayGUIError_Pre
         {

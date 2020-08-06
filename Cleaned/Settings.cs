@@ -1,4 +1,5 @@
-﻿using Harmony;
+﻿using System;
+using Harmony;
 using ModSettings;
 
 namespace RelentlessNight
@@ -19,7 +20,7 @@ namespace RelentlessNight
         [Name("Permenant aurora at endgame")]
         [Description("If enabled, the aurora borealis will be present throughout the endgame, giving you some vision at the new dark side of Earth.\n\nSetting this to zero will begin the endgame immidiately and the entire run will be in darkness. This setting can be ignored if the endgame is disabled.\n\nYour journal will still track days survived in regular 24-hour days no matter how long the earth takes to make one full rotation.")]
         public bool coEndgameAurora = RnGl.glEndgameAurora;
-        
+
         [Name("How fast days and nights get longer")]
         [Description("Controls how fast the earth's spin will slow down, and so how quickly the duration of days and nights will increase.\n\n0% - The earth's spin will not slow down, this feature will essentially be disabled.\n\n50% - After 24 hours survived, the earth will be spinning 50% slower, and the second day will take roughly 36 hours.")]
         [Slider(0f, 100f, 101, NumberFormat = "{0,3:D}%")]
@@ -32,7 +33,7 @@ namespace RelentlessNight
 
         [Name("Minimum Temperature")]
         [Description("The minimum temperature that will be reached at the Relentless Night endgame or during a sufficiently long night.")]
-        [Slider(-40f, -120f, 81)]
+        [Slider(-40f, -100f, 61, NumberFormat = "{0,3:D}°C")]
         public int coMinimumTemperature = RnGl.glMinimumTemperature;
 
         [Name("Fire Heat Retention")]
@@ -67,6 +68,11 @@ namespace RelentlessNight
         [Slider(1f, 3f, 21, NumberFormat = "{0,2:F1}x")]
         public float coLanternFuelFactor = RnGl.glLanternFuelFactor;
         
+        internal static bool IsInImperial()
+        {
+            return InterfaceManager.m_Panel_OptionsMenu.m_State.m_Units == MeasurementUnits.Imperial;
+        }
+
         protected override void OnConfirm()
         {
             RnGl.glEndgameActive = Settings.options.coEndgameActive;

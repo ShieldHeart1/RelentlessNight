@@ -7,6 +7,13 @@ namespace RelentlessNight
 {
     public class MenuChange
     {
+        private const int mainMenuButtonIndex = 3;
+
+        public static void MoveUpMainMenuWordmark(int numOfMainMenuItems)
+        {
+            GameObject.Find("Panel_MainMenu/MainPanel/Main/TLD_wordmark").transform.localPosition += new Vector3(0, (numOfMainMenuItems - 8) * 30, 0);
+        }
+
         [HarmonyPatch(typeof(BasicMenu), "InternalClickAction", null)]
         internal class BasicMenu_InternalClickAction_Pre
         {
@@ -38,7 +45,7 @@ namespace RelentlessNight
         {
             private static void Postfix(ref string __result)
             {
-                __result += "Relentless Night " + RnGl.RnVersion;
+                __result += "Relentless Night " + RnGl.RnVersion + " - alpha do not distribute";
             }
         }
 
@@ -106,20 +113,18 @@ namespace RelentlessNight
             {
                 if (!InterfaceManager.IsMainMenuActive()) return;
 
-                int numOfMainMenuItems = Convert.ToInt16(__instance.m_BasicMenu.m_MenuItems.Count.ToString());
-                GameObject.Find("Panel_MainMenu/MainPanel/Main/TLD_wordmark").transform.localPosition += new Vector3(0, (numOfMainMenuItems - 8) * 30, 0);
+                MoveUpMainMenuWordmark(Convert.ToInt16(__instance.m_BasicMenu.m_MenuItems.Count.ToString()));
 
                 Panel_MainMenu.MainMenuItem mainMenuItem = new Panel_MainMenu.MainMenuItem();
                 mainMenuItem.m_LabelLocalizationId = "Relentless Night";
                 mainMenuItem.m_Type = Panel_MainMenu.MainMenuItem.MainMenuItemType.Sandbox;
-                __instance.m_MenuItems.Insert(3, mainMenuItem);
+                __instance.m_MenuItems.Insert(mainMenuButtonIndex, mainMenuItem);
 
 
-                string id = __instance.m_MenuItems[3].m_Type.ToString();
-                int type = (int)__instance.m_MenuItems[3].m_Type;
-                string key2 = "The earth seems to be slowing down. Days and nights are getting longer. Each night is colder and harsher than the last. How long will you survive?";
+                string id = __instance.m_MenuItems[mainMenuButtonIndex].m_Type.ToString();
+                int type = (int)__instance.m_MenuItems[mainMenuButtonIndex].m_Type;
 
-                __instance.m_BasicMenu.AddItem(id, type, 3, "Relentless Night", key2, "", new Action(__instance.OnSandbox), Color.gray, Color.white);
+                __instance.m_BasicMenu.AddItem(id, type, mainMenuButtonIndex, "Relentless Night", "", "", new Action(__instance.OnSandbox), Color.gray, Color.white);
             }
         }
 
@@ -128,7 +133,7 @@ namespace RelentlessNight
         {
             private static void Postfix(BasicMenu __instance, int buttonIndex)
             {
-                if (InterfaceManager.IsMainMenuActive() && buttonIndex == 2)
+                if (InterfaceManager.IsMainMenuActive() && buttonIndex == mainMenuButtonIndex - 1)
                 {
                     __instance.m_DescriptionLabel.text = "The earth seems to be slowing down. Days and nights are getting longer. Each night is colder and harsher than the last. How long will you survive?";
                 }
@@ -166,7 +171,7 @@ namespace RelentlessNight
                 if (SaveGameSlots.SlotsAreLoading(RnGl.RnSlotType))
                 {
                     SaveGameSlots.SetLoadingPriority(RnGl.RnSlotType);
-                    GameAudioManager.PlayGUIError();
+                    GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     return false;
                 }
 
@@ -225,7 +230,6 @@ namespace RelentlessNight
                 if (InterfaceManager.IsMainMenuActive() && !__instance.IsSubMenuEnabled())
                 {
                     RnGl.rnActive = false;
-                    Debug.Log("RN DISABLED");
                 }
             }
         }
@@ -244,7 +248,7 @@ namespace RelentlessNight
                     (RnGl.glEndgameAurora) ? ("ENDGAME AURORA: YES") : ("ENDGAME AURORA: NO"),
                     "DAY LENGTH CHANGE RATE: " + RnGl.glRotationDecline.ToString() + "%",
                     "INDOOR/OUTDOOR TEMP: " + RnGl.glTemperatureEffect.ToString() + "%",
-                    "MINIMUM TEMPERATURE: " + RnGl.glMinimumTemperature.ToString(),
+                    "MINIMUM TEMPERATURE: " + RnGl.glMinimumTemperature.ToString() + "°C",
                     (RnGl.glHeatRetention) ? ("HEAT RETENTION: YES") : ("HEAT RETENTION: NO"),                 
                     (RnGl.glRealisticFreezing) ? ("REALISTIC FREEZING: YES") : ("REALISTIC FREEZING: NO"),   
                     (RnGl.glWildlifeFreezing) ? ("TEMP AFFECTS WILDLIFE: YES") : ("TEMP AFFECTS WILDLIFE: NO"),
@@ -280,7 +284,7 @@ namespace RelentlessNight
             }
         }
 
-        [HarmonyPatch(typeof(Panel_Sandbox), "OnClickFeats", null)] // inlined everywhere
+        [HarmonyPatch(typeof(Panel_Sandbox), "OnClickFeats", null)]
         internal class Panel_Sandbox_OnClickFeats_Pre
         {
             private static void Prefix()
