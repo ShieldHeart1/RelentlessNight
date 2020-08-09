@@ -67,7 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Gameplay\CarcassMoving.cs" />
+    <Compile Include="Cleaned\CarcassMoving.cs" />
     <Compile Include="Cleaned\BurnTimes.cs" />
     <Compile Include="Cleaned\ElectricTorchLighting.cs" />
     <Compile Include="Cleaned\VanillaBugFix.cs" />
@@ -81,7 +81,7 @@
     <Compile Include="Gameplay\WildlifeDecline.cs" />
     <Compile Include="RnGlobals.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Cleaned\Debug.cs" />
+    <Compile Include="Cleaned\Utils.cs" />
     <Compile Include="Cleaned\Mod.cs" />
     <Compile Include="Cleaned\Settings.cs" />
     <Compile Include="Gameplay\SaveSystem.cs" />

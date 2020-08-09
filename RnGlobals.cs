@@ -8,6 +8,7 @@ namespace RelentlessNight
         public const string RnSlotPrefix = "relentless";
         public const Panel_MainMenu.MainMenuItem.MainMenuItemType MY_MENU_ITEM_TYPE = (Panel_MainMenu.MainMenuItem.MainMenuItemType)7;
         public const SaveSlotType RnSlotType = (SaveSlotType)21070;
+        public static bool secondSceneLoadForCarrions = false;
 
         public static bool glEndgameActive = true;
         public static int glEndgameDay = 100;
@@ -23,9 +24,12 @@ namespace RelentlessNight
         public static float glFireFuelFactor = 1.5f;
         public static float glLanternFuelFactor = 1.5f;
 
+        public static float glOutdoorTempWithoutBlizDrop = -10f;
+        public static int glCurrentDay = 0;
+        public static int glCurrentDayTempOffset = 0;
+
         public static int glDayTidallyLocked = -1;
         public static int glDayNum = 1;
-        public static float glLastOutdoorTempNoBliz = -10f;
         public static bool glIsCarryingCarcass = false;
         public static string glSerializedCarcass; 
         public static float rnCurrentRetainedHeat = 0f;
@@ -42,11 +46,6 @@ namespace RelentlessNight
         public static float rnElapsedHours;
         public static float rnElapsedHoursAccumulator;
         public static float rnNormNum5;
-
-        public static bool IsRnActive()
-        {
-            return rnActive;
-        }
 
         public static void UpdateRnGlobalsForScene()
         {
@@ -105,7 +104,6 @@ namespace RelentlessNight
         public float sdLanternFuelFactor;
         public int sdDayTidallyLocked;
         public int sdDayNum;
-        public float sdLastOutdoorTempNoBliz;
         public bool sdIsCarryingCarcass;
         public string sdSerializedCarcass;
     }

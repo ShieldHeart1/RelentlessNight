@@ -6,6 +6,17 @@ namespace RelentlessNight
 {
     public class TemperatureChange
     {
+        public static void MaybeApplyNewDailyTempOffset(int curDay)
+        {
+            if (RnGl.glCurrentDay != curDay)
+            {
+                RnGl.glCurrentDay = curDay;
+
+                System.Random rnd = new System.Random();
+                RnGl.glCurrentDayTempOffset = rnd.Next(-5, 5);
+            }
+        }
+
         [HarmonyPatch(typeof(Weather), "CalculateCurrentTemperature", null)]
         public class Weather_CalculateCurrentTemperature_Pre
         {
@@ -13,10 +24,10 @@ namespace RelentlessNight
             {
                 if (!RnGl.rnActive) return true;
 
-                float curDay = GameManager.GetTimeOfDayComponent().GetDayNumber();
-                float m_CurrentTemperature = __instance.m_CurrentTemperature;
+                int curDay = GameManager.GetTimeOfDayComponent().GetDayNumber();
+
                 int curCelestialHour = GameManager.GetTimeOfDayComponent().GetHour();
-                int num2 = curCelestialHour * 60 + GameManager.GetTimeOfDayComponent().GetMinutes();
+                int curCelestialMinutes = curCelestialHour * 60 + GameManager.GetTimeOfDayComponent().GetMinutes();
 
                 float m_TempHigh = __instance.m_TempHigh;
                 float m_TempLow = __instance.m_TempLow;
@@ -33,12 +44,12 @@ namespace RelentlessNight
                     {
                         __instance.GenerateTempHigh();
                     }
-                    int num8 = num2 - __instance.m_HourWarmingBegins * 60;
+                    int num8 = curCelestialMinutes - __instance.m_HourWarmingBegins * 60;
                     float num9 = (__instance.m_HourCoolingBegins - __instance.m_HourWarmingBegins) * 60f;
 
                     if (m_TempLow - tempDecrease < RnGl.glMinimumTemperature)
                     {
-                        tempDecrease = 100f + m_TempLow;
+                        tempDecrease = Mathf.Abs(RnGl.glMinimumTemperature + 5f) + m_TempLow;
                     }
 
                     if (m_TempHigh + tempIncrease > 2f)
@@ -53,11 +64,11 @@ namespace RelentlessNight
                     {
                         __instance.GenerateTempLow();
                     }
-                    int num10 = num2 - __instance.m_HourCoolingBegins * 60;
+                    int num10 = curCelestialMinutes - __instance.m_HourCoolingBegins * 60;
 
                     if (num10 < 0)
                     {
-                        num10 = num2 + (24 - __instance.m_HourCoolingBegins) * 60;
+                        num10 = curCelestialMinutes + (24 - __instance.m_HourCoolingBegins) * 60;
                     }
                     float num11 = (24 - __instance.m_HourCoolingBegins + __instance.m_HourWarmingBegins) * 60f;
 
@@ -68,23 +79,24 @@ namespace RelentlessNight
 
                     if (m_TempLow - tempDecrease < RnGl.glMinimumTemperature)
                     {
-                        tempDecrease = Mathf.Abs(RnGl.glMinimumTemperature) + m_TempLow;
+                        tempDecrease = Mathf.Abs(RnGl.glMinimumTemperature + 5f) + m_TempLow;
                     }
                     __instance.m_CurrentTemperature = m_TempHigh + tempIncrease - (num10 / num11 * (m_TempHigh + (tempIncrease + tempDecrease) - m_TempLow));
                 }
-
-                //Debug.Log("TEMP1: " + __instance.m_CurrentTemperature);
 
                 if (RnGl.glDayTidallyLocked != -1)
                 {
                     __instance.m_CurrentTemperature -= (curDay - RnGl.glDayTidallyLocked) * 2f;
 
-                    if (__instance.m_CurrentTemperature < RnGl.glMinimumTemperature) __instance.m_CurrentTemperature = RnGl.glMinimumTemperature;
+                    if (__instance.m_CurrentTemperature < RnGl.glMinimumTemperature + 5) __instance.m_CurrentTemperature = RnGl.glMinimumTemperature + 5;
                 }
 
-                //Debug.Log("TEMP2: " + __instance.m_CurrentTemperature);
+                RnGl.glOutdoorTempWithoutBlizDrop = __instance.m_CurrentBlizzardDegreesDrop;
 
                 float m_CurrentBlizzardDegreesDrop = __instance.m_CurrentBlizzardDegreesDrop;
+
+                MaybeApplyNewDailyTempOffset(curDay);
+                __instance.m_CurrentTemperature += RnGl.glCurrentDayTempOffset;
 
                 bool isCountedIndoors = false;
                 if (__instance.IsIndoorEnvironment())
@@ -107,25 +119,20 @@ namespace RelentlessNight
                     __instance.m_CurrentTemperature -= m_CurrentBlizzardDegreesDrop;
                 }
 
-                //Debug.Log("TEMP3: " + __instance.m_CurrentTemperature);
-
                 if (GameManager.GetSnowShelterManager().PlayerInNonRuinedShelter())
                 {
                     __instance.m_CurrentTemperature += GameManager.GetSnowShelterManager().GetTemperatureIncreaseCelsius();
                 }
-                //Debug.Log("TEMP4: " + __instance.m_CurrentTemperature);
 
                 if (GameManager.GetPlayerManagerComponent().m_IndoorSpaceTrigger)
                 {
                     __instance.m_CurrentTemperature += GameManager.GetPlayerManagerComponent().m_IndoorSpaceTrigger.m_TemperatureDeltaCelsius;
                 }
-                //Debug.Log("TEMP5: " + __instance.m_CurrentTemperature);
+
                 if (GameManager.GetPlayerInVehicle().IsInside())
                 {
                     __instance.m_CurrentTemperature += GameManager.GetPlayerInVehicle().GetTempIncrease();
                 }
-
-                //Debug.Log("TEMP6: " + __instance.m_CurrentTemperature);
 
                 __instance.m_CurrentTemperature += __instance.m_ArtificalTempIncrease;
                 __instance.m_CurrentTemperatureWithoutHeatSources = __instance.m_CurrentTemperature;
@@ -134,8 +141,6 @@ namespace RelentlessNight
                 __instance.m_CurrentTemperature = Mathf.Max(__instance.GetMinAirTemp(), __instance.m_CurrentTemperature);
                 __instance.m_CurrentTemperature = Mathf.Clamp(__instance.m_CurrentTemperature, float.NegativeInfinity, __instance.m_MaxAirTemperature);
                 __instance.m_CurrentTemperature = Mathf.Clamp(__instance.m_CurrentTemperature, __instance.m_MinAirTemperature, __instance.m_MaxAirTemperature);
-
-                //Debug.Log("TEMP7: " + __instance.m_CurrentTemperature);
 
                 if (__instance.m_LockedAirTemperature > -1000f)
                 {

@@ -17,18 +17,17 @@ namespace RelentlessNight
                 if (m_StartHasBeenCalled) return;
 
                 int glDayNum = RnGl.glDayNum;
-                float glLastOutdoorTempNoBliz = RnGl.glLastOutdoorTempNoBliz;
                 float curDayFactor = 1f;
                 float curTempFactor = 1f;
                 int minPopulation = 1;
 
                 if (RnGl.glMinWildlifeAmount < 100)
                 {
-                    curDayFactor = 1f - Mathf.Clamp((float)glDayNum / (float)RnGl.glMinWildlifeDay, 0f, 0.98f) * ((float)(100 - RnGl.glMinWildlifeAmount) * 0.01f);
+                    curDayFactor = 1f - Mathf.Clamp((float)glDayNum / RnGl.glMinWildlifeDay, 0f, 0.98f) * ((100 - RnGl.glMinWildlifeAmount) * 0.01f);
                 }
                 if (RnGl.glWildlifeFreezing)
                 {
-                    curTempFactor = 1f + Mathf.Clamp((RnGl.glLastOutdoorTempNoBliz + 30f) * 0.01f, -0.75f, 0.5f);
+                    curTempFactor = 1f + Mathf.Clamp((RnGl.glOutdoorTempWithoutBlizDrop + 30f) * 0.01f, -0.75f, 0.5f);
                 }
                 if (RnGl.glMinWildlifeAmount == 0)
                 {

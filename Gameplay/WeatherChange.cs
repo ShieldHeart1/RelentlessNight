@@ -6,6 +6,23 @@ namespace RelentlessNight
 {
     public class WeatherChange
     {
+        public static void MaybeEliminateDenseFog(WeatherSet currentWeatherSet, int dayNumber)
+        {
+            if (RnGl.glRotationDecline * dayNumber > 1000) currentWeatherSet.m_DenseFogAsNextSelectionWeight = 0;
+        }
+
+        public static void MaybeEliminateLightFog(WeatherSet currentWeatherSet, int dayNumber)
+        {
+            if (RnGl.glRotationDecline * dayNumber > 2000) currentWeatherSet.m_LightFogAsNextSelectionWeight = 0;
+        }
+
+        public static bool ShouldSetPermanentAuroraForEndGame()
+        {
+            if (RnGl.glEndgameActive && RnGl.glEndgameAurora) return true;
+
+            return false;
+        }
+
         [HarmonyPatch(typeof(WeatherTransition), "ChooseNextWeatherSet", null)]
         public class WeatherTransition_ChooseNextWeatherSet_Pre
         {
@@ -16,14 +33,9 @@ namespace RelentlessNight
                 int dayNumber = GameManager.GetTimeOfDayComponent().GetDayNumber();
                 WeatherSet m_CurrentWeatherSet = __instance.m_CurrentWeatherSet;
 
-                if (RnGl.glRotationDecline * dayNumber > 250)
-                {
-                    m_CurrentWeatherSet.m_DenseFogAsNextSelectionWeight = 0;
-                }
-                if (RnGl.glRotationDecline * dayNumber > 500)
-                {
-                    m_CurrentWeatherSet.m_LightFogAsNextSelectionWeight = 0;
-                }
+                MaybeEliminateDenseFog(m_CurrentWeatherSet, dayNumber);
+
+                MaybeEliminateLightFog(m_CurrentWeatherSet, dayNumber);
             }
         }
 
@@ -63,7 +75,7 @@ namespace RelentlessNight
         {
             private static void Prefix(ref WeatherStage reqType)
             {
-                if (!RnGl.rnActive || !RnGl.glEndgameActive || !RnGl.glEndgameAurora) return;
+                if (!RnGl.rnActive || !ShouldSetPermanentAuroraForEndGame()) return;
 
                 reqType = WeatherStage.ClearAurora;
             }

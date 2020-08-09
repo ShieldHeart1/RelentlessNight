@@ -11,7 +11,6 @@ namespace RelentlessNight
         {
             private static void Postfix(GameManager __instance)
             {
-                //Debug.Log("FireManager_Start_Pos");
                 if (!RnGl.rnActive) return;
 
                 GameManager.GetFireManagerComponent().m_MaxHeatIncreaseOfFire = 120f;
@@ -24,7 +23,6 @@ namespace RelentlessNight
         {
             private static bool Prefix(Panel_FeedFire __instance)
             {
-                //Debug.Log("Panel_Panel_FeedFire_Pre");
                 if (!RnGl.rnActive || !RnGl.glHeatRetention) return true;
 
                 if (__instance.ProgressBarIsActive())
@@ -96,7 +94,6 @@ namespace RelentlessNight
         {
             private static void Postfix(Fire __instance)
             {
-                //Debug.Log("Fire_AddFuel_Pos");
                 if (!RnGl.rnActive || !RnGl.glHeatRetention) return;
 
                 __instance.m_HeatSource.m_MaxTempIncreaseInnerRadius = 1000f;
@@ -109,7 +106,6 @@ namespace RelentlessNight
         {
             private static void Postfix(Fire __instance)
             {
-                //Debug.Log("Fire_Deserialize_Pos");
                 if (!RnGl.rnActive || !RnGl.glHeatRetention) return;
 
                 float m_ElapsedOnTODSeconds = __instance.m_ElapsedOnTODSeconds;
@@ -136,7 +132,6 @@ namespace RelentlessNight
         {
             private static void Postfix(Fire __instance)
             {
-                //Debug.Log("Fire_TurnOn_Pos");
                 if (!RnGl.rnActive || !RnGl.glHeatRetention) return;
 
                 __instance.m_HeatSource.m_MaxTempIncrease += RnGl.rnCurrentRetainedHeat;
@@ -156,7 +151,6 @@ namespace RelentlessNight
         {
             private static void Prefix(Fire __instance, ref bool maskTempIncrease)
             {
-                //Debug.Log("Fire_TurnOn_Pre");
                 if (!RnGl.rnActive || !RnGl.glHeatRetention) return;
                 maskTempIncrease = false;
 
@@ -173,10 +167,8 @@ namespace RelentlessNight
         {
             private static void Prefix(Fire __instance)
             {
-                //Debug.Log("Fire_Update_Pre");
                 if (!RnGl.rnActive || !RnGl.glHeatRetention || GameManager.m_IsPaused) return;
 
-                // Temp Bug Fix1
                 if (__instance.m_HeatSource.m_MaxTempIncreaseInnerRadius == 1000f || __instance.m_HeatSource.m_MaxTempIncreaseOuterRadius == 1000f)
                 {
                     __instance.m_HeatSource.m_MaxTempIncreaseInnerRadius = 2;
@@ -186,50 +178,16 @@ namespace RelentlessNight
                 FireState fireState = __instance.m_FireState;
                 if (fireState == FireState.Off)
                 {
-                    //float m_ElapsedOnTODSeconds = __instance.m_ElapsedOnTODSeconds;
-                    //m_ElapsedOnTODSeconds += GameManager.GetTimeOfDayComponent().GetTODSeconds(Time.deltaTime);
-                    //__instance.m_ElapsedOnTODSeconds = m_ElapsedOnTODSeconds;
-
                     __instance.m_ElapsedOnTODSeconds += GameManager.GetTimeOfDayComponent().GetTODSeconds(Time.deltaTime);
                 }
             }
         }
-
-        // Makes sure if the fire still has retained heat, that the heatsource is not turned off
-        /*
-        [HarmonyPatch(typeof(HeatSource), "TurnOff", null)] //inlined everywhere, HeatSource.TurnOffImmediate?
-        public class HeatSource_TurnOff_Pre
-        {
-            private static bool Prefix(HeatSource __instance)
-            {
-                //Debug.Log("HeatSource_TurnOff_Pre");
-                if (!RnGl.rnActive || !RnGl.glHeatRetention) return true;    
-
-                FireState fireState = (FireState)AccessTools.Field(typeof(Fire), "m_FireState").GetValue(__instance);
-                float m_MaxOnTODSeconds = (float)AccessTools.Field(typeof(Fire), "m_MaxOnTODSeconds").GetValue(__instance);
-
-                if (fireState == FireState.Off && __instance.m_MaxTempIncrease > 0f && m_MaxOnTODSeconds > 0f)
-                {
-                    float m_ElapsedOnTODSeconds = (float)AccessTools.Field(typeof(Fire), "m_ElapsedOnTODSeconds").GetValue(__instance);
-                    float hoursAfterBurnOut = (m_ElapsedOnTODSeconds - m_MaxOnTODSeconds) / 3600f;
-                    float tempBonusRemaining = __instance.m_MaxTempIncrease - hoursAfterBurnOut * 2.5f * RnGl.rnHeatDissapationFactor;
-
-                    if (tempBonusRemaining > 0f)
-                    {
-                        return false;
-                    }
-                }
-                return true;      
-            }
-        }
-        */
 
         [HarmonyPatch(typeof(HeatSource), "TurnOffImmediate", null)]
         public class HeatSource_TurnOffImmediate_Pre
         {
             private static bool Prefix(HeatSource __instance)
             {
-                //Debug.Log("HeatSource_TurnOffImmediate_Pre");
                 if (!RnGl.rnActive || !RnGl.glHeatRetention) return true;
 
                 if (__instance.m_TempIncrease > 0f) return false;
@@ -243,7 +201,6 @@ namespace RelentlessNight
         {
             private static bool Prefix(HeatSource __instance)
             {
-                //Debug.Log("HeatSource_Update_Pre");
                 if (!RnGl.rnActive || !RnGl.glHeatRetention) return true;
 
                 if (GameManager.m_IsPaused) return false;

@@ -28,7 +28,6 @@ namespace RelentlessNight
 
                 RnGl.glDayTidallyLocked = -1;
                 RnGl.glDayNum = 1;
-                RnGl.glLastOutdoorTempNoBliz = -10f;
                 RnGl.rnIndoorTempFactor = 1f;
                 RnGl.rnFireShouldHeatWholeScene = false;
                 RnGl.rnHeatDissapationFactor = 15f;

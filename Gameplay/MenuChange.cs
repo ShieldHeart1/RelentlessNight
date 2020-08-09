@@ -77,7 +77,6 @@ namespace RelentlessNight
         {
             private static void Prefix()
             {
-                Debug.Log("Panel_ChooseSandbox_ProcessMenu_Pre");
                 if (!RnGl.rnActive) return;
 
                 SaveGameSlots.SANDBOX_SLOT_PREFIX = RnGl.RnSlotPrefix;
@@ -89,7 +88,6 @@ namespace RelentlessNight
         {
             private static void Prefix()
             {
-                Debug.Log("Panel_ChooseSandbox_Update_Pre");
                 if (!RnGl.rnActive) return;
             }
         }
@@ -133,7 +131,7 @@ namespace RelentlessNight
         {
             private static void Postfix(BasicMenu __instance, int buttonIndex)
             {
-                if (InterfaceManager.IsMainMenuActive() && buttonIndex == mainMenuButtonIndex - 1)
+                if (InterfaceManager.IsMainMenuActive() && !InterfaceManager.m_Panel_MainMenu.IsSubMenuEnabled() && buttonIndex == mainMenuButtonIndex - 1)
                 {
                     __instance.m_DescriptionLabel.text = "The earth seems to be slowing down. Days and nights are getting longer. Each night is colder and harsher than the last. How long will you survive?";
                 }
@@ -156,7 +154,6 @@ namespace RelentlessNight
         {
             private static bool Prefix(Panel_MainMenu __instance)
             {
-                Debug.Log("Panel_MainMenu_OnSandbox_Pre");
                 if (!RnGl.rnActive) return true;
 
                 IL2CPP.List<SlotData> m_SaveSlots = SaveGameSlots.m_SaveSlots;
@@ -248,7 +245,7 @@ namespace RelentlessNight
                     (RnGl.glEndgameAurora) ? ("ENDGAME AURORA: YES") : ("ENDGAME AURORA: NO"),
                     "DAY LENGTH CHANGE RATE: " + RnGl.glRotationDecline.ToString() + "%",
                     "INDOOR/OUTDOOR TEMP: " + RnGl.glTemperatureEffect.ToString() + "%",
-                    "MINIMUM TEMPERATURE: " + RnGl.glMinimumTemperature.ToString() + "°C",
+                    "MINIMUM AIR TEMPERATURE: " + RnGl.glMinimumTemperature.ToString() + "°C",
                     (RnGl.glHeatRetention) ? ("HEAT RETENTION: YES") : ("HEAT RETENTION: NO"),                 
                     (RnGl.glRealisticFreezing) ? ("REALISTIC FREEZING: YES") : ("REALISTIC FREEZING: NO"),   
                     (RnGl.glWildlifeFreezing) ? ("TEMP AFFECTS WILDLIFE: YES") : ("TEMP AFFECTS WILDLIFE: NO"),
@@ -300,7 +297,7 @@ namespace RelentlessNight
             {
                 if (!RnGl.rnActive) return;
 
-                __instance.m_BasicMenu.UpdateTitle("Relentless Night", "", new Vector3(0f, -150f, 0f));
+                __instance.m_BasicMenu.UpdateTitle("Relentless Night", "See game Options and Mod Settings to configure\nyour Relentless Night run.", new Vector3(0f, -200f, 0f));
             }
         }
     }

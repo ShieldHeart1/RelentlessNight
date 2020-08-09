@@ -17,8 +17,8 @@ namespace RelentlessNight
         [Slider(0f, 500f, 251)]
         public int coEndgameDay = RnGl.glEndgameDay;
 
-        [Name("Permenant aurora at endgame")]
-        [Description("If enabled, the aurora borealis will be present throughout the endgame, giving you some vision at the new dark side of Earth.\n\nSetting this to zero will begin the endgame immidiately and the entire run will be in darkness. This setting can be ignored if the endgame is disabled.\n\nYour journal will still track days survived in regular 24-hour days no matter how long the earth takes to make one full rotation.")]
+        [Name("Permanent aurora at endgame")]
+        [Description("If enabled, the aurora borealis will be present throughout the endgame, giving you some vision at the new dark side of Earth.")]
         public bool coEndgameAurora = RnGl.glEndgameAurora;
 
         [Name("How fast days and nights get longer")]
@@ -31,8 +31,8 @@ namespace RelentlessNight
         [Slider(0f, 100f, 101, NumberFormat = "{0,3:D}%")]
         public int coTemperatureEffect = RnGl.glTemperatureEffect;
 
-        [Name("Minimum Temperature")]
-        [Description("The minimum temperature that will be reached at the Relentless Night endgame or during a sufficiently long night.")]
+        [Name("Minimum Air Temperature")]
+        [Description("The minimum air temperature that will be reached at the Relentless Night endgame or during a sufficiently long night.")]
         [Slider(-40f, -100f, 61, NumberFormat = "{0,3:D}°C")]
         public int coMinimumTemperature = RnGl.glMinimumTemperature;
 

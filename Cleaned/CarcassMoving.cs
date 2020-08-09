@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Harmony;
 using AK;
 
@@ -10,10 +11,10 @@ namespace RelentlessNight
         {
             UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<CarcassMoving>();
         }
-        public CarcassMoving(System.IntPtr ptr) : base(ptr) { }
+        public CarcassMoving(IntPtr ptr) : base(ptr) { }
 
         public const float carryFatigueMultiplier = 0.05f;              //% fatigue rate increase per kilo of carcass being carried
-        public const float carrySlowDownMultiplier = 0.05f;             //% Player speed slow down per kilo of carcass being carried
+        public const float carrySlowDownMultiplier = 0.04f;             //% Player speed slow down per kilo of carcass being carried
         public const float carryCaloryBurnRateMultiplier = 15f;         //Additional calories burned per hour for every kilo of the carcass being carried
 
         public static GameObject currentCarryObj;
@@ -32,12 +33,9 @@ namespace RelentlessNight
         {
             if (!PlayerIsCarryingCarcass) return;
 
-            if (HasInjuryPreventingCarry() || GameManager.GetPlayerStruggleComponent().InStruggle())
-            {
-                DropCarcass();
-                return;
-            }
-            if (InputManager.GetAltFirePressed(this))
+            DisplayDropCarcassPopUp();
+
+            if (HasInjuryPreventingCarry() || GameManager.GetPlayerStruggleComponent().InStruggle() || InputManager.GetAltFirePressed(this))
             {
                 DropCarcass();
             }
@@ -57,7 +55,7 @@ namespace RelentlessNight
 
                     moveCarcassUIBtn = moveCarcassBtnObj.GetComponentInChildren<UIButton>();
                     moveCarcassUIBtn.onClick.Clear();
-                    moveCarcassUIBtn.onClick.Add(new EventDelegate(new System.Action(OnMoveCarcass)));
+                    moveCarcassUIBtn.onClick.Add(new EventDelegate(new Action(OnMoveCarcass)));
                 }
             }
             else
@@ -72,7 +70,7 @@ namespace RelentlessNight
 
         internal static bool IsMovableCarcass(BodyHarvest bodyHarvest)
         {
-            return (bodyHarvest.name.Contains("Stag") || bodyHarvest.name.Contains("Deer") || bodyHarvest.name.Contains("Wolf"));
+            return bodyHarvest.name.Contains("Stag") || bodyHarvest.name.Contains("Deer") || bodyHarvest.name.Contains("Wolf");
         }
 
         internal static void OnMoveCarcass()
@@ -91,9 +89,6 @@ namespace RelentlessNight
         {
             PlayerIsCarryingCarcass = true;
             carcassWeight = currentBodyHarvest.m_MeatAvailableKG + currentBodyHarvest.GetGutsAvailableWeightKg() + currentBodyHarvest.GetHideAvailableWeightKg();
-
-            Debug.Log(carcassWeight.ToString());
-
             currentHarvestPanel.OnBack();
             carcassOriginalScene = GameManager.m_ActiveScene;
 
@@ -105,9 +100,8 @@ namespace RelentlessNight
 
             GameManager.GetPlayerManagerComponent().UnequipItemInHands();
 
-            DisplayDropCarcassPopUp();
             HideCarcassFromView();
-            PlayCarcassPickUpAudio();       
+            PlayCarcassPickUpAudio();
         }
 
         internal static void DropCarcass()
@@ -117,7 +111,7 @@ namespace RelentlessNight
             BringCarcassBackIntoView();
 
             if (GameManager.m_ActiveScene != carcassOriginalScene)
-            {
+            {                
                 AddCarcassToSceneSaveData(currentBodyHarvest);
             }
 
@@ -132,7 +126,6 @@ namespace RelentlessNight
         internal static void BringCarcassBackIntoView()
         {
             currentCarryObj.transform.localScale = new Vector3(1f, 1f, 1f);
-            currentBodyHarvest.transform.localScale = new Vector3(1f, 1f, 1f);
         }
 
         internal static void DisplayDropCarcassPopUp()
@@ -155,13 +148,12 @@ namespace RelentlessNight
         internal static void AddCarcassToSceneSaveData(BodyHarvest bodyHarvest)
         {
             BodyHarvestManager.AddBodyHarvest(currentBodyHarvest);
-            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(currentCarryObj, UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(currentCarryObj.transform.root.gameObject, UnityEngine.SceneManagement.SceneManager.GetActiveScene());
         }
 
         internal static void ApplyPickUpMovement()
         {
-            vp_Spring m_RotationSpring = GameManager.m_vpFPSCamera.m_RotationSpring;
-            m_RotationSpring.AddForce(new Vector3(0f, 0f, 2f));
+            GameManager.m_vpFPSCamera.m_RotationSpring.AddForce(new Vector3(0f, 0f, 1f));
         }
 
         internal static void PlayCarcassPickUpAudio()
@@ -210,7 +202,7 @@ namespace RelentlessNight
             {
                 if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
 
-                DontDestroyOnLoad(currentCarryObj); //Do not destroy carcass object through scene transition
+                DontDestroyOnLoad(currentCarryObj.transform.root.gameObject); //Do not destroy carcass object through scene transition
                 currentBodyHarvest.enabled = false; //Disable Carcass Object to prevent its saving in the scene being left
             }
         }
@@ -235,8 +227,8 @@ namespace RelentlessNight
             {
                 if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
 
-                currentBodyHarvest.enabled = true;
-            }
+                if (currentBodyHarvest != null) currentBodyHarvest.enabled = true;
+            } 
         }
 
         [HarmonyPatch(typeof(PlayerManager), "ShouldSaveGameAfterTeleport", null)]
@@ -280,6 +272,8 @@ namespace RelentlessNight
         {
             private static void Postfix(ref float __result)
             {
+                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
+
                 __result += carcassWeight * carryCaloryBurnRateMultiplier;
             }
         }
