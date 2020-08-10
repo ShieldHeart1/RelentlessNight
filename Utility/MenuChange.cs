@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Reflection;
 using Harmony;
 using UnityEngine;
+using ModSettings;
 using IL2CPP = Il2CppSystem.Collections.Generic;
 
 namespace RelentlessNight

@@ -151,11 +151,6 @@ namespace RelentlessNight
             UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(currentCarryObj.transform.root.gameObject, UnityEngine.SceneManagement.SceneManager.GetActiveScene());
         }
 
-        internal static void ApplyPickUpMovement()
-        {
-            GameManager.m_vpFPSCamera.m_RotationSpring.AddForce(new Vector3(0f, 0f, 1f));
-        }
-
         internal static void PlayCarcassPickUpAudio()
         {
             GameAudioManager.PlaySound("Play_RopeGetOn", InterfaceManager.GetSoundEmitter());
@@ -195,6 +190,19 @@ namespace RelentlessNight
             }
         }
 
+        [HarmonyPatch(typeof(GameManager), "TriggerSurvivalSaveAndDisplayHUDMessage", null)]
+        internal class GameManager_TriggerSurvivalSaveAndDisplayHUDMessage
+        {
+            private static void Prefix()
+            {
+                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
+
+                currentBodyHarvest.enabled = true;
+                MoveCarcassToPlayerPosition();
+                AddCarcassToSceneSaveData(currentBodyHarvest);
+            }
+        }
+
         [HarmonyPatch(typeof(LoadScene), "Activate", null)]
         internal class LoadScene_Activate_Pos
         {
@@ -207,19 +215,6 @@ namespace RelentlessNight
             }
         }
 
-        [HarmonyPatch(typeof(GameManager), "TriggerSurvivalSaveAndDisplayHUDMessage", null)]
-        internal class GameManager_TriggerSurvivalSaveAndDisplayHUDMessage_Pre
-        {
-            private static void Prefix()
-            {
-                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
-
-                currentBodyHarvest.enabled = true;
-                MoveCarcassToPlayerPosition();
-                AddCarcassToSceneSaveData(currentBodyHarvest);
-            }
-        }
-
         [HarmonyPatch(typeof(MissionServicesManager), "SceneLoadCompleted", null)]
         internal class MissionServicesManager_SceneLoadCompleted_Pos
         {
@@ -228,7 +223,7 @@ namespace RelentlessNight
                 if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
 
                 if (currentBodyHarvest != null) currentBodyHarvest.enabled = true;
-            } 
+            }
         }
 
         [HarmonyPatch(typeof(PlayerManager), "ShouldSaveGameAfterTeleport", null)]

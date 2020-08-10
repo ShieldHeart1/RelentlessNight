@@ -7,15 +7,8 @@ using IL2CPP = Il2CppSystem.Collections.Generic;
 
 namespace RelentlessNight
 {
-    public class Utils 
+    public class Utilities
     {
-        internal static void Log(string debugMessage)
-        {            
-            #if DEBUG
-            Debug.Log("-RN- " + debugMessage);
-            #endif
-        }
-
         internal static List<GameObject> GetRootObjects()
         {
             List<GameObject> rootObj = new List<GameObject>();
@@ -54,40 +47,29 @@ namespace RelentlessNight
             }
         }
 
-        public static List<GameObject> torchLightingSceneItems = new List<GameObject>();
-
-        internal static void GetTorchLightingSceneItems()
+        internal static void CreateTorchLightingSceneItem(string objectName)
         {
             List<GameObject> rObjs = GetRootObjects();
             List<GameObject> result = new List<GameObject>();
 
-            int wCount = 0;
-
             foreach (GameObject rootObj in rObjs)
             {
-                GetChildrenWithName(rootObj, "toaster", result);
+                GetChildrenWithName(rootObj, objectName, result);
 
                 if (result.Count > 0)
                 {
                     foreach (GameObject child in result)
                     {
-                        if (child.name != "XPZ_Switch")
-                        {
-                            child.layer = 12;
-                            torchLightingSceneItems.Add(child);
-                            child.name = "XPZ_Switch";
-                            wCount++;
-                        }
+                        //Debug.Log(child.name);
+                        child.layer = 12;
                     }
                 }
             }
-
-            Debug.Log("[house-lights] Light switches found:" + wCount + ".");
         }
 
         public static void HyperTime()
         {
-            if (RnGl.rnTimeAccel != 500) RnGl.rnTimeAccel = 500;
+            if (RnGl.rnTimeAccel != 1000) RnGl.rnTimeAccel = 1000;
             else RnGl.rnTimeAccel = 1;
         }
 

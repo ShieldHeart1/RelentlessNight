@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RelentlessNight
 {    
@@ -8,7 +9,6 @@ namespace RelentlessNight
         public const string RnSlotPrefix = "relentless";
         public const Panel_MainMenu.MainMenuItem.MainMenuItemType MY_MENU_ITEM_TYPE = (Panel_MainMenu.MainMenuItem.MainMenuItemType)7;
         public const SaveSlotType RnSlotType = (SaveSlotType)21070;
-        public static bool secondSceneLoadForCarrions = false;
 
         public static bool glEndgameActive = true;
         public static int glEndgameDay = 100;
@@ -31,8 +31,9 @@ namespace RelentlessNight
         public static int glDayTidallyLocked = -1;
         public static int glDayNum = 1;
         public static bool glIsCarryingCarcass = false;
-        public static string glSerializedCarcass; 
+        public static string glSerializedCarcass;
         public static float rnCurrentRetainedHeat = 0f;
+        
 
         public static bool rnFireShouldHeatWholeScene = false;
         public static float rnIndoorTempFactor = 1f;
@@ -95,7 +96,7 @@ namespace RelentlessNight
         public int sdRotationDecline;
         public int sdTemperatureEffect;
         public int sdMinimumTemperature;
-        public bool sdHeatRetenion;
+        public bool sdHeatRetention;
         public bool sdRealisticFreezing;
         public bool sdWildlifeFreezing;
         public int sdMinWildlifeDay;

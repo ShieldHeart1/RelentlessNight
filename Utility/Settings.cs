@@ -1,7 +1,8 @@
 ﻿using System;
+using UnityEngine;
 using Harmony;
 using ModSettings;
-
+`
 namespace RelentlessNight
 {
     public class RelentlessNightSettings : JsonModSettings
@@ -9,11 +10,11 @@ namespace RelentlessNight
         [Section(" ")]
 
         [Name("Perpetual night endgame")]
-        [Description("Enables the Relentless Night endgame where the earth eventually becomes tidally locked with the sun and you're left to survive in perpetual darkness for the rest of the game.\n\nIf disabled, the earth's spin will simply keep slowing down indefinitely.")]
+        [Description("Enables the Relentless Night endgame where the earth eventually becomes tidally locked with the sun and you are left to survive in perpetual darkness for the rest of the game.\n\nIf disabled, the earth's spin will simply keep slowing down indefinitely.")]
         public bool coEndgameActive = RnGl.glEndgameActive;
 
         [Name("Day after which endgame starts")]
-        [Description("The endgame will start on the next nightfall after this many days survived.\n\nSetting this to zero will begin the endgame at the beginning of the game and the entire run will be in darkness. This setting can be ignored if the endgame is disabled.\n\nYour journal will still track days survived in regular 24-hour days no matter how long the earth takes to make one full rotation.")]
+        [Description("The endgame will start on the next nightfall after this many days survived.\n\nSetting this to zero will begin the endgame at the beginning of the game and the entire run will be in darkness. Setting can be ignored if endgame is disabled.\n\nYour journal will still track days survived in regular 24-hour days no matter how long the earth takes to make one full rotation.")]
         [Slider(0f, 500f, 251)]
         public int coEndgameDay = RnGl.glEndgameDay;
 
@@ -27,7 +28,7 @@ namespace RelentlessNight
         public int coRotationDecline = RnGl.glRotationDecline;
 
         [Name("Outdoor effect on indoor temperatures")]
-        [Description("Controls how much of an effect outdoor temperature will have on indoor temperatures.\n\n0% - No effect, disables this feature.\n\n100% - 100% of the current outdoor air temperature will be subtracted from the indoor environment's base temperature, making indoor temprerature heavily dependant on temperature outside.")]
+        [Description("Controls how much of an effect outdoor temperature will have on indoor temperatures.\n\n0% - No effect, disables this feature.\n\n100% - 100% of the current outdoor air temperature will be subtracted from the indoor environment's base temperature, making indoor temperature heavily dependant on temperature outside.")]
         [Slider(0f, 100f, 101, NumberFormat = "{0,3:D}%")]
         public int coTemperatureEffect = RnGl.glTemperatureEffect;
 
@@ -67,11 +68,6 @@ namespace RelentlessNight
         [Description("Determines how long lantern fuel will last while in use.\n\n1x - No change in lantern fuel burn time.\n\n3x - Lantern fuel will burn for 3 times longer than normal.")]
         [Slider(1f, 3f, 21, NumberFormat = "{0,2:F1}x")]
         public float coLanternFuelFactor = RnGl.glLanternFuelFactor;
-        
-        internal static bool IsInImperial()
-        {
-            return InterfaceManager.m_Panel_OptionsMenu.m_State.m_Units == MeasurementUnits.Imperial;
-        }
 
         protected override void OnConfirm()
         {
@@ -100,7 +96,7 @@ namespace RelentlessNight
             options = new RelentlessNightSettings();
             options.AddToModSettings("Relentless Night Settings");
         }
-    }    
+    }
 
     [HarmonyPatch(typeof(Panel_MainMenu), "OnSandboxFinal", null)]
     public static class CustomGameStartedPatch

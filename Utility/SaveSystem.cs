@@ -75,9 +75,11 @@ namespace RelentlessNight
                         RnSd rnSd = JsonConvert.DeserializeObject<RnSd>(text);
                         RnGl.glEndgameActive = rnSd.sdEndgameActive;
                         RnGl.glEndgameDay = rnSd.sdEndgameDay;
+                        RnGl.glEndgameAurora = rnSd.sdEndgameAurora;
                         RnGl.glRotationDecline = rnSd.sdRotationDecline;
                         RnGl.glTemperatureEffect = rnSd.sdTemperatureEffect;
-                        RnGl.glHeatRetention = rnSd.sdHeatRetenion;
+                        RnGl.glMinimumTemperature = rnSd.sdMinimumTemperature;
+                        RnGl.glHeatRetention = rnSd.sdHeatRetention;
                         RnGl.glRealisticFreezing = rnSd.sdRealisticFreezing;
                         RnGl.glWildlifeFreezing = rnSd.sdWildlifeFreezing;
                         RnGl.glMinWildlifeDay = rnSd.sdMinWildlifeDay;
@@ -90,8 +92,10 @@ namespace RelentlessNight
 
                     Settings.options.coEndgameActive = RnGl.glEndgameActive;
                     Settings.options.coEndgameDay = RnGl.glEndgameDay;
+                    Settings.options.coEndgameAurora = RnGl.glEndgameAurora;
                     Settings.options.coRotationDecline = RnGl.glRotationDecline;
                     Settings.options.coTemperatureEffect = RnGl.glTemperatureEffect;
+                    Settings.options.coMinimumTemperature = RnGl.glMinimumTemperature;
                     Settings.options.coHeatRetention = RnGl.glHeatRetention;
                     Settings.options.coExtraFreezing = RnGl.glRealisticFreezing;
                     Settings.options.coWildlifeFreezing = RnGl.glWildlifeFreezing;
@@ -141,7 +145,7 @@ namespace RelentlessNight
                     RnGl.glRotationDecline = rnSd.sdRotationDecline;
                     RnGl.glTemperatureEffect = rnSd.sdTemperatureEffect;
                     RnGl.glMinimumTemperature = rnSd.sdMinimumTemperature;
-                    RnGl.glHeatRetention = rnSd.sdHeatRetenion;
+                    RnGl.glHeatRetention = rnSd.sdHeatRetention;
                     RnGl.glRealisticFreezing = rnSd.sdRealisticFreezing;
                     RnGl.glWildlifeFreezing = rnSd.sdWildlifeFreezing;
                     RnGl.glMinWildlifeDay = rnSd.sdMinWildlifeDay;
@@ -159,7 +163,7 @@ namespace RelentlessNight
                     Settings.options.coRotationDecline = rnSd.sdRotationDecline;
                     Settings.options.coTemperatureEffect = rnSd.sdTemperatureEffect;
                     Settings.options.coMinimumTemperature = rnSd.sdMinimumTemperature;
-                    Settings.options.coHeatRetention = rnSd.sdHeatRetenion;
+                    Settings.options.coHeatRetention = rnSd.sdHeatRetention;
                     Settings.options.coExtraFreezing = rnSd.sdRealisticFreezing;
                     Settings.options.coWildlifeFreezing = rnSd.sdWildlifeFreezing;
                     Settings.options.coMinWildlifeDay = rnSd.sdMinWildlifeDay;
@@ -185,7 +189,7 @@ namespace RelentlessNight
                     sdRotationDecline = RnGl.glRotationDecline,
                     sdTemperatureEffect = RnGl.glTemperatureEffect,
                     sdMinimumTemperature = RnGl.glMinimumTemperature,
-                    sdHeatRetenion = RnGl.glHeatRetention,
+                    sdHeatRetention = RnGl.glHeatRetention,
                     sdRealisticFreezing = RnGl.glRealisticFreezing,
                     sdWildlifeFreezing = RnGl.glWildlifeFreezing,
                     sdMinWildlifeDay = RnGl.glMinWildlifeDay,
@@ -197,6 +201,7 @@ namespace RelentlessNight
                     sdIsCarryingCarcass = RnGl.glIsCarryingCarcass,
                     sdSerializedCarcass = RnGl.glSerializedCarcass,
                 };
+
                 string data = JsonConvert.SerializeObject(value);
                 SaveGameSlots.SaveDataToSlot(gameMode, SaveGameSystem.m_CurrentEpisode, SaveGameSystem.m_CurrentGameId, name, "RelentlessNight", data);
             }
