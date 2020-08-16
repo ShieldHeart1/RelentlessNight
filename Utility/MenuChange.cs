@@ -47,7 +47,7 @@ namespace RelentlessNight
         {
             private static void Postfix(ref string __result)
             {
-                __result += "Relentless Night " + RnGl.RnVersion + " - alpha do not distribute";
+                __result += "Relentless Night " + RnGl.RnVersion;
             }
         }
 
@@ -299,7 +299,7 @@ namespace RelentlessNight
             {
                 if (!RnGl.rnActive) return;
 
-                __instance.m_BasicMenu.UpdateTitle("Relentless Night", "See game Options and Mod Settings to configure\nyour Relentless Night run.", new Vector3(0f, -200f, 0f));
+                __instance.m_BasicMenu.UpdateTitle("Relentless Night", "See game Options and Mod Settings to\nconfigure your Relentless Night run.", new Vector3(0f, -75f, 0f));
             }
         }
     }

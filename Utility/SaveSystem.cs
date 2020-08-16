@@ -46,7 +46,9 @@ namespace RelentlessNight
                 bool rnSaveExists = false;
 
                 DirectoryInfo directoryInfo = new DirectoryInfo(PersistentDataPath.m_Path);
+
                 FileInfo[] saveFiles = directoryInfo.GetFiles("*", SearchOption.AllDirectories);
+
                 foreach (FileInfo fileInfo in saveFiles)
                 {
                     if (fileInfo.Name.Contains("relentless"))
@@ -59,6 +61,7 @@ namespace RelentlessNight
                 if (rnSaveExists)
                 {
                     List<SlotData> m_SaveSlots = SaveGameSlots.m_SaveSlots;
+
                     foreach (SlotData slotData in m_SaveSlots)
                     {
                         if (slotData.m_Name.Contains("relentless") && slotData.m_GameMode != RnGl.RnSlotType)
@@ -66,10 +69,15 @@ namespace RelentlessNight
                             slotData.m_GameMode = RnGl.RnSlotType;
                         }
                     }
+
                     List<SaveSlotInfo> sortedSaveSlots = SaveGameSystem.GetSortedSaveSlots(Episode.One, RnGl.RnSlotType);
+
+                    // Pre 4.0 RN save exists, disallow loading, not compatible
+                    if (sortedSaveSlots.Count == 0) return;
+
                     string text = SaveGameSlots.LoadDataFromSlot(sortedSaveSlots[0].m_SaveSlotName, "RelentlessNight");
 
-                    // RN save is found, populate globals from save data
+                    // 4.0 RN save is found, populate globals from save data
                     if (text != null)
                     {
                         RnSd rnSd = JsonConvert.DeserializeObject<RnSd>(text);

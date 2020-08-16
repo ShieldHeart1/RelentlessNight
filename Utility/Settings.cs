@@ -2,7 +2,7 @@
 using UnityEngine;
 using Harmony;
 using ModSettings;
-`
+
 namespace RelentlessNight
 {
     public class RelentlessNightSettings : JsonModSettings

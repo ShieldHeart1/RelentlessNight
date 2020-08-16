@@ -27,15 +27,18 @@ namespace RelentlessNight
             [HarmonyPatch(typeof(Rest), "UpdateWhenSleeping", null)]
             internal static class Rest_UpdateWhenSleeping_Pre
             {
-                private static void Prefix(Rest __instance)
+                private static void Postfix(Rest __instance)
                 {
-                    bool bedProvidesAboveFreezing = __instance.m_Bed.m_WarmthBonusCelsius + GameManager.GetFreezingComponent().CalculateBodyTemperature() > 0;
-                    bool playerIsFreezing = GameManager.GetFreezingComponent().IsFreezing();
+                    if (__instance.m_Bed != null)
+                    {
+                        bool bodyTemperatureInBedIsPositive = GameManager.GetFreezingComponent().CalculateBodyTemperature() > 0;
+                        bool playerIsFreezing = GameManager.GetFreezingComponent().IsFreezing();
 
-                    if (!RnGl.rnActive || !playerIsFreezing || bedProvidesAboveFreezing) return;
+                        if (!RnGl.rnActive || !playerIsFreezing || bodyTemperatureInBedIsPositive) return;
 
-                    __instance.EndSleeping(true);
-                    HUDMessage.AddMessage("You woke up due to freezing", false);
+                        __instance.EndSleeping(true);
+                        HUDMessage.AddMessage("You woke up due to freezing", false);                        
+                    }
                 }
             }
         }

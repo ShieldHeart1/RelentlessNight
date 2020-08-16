@@ -37,7 +37,7 @@ namespace RelentlessNight
             {
                 if (PlayerInteractingWithElectricLightSource(__instance) && PlayerHoldingUnlitTorch(__instance))
                 {
-                    __result = "Ignite Torch";
+                    __result = "Light Torch";
                 }
             }
         }
