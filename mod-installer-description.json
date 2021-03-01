@@ -1,20 +1,20 @@
 {
   "name": "Relentless Night",
-  "url": "https://github.com/Shield-Heart/RelentlessNight",
+  "url": "https://github.com/Burakalite/RelentlessNight",
   "description": "An extensive gameplay mod adding a new sandbox scenario where the spin of the Earth is slowing down, introducing progressive diifulty which makes surival harder and harsher over time. Slowly but surely, days and nights get longer, leading to a world with continuously changing temperatures, weather patterns, wildlife populations, and more.",
-  "author": "Shield-Heart",
+  "author": "ShieldHeart",
   "releases": [
     {
       "name": "Relentless Night",
-      "version": "3.02",
-      "author": "Shield-Heart",
+      "version": "4.00",
+      "author": "ShieldHeart",
       "description": "An extensive gameplay mod adding a new sandbox scenario where the spin of the Earth is slowing down, introducing progressive diifulty which makes surival harder and harsher over time. Slowly but surely, days and nights get longer, leading to a world with continuously changing temperatures, weather patterns, wildlife populations, and more..",
-      "releaseDate": "2018-01-05",
-      "changes": "Continuation of version 3.01, fixed to work with the latest redux updates of the game. See the Relentless Night Discord for details: https://discord.gg/9ndTkCF",
+      "releaseDate": "2020-08-16",
+      "changes": "",
       "dependencies": [
         {
           "name": "ModSettings",
-          "version": "1.4"
+          "version": "1.6"
         }
       ]
     }  

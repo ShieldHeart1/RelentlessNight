@@ -32,7 +32,6 @@ namespace RelentlessNight
         {
             if (obj.transform.childCount > 0)
             {
-
                 for (int i = 0; i < obj.transform.childCount; i++)
                 {
                     GameObject child = obj.transform.GetChild(i).gameObject;
@@ -83,7 +82,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(ConsoleManager), "RegisterCommands", new Type[] { })]
-        public class ConsoleManager_RegisterCommands_Pos
+        public class ConsoleManager_RegisterCommands_Post
         {
             public static void Postfix()
             {

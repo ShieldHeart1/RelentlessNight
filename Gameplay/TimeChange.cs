@@ -15,7 +15,7 @@ namespace RelentlessNight
 
                 if (GameManager.m_IsPaused) return;
 
-                hours = RnGl.rnNormNum5;
+                hours = RnGl.rnHours;
             }
         }
 
@@ -36,7 +36,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(PlayerManager), "TeleportPlayerAfterSceneLoad", null)]
-        internal static class PlayerManager_TeleportPlayerAfterSceneLoad_Pos
+        internal static class PlayerManager_TeleportPlayerAfterSceneLoad_Post
         {
             private static void Postfix()
             {
@@ -46,7 +46,7 @@ namespace RelentlessNight
             }
         }
 
-        [HarmonyPatch(typeof(UniStormWeatherSystem), "SetNormalizedTime", new[] { typeof(float) })]
+        [HarmonyPatch(typeof(UniStormWeatherSystem), "SetNormalizedTime", new[] { typeof(float), typeof(bool) })]
         internal static class UniStormWeatherSystem_SetNormalizedTime_Pre
         {
             private static bool Prefix(UniStormWeatherSystem __instance, ref float time)
@@ -54,7 +54,7 @@ namespace RelentlessNight
                 if (!RnGl.rnActive) return true;
 
                 float m_DeltaTime = __instance.m_DeltaTime;
-                RnGl.rnNormNum5 = m_DeltaTime / Mathf.Clamp((7200f * __instance.m_DayLengthScale / RnGl.rnTimeAccel) * GameManager.GetExperienceModeManagerComponent().GetTimeOfDayScale(), 1f, float.PositiveInfinity) * 24f;
+                RnGl.rnHours = m_DeltaTime / Mathf.Clamp((7200f * __instance.m_DayLengthScale / RnGl.rnTimeAccel) * GameManager.GetExperienceModeManagerComponent().GetTimeOfDayScale(), 1f, float.PositiveInfinity) * 24f;
 
                 if (RnGl.glEndgameActive && __instance.m_DayCounter >= RnGl.glEndgameDay && GameManager.GetTimeOfDayComponent().IsNight())
                 {
@@ -66,7 +66,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(TimeWidget), "Update", null)]
-        internal static class TimeWidget_Start_Pos
+        internal static class TimeWidget_Start_Post
         {
             private static void Postfix(TimeWidget __instance)
             {
@@ -88,7 +88,7 @@ namespace RelentlessNight
             {
                 if (!RnGl.rnActive || GameManager.m_IsPaused || !__instance.m_MainCamera) return;
 
-                timeDeltaHours = RnGl.rnNormNum5;
+                timeDeltaHours = RnGl.rnHours;
             }
         }
 
@@ -109,13 +109,13 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(UniStormWeatherSystem), "Update", null)]
-        internal static class UniStormWeatherSystem_Update_Pos
+        internal static class UniStormWeatherSystem_Update_Post
         {
             private static void Postfix(UniStormWeatherSystem __instance)
             {
                 if (!RnGl.rnActive || GameManager.m_IsPaused || !__instance.m_MainCamera) return;
 
-                RnGl.rnElapsedHoursAccumulator += RnGl.rnNormNum5;
+                RnGl.rnElapsedHoursAccumulator += RnGl.rnHours;
 
                 if (RnGl.rnElapsedHoursAccumulator > 0.5f)
                 {

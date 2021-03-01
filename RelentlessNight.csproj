@@ -87,6 +87,8 @@
     <Compile Include="Utility\SaveSystem.cs" />
     <Compile Include="Utility\MenuChange.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Translations\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

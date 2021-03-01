@@ -5,7 +5,7 @@ namespace RelentlessNight
 {    
     public class RnGl
     {
-        public const string RnVersion = "v4.00";
+        public const string RnVersion = "v4.20";
         public const string RnSlotPrefix = "relentless";
         public const Panel_MainMenu.MainMenuItem.MainMenuItemType MY_MENU_ITEM_TYPE = (Panel_MainMenu.MainMenuItem.MainMenuItemType)7;
         public const SaveSlotType RnSlotType = (SaveSlotType)21070;
@@ -23,6 +23,7 @@ namespace RelentlessNight
         public static int glMinWildlifeAmount = 10;
         public static float glFireFuelFactor = 1.5f;
         public static float glLanternFuelFactor = 1.5f;
+        public static float glTorchFuelFactor = 1.5f;
 
         public static float glOutdoorTempWithoutBlizDrop = -10f;
         public static int glCurrentDay = 0;
@@ -32,8 +33,7 @@ namespace RelentlessNight
         public static int glDayNum = 1;
         public static bool glIsCarryingCarcass = false;
         public static string glSerializedCarcass;
-        public static float rnCurrentRetainedHeat = 0f;
-        
+        public static float rnCurrentRetainedHeat = 0f;        
 
         public static bool rnFireShouldHeatWholeScene = false;
         public static float rnIndoorTempFactor = 1f;
@@ -46,7 +46,7 @@ namespace RelentlessNight
 
         public static float rnElapsedHours;
         public static float rnElapsedHoursAccumulator;
-        public static float rnNormNum5;
+        public static float rnHours;
 
         public static void UpdateRnGlobalsForScene()
         {
@@ -54,8 +54,7 @@ namespace RelentlessNight
             
             if (GameManager.GetWeatherComponent().IsIndoorScene())
             {
-                bool flag2 = activeScene.Contains("cave") || activeScene.Contains("mine");
-                if (flag2)
+                if (activeScene.Contains("cave") || activeScene.Contains("mine"))
                 {
                     rnIndoorTempFactor = 0.80f;
                     rnFireShouldHeatWholeScene = false;
@@ -64,9 +63,9 @@ namespace RelentlessNight
                 else
                 {
                     // Update Buildings here
-                    bool flag3 = activeScene.Contains("whalingwarehouse") || activeScene.Contains("dam") || activeScene.Contains("damtransitionzone") ||
+                    bool tempAffectedIndoorScene = activeScene.Contains("whalingwarehouse") || activeScene.Contains("dam") || activeScene.Contains("damtransitionzone") ||
                         activeScene.Contains("whalingship") || activeScene.Contains("barnhouse") || activeScene.Contains("maintenanceshed");
-                    if (flag3)
+                    if (tempAffectedIndoorScene)
                     {
                         rnIndoorTempFactor = 1f;
                         rnFireShouldHeatWholeScene = false;
@@ -103,6 +102,7 @@ namespace RelentlessNight
         public int sdMinWildlifeAmount;
         public float sdFireFuelFactor;
         public float sdLanternFuelFactor;
+        public float sdTorchFuelFactor;
         public int sdDayTidallyLocked;
         public int sdDayNum;
         public bool sdIsCarryingCarcass;

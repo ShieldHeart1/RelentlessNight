@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using Harmony;
 using UnityEngine;
-using ModSettings;
 using IL2CPP = Il2CppSystem.Collections.Generic;
 
 namespace RelentlessNight
@@ -31,7 +29,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(BasicMenu), "UpdateTitleHeader", null)]
-        internal class BasicMenu_UpdateTitleHeader_Pos
+        internal class BasicMenu_UpdateTitleHeader_Postt
         {
             private static void Postfix(BasicMenu __instance)
             {
@@ -43,7 +41,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(GameManager), "GetVersionString", null)]
-        internal class GameManager_GetVersionString_Pos
+        internal class GameManager_GetVersionString_Postt
         {
             private static void Postfix(ref string __result)
             {
@@ -52,7 +50,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Panel_Badges), "OnFeats", null)]
-        internal class Panel_Badges_OnFeats_Pos
+        internal class Panel_Badges_OnFeats_Postt
         {
             private static void Postfix()
             {
@@ -64,7 +62,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Panel_ChooseSandbox), "ConfigureMenu", null)]
-        internal class Panel_ChooseSandbox_ConfigureMenu_Pos
+        internal class Panel_ChooseSandbox_ConfigureMenu_Postt
         {
             private static void Postfix(Panel_ChooseSandbox __instance)
             {
@@ -107,7 +105,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Panel_MainMenu), "Start", null)]
-        public class Panel_MainMenu_Start_Pos
+        public class Panel_MainMenu_Start_Postt
         {
             public static void Postfix(Panel_MainMenu __instance)
             {
@@ -129,7 +127,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(BasicMenu), "UpdateDescription", null)]
-        internal class BasicMenu_UpdateDescription_Pos
+        internal class BasicMenu_UpdateDescription_Post
         {
             private static void Postfix(BasicMenu __instance, int buttonIndex)
             {
@@ -141,7 +139,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Panel_MainMenu), "ConfigureMenu", null)]
-        internal class Panel_Panel_MainMenu_ConfigureMenu_Pos
+        internal class Panel_Panel_MainMenu_ConfigureMenu_Post
         {
             private static void Postfix(Panel_MainMenu __instance)
             {
@@ -222,7 +220,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Panel_MainMenu), "ConfigureMenu", null)]
-        internal class Panel_PanelMainMenu_ConfigureMenu_Pos
+        internal class Panel_PanelMainMenu_ConfigureMenu_Post
         {
             private static void Prefix(Panel_MainMenu __instance)
             {
@@ -234,7 +232,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Panel_PauseMenu), "ConfigureMenu", null)]
-        internal class Panel_PauseMenu_ConfigureMenu_Pos
+        internal class Panel_PauseMenu_ConfigureMenu_Post
         {
             private static void Postfix(Panel_PauseMenu __instance)
             {
@@ -253,8 +251,9 @@ namespace RelentlessNight
                     (RnGl.glWildlifeFreezing) ? ("TEMP AFFECTS WILDLIFE: YES") : ("TEMP AFFECTS WILDLIFE: NO"),
                     "MIN WILDLIFE AMOUNT: " + RnGl.glMinWildlifeAmount.ToString() + "%",
                     "MIN WILDLIFE DAY: " + RnGl.glMinWildlifeDay.ToString(),
-                    "FIRE FUEL BURNTIME: " + RnGl.glFireFuelFactor.ToString() + "X",
-                    "LANTERN FUEL BURNTIME: " + RnGl.glLanternFuelFactor.ToString() + "X"
+                    "FIRE FUEL BURN TIME: " + RnGl.glFireFuelFactor.ToString() + "X",
+                    "LANTERN FUEL BURN TIME: " + RnGl.glLanternFuelFactor.ToString() + "X",
+                    "TORCH BURN TIME: " + RnGl.glTorchFuelFactor.ToString() + "X"
                 };
 
                 string rnSettings = "";
@@ -265,7 +264,7 @@ namespace RelentlessNight
 
                 BasicMenu basicMenu = __instance.m_BasicMenu;
                 basicMenu.UpdateTitle("Relentless Night", rnSettings, new Vector3(0f, -145f, 0f));
-                basicMenu.m_TitleHeaderLabel.fontSize = 14;
+                basicMenu.m_TitleHeaderLabel.fontSize = 12;
                 basicMenu.m_TitleHeaderLabel.capsLock = true;
                 basicMenu.m_TitleHeaderLabel.useFloatSpacing = true;
                 basicMenu.m_TitleHeaderLabel.floatSpacingY = 1.5f;
@@ -273,7 +272,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Panel_Sandbox), "ConfigureMenu", null)]
-        internal class Panel_Sandbox_ConfigureMenu_Pos
+        internal class Panel_Sandbox_ConfigureMenu_Postt
         {
             private static void Postfix(Panel_Sandbox __instance)
             {
@@ -293,7 +292,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Panel_SelectExperience), "ConfigureMenu", null)]
-        internal class Panel_SelectExperience_ConfigureMenu_Pos
+        internal class Panel_SelectExperience_ConfigureMenu_Postt
         {
             private static void Postfix(Panel_SelectExperience __instance)
             {

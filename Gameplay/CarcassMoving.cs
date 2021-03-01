@@ -13,9 +13,14 @@ namespace RelentlessNight
         }
         public CarcassMoving(IntPtr ptr) : base(ptr) { }
 
-        public const float carryFatigueMultiplier = 0.05f;              //% fatigue rate increase per kilo of carcass being carried
-        public const float carrySlowDownMultiplier = 0.04f;             //% Player speed slow down per kilo of carcass being carried
-        public const float carryCaloryBurnRateMultiplier = 15f;         //Additional calories burned per hour for every kilo of the carcass being carried
+        //% fatigue rate increase per kilo of carcass being carried
+        public const float carryFatigueMultiplier = 0.05f;
+
+        //% Player speed slow down per kilo of carcass being carried
+        public const float carrySlowDownMultiplier = 0.04f;
+
+        //Additional calories burned per hour for every kilo of the carcass being carried
+        public const float carryCaloryBurnRateMultiplier = 15f;         
 
         public static GameObject currentCarryObj;
         public static BodyHarvest currentBodyHarvest;
@@ -70,7 +75,7 @@ namespace RelentlessNight
 
         internal static bool IsMovableCarcass(BodyHarvest bodyHarvest)
         {
-            return bodyHarvest.name.Contains("Stag") || bodyHarvest.name.Contains("Deer") || bodyHarvest.name.Contains("Wolf");
+            return (bodyHarvest.name.Contains("Stag") || bodyHarvest.name.Contains("Deer") || bodyHarvest.name.Contains("Wolf")) && !bodyHarvest.name.Contains("Quarter");
         }
 
         internal static void OnMoveCarcass()
@@ -116,6 +121,9 @@ namespace RelentlessNight
             }
 
             PlayCarcassDropAudio();
+            currentCarryObj = null;
+            currentBodyHarvest = null;
+            ResetBodyHarvestManager();
         }
 
         internal static void HideCarcassFromView()
@@ -175,9 +183,16 @@ namespace RelentlessNight
                 __instance.m_Sprite_SprintBar.color = __instance.m_SprintBarNoSprintColor;
             }
         }
+        public static void ResetBodyHarvestManager()
+        {
+            if (currentCarryObj != null && PlayerIsCarryingCarcass) MoveCarcassToPlayerPosition();
+            string data = BodyHarvestManager.Serialize();
+            BodyHarvestManager.DeleteAllActive();
+            BodyHarvestManager.Deserialize(data);
+        }
 
         [HarmonyPatch(typeof(Panel_BodyHarvest), "Enable", null)]
-        internal class Panel_BodyHarvest_Start_Pos
+        internal class Panel_BodyHarvest_Start_Post
         {
             private static void Postfix(Panel_BodyHarvest __instance, BodyHarvest bh, bool enable)
             {
@@ -191,57 +206,84 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(GameManager), "TriggerSurvivalSaveAndDisplayHUDMessage", null)]
-        internal class GameManager_TriggerSurvivalSaveAndDisplayHUDMessage
+        internal class GameManager_TriggerSurvivalSaveAndDisplayHUDMessage_Pre
         {
             private static void Prefix()
             {
                 if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
 
-                currentBodyHarvest.enabled = true;
-                MoveCarcassToPlayerPosition();
-                AddCarcassToSceneSaveData(currentBodyHarvest);
+                if (currentBodyHarvest != null)
+                {
+                    currentBodyHarvest.enabled = true;
+                    MoveCarcassToPlayerPosition();
+                    AddCarcassToSceneSaveData(currentBodyHarvest);
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(GameManager), "SetAudioModeForLoadedScene")]
+        internal class GameManager_SetAudioModeForLoadedScene_Post
+        {
+            private static void Postfix()
+            {
+                if (!RnGl.rnActive) return;
+
+                ResetBodyHarvestManager();
+
+                if (!PlayerIsCarryingCarcass) return;
+
+                if (currentCarryObj == null)
+                {
+                    PlayerIsCarryingCarcass = false;
+                }
+
+                if (currentBodyHarvest != null) currentBodyHarvest.enabled = true;
+
+                SaveTrigger.trigger = true;
+            }
+        }
+
+        internal class SaveTrigger
+        {
+            public static bool trigger = false;
+        }
+
+        [HarmonyPatch(typeof(PlayerManager), "Update")]
+        internal class PlayerManager_Update_Post
+        {
+            private static void Postfix(PlayerManager __instance)
+            {
+                if (SaveTrigger.trigger)
+                {
+                    SaveTrigger.trigger = false;
+                    GearManager.UpdateAll();
+                    GameManager.TriggerSurvivalSaveAndDisplayHUDMessage();
+                }
             }
         }
 
         [HarmonyPatch(typeof(LoadScene), "Activate", null)]
-        internal class LoadScene_Activate_Pos
+        internal class LoadScene_Activate_Post
         {
             private static void Postfix(LoadScene __instance)
             {
                 if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
 
-                DontDestroyOnLoad(currentCarryObj.transform.root.gameObject); //Do not destroy carcass object through scene transition
-                currentBodyHarvest.enabled = false; //Disable Carcass Object to prevent its saving in the scene being left
+                if (currentCarryObj != null)
+                {
+                    //Do not destroy carcass object through scene transition
+                    DontDestroyOnLoad(currentCarryObj.transform.root.gameObject);
+
+                    //Disable carcass object to prevent its saving in the scene being left
+                    currentBodyHarvest.enabled = false; 
+                }                
             }
         }
 
-        [HarmonyPatch(typeof(MissionServicesManager), "SceneLoadCompleted", null)]
-        internal class MissionServicesManager_SceneLoadCompleted_Pos
-        {
-            private static void Postfix()
-            {
-                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
 
-                if (currentBodyHarvest != null) currentBodyHarvest.enabled = true;
-            }
-        }
-
-        [HarmonyPatch(typeof(PlayerManager), "ShouldSaveGameAfterTeleport", null)]
-        internal class PlayerManager_ShouldSaveGameAfterTeleport_Pre
-        {
-            private static bool Prefix(ref bool __result)
-            {
-                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return true;
-
-                // Ensures game will save after stepping outside as well as inside a new scene, prevents carcass loss on game quit
-                __result = !GameManager.m_SceneTransitionData.m_TeleportPlayerSaveGamePosition && GameManager.m_SceneTransitionData.m_SpawnPointName != null;
-
-                return false;
-            }
-        }
 
         [HarmonyPatch(typeof(PlayerManager), "PlayerCanSprint", null)]
-        public static class MaybeChangeWhetherPlayerCanSprint_Pos
+        public static class PlayerManager_PlayerCanSprint_Post
         {
             private static void Postfix(ref bool __result)
             {
@@ -252,7 +294,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Fatigue), "CalculateFatigueIncrease", null)]
-        internal class Fatigue_CalculateFatigueIncrease_Pos
+        internal class Fatigue_CalculateFatigueIncrease_Post
         {
             private static void Postfix(ref float __result)
             {
@@ -263,7 +305,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(PlayerManager), "CalculateModifiedCalorieBurnRate")]
-        internal static class PlayerManager_CalculateModifiedCalorieBurnRate_Pos
+        internal static class PlayerManager_CalculateModifiedCalorieBurnRate_Post
         {
             private static void Postfix(ref float __result)
             {
@@ -274,7 +316,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Encumber), "GetEncumbranceSlowdownMultiplier", null)]
-        internal class MaybeAdjustEncumbranceSlowDown_Pos
+        internal class MaybeAdjustEncumbranceSlowDown_Post
         {
             private static void Postfix(ref float __result)
             {
@@ -285,7 +327,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(EquipItemPopup), "ShouldHideEquipPopup", null)]
-        internal class EquipItemPopup_ShouldHideEquipAndAmmoPopups_Pos
+        internal class EquipItemPopup_ShouldHideEquipAndAmmoPopups_Post
         {
             private static void Postfix(ref bool __result)
             {
@@ -296,7 +338,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Panel_BodyHarvest), "CanEnable", null)]
-        internal class Panel_BodyHarvest_CarcassTooFrozenToHarvestBareHands_Pos
+        internal class Panel_BodyHarvest_CarcassTooFrozenToHarvestBareHands_Post
         {
             private static void Postfix(BodyHarvest bodyHarvest, ref bool __result)
             {
@@ -320,7 +362,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Panel_HUD), "Update", null)]
-        internal class Panel_HUD_Update_Pos
+        internal class Panel_HUD_Update_Post
         {
             private static void Postfix(Panel_HUD __instance)
             {
@@ -346,6 +388,19 @@ namespace RelentlessNight
                     }
                 }
                 return true;
+            }
+        }
+
+        [HarmonyPatch(typeof(GameManager), "SetAudioModeForLoadedScene")]
+        internal class GameManager_SetAudioModeForLoadedScene_Postt
+        {
+            private static void Postfix()
+            {
+                if (!RnGl.rnActive) return;
+
+                string data = BodyHarvestManager.Serialize();
+                BodyHarvestManager.DeleteAllActive();
+                BodyHarvestManager.Deserialize(data);
             }
         }
     }

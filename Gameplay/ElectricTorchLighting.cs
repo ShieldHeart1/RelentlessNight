@@ -15,17 +15,18 @@ namespace RelentlessNight
         {
             GameObject itemUnderCrosshair = __instance.m_InteractiveObjectUnderCrosshair;
 
-            if (itemUnderCrosshair != null && (itemUnderCrosshair.name.ToLowerInvariant().Contains("outlet") || itemUnderCrosshair.name.ToLowerInvariant().Contains("socket") || itemUnderCrosshair.name.ToLowerInvariant().Contains("electricdamage_temp"))) return true;
+            if (itemUnderCrosshair != null && (itemUnderCrosshair.name.ToLowerInvariant().Contains("outlet") || itemUnderCrosshair.name.ToLowerInvariant().Contains("socket") || itemUnderCrosshair.name.ToLowerInvariant().Contains("electricdamage_temp") || itemUnderCrosshair.name.ToLowerInvariant().Contains("cableset"))) return true;
             return false;
         }
 
         [HarmonyPatch(typeof(MissionServicesManager), "SceneLoadCompleted")]
-        internal class MissionServicesManager_SceneLoadCompleted_Two_Pos
+        internal class MissionServicesManager_SceneLoadCompleted_Two_Post
         {
             private static void Postfix(MissionServicesManager __instance)
             {
                 Utilities.CreateTorchLightingSceneItem("socket");
                 Utilities.CreateTorchLightingSceneItem("outlet");
+                Utilities.CreateTorchLightingSceneItem("cableset");
                 Utilities.CreateTorchLightingSceneItem("electricdamage_temp");
             }
         }
@@ -36,7 +37,7 @@ namespace RelentlessNight
             private static void Postfix(PlayerManager __instance, ref string __result, GameObject interactiveObject)
             {
                 if (PlayerInteractingWithElectricLightSource(__instance) && PlayerHoldingUnlitTorch(__instance))
-                {
+                {                    
                     __result = "Light Torch";
                 }
             }

@@ -10,7 +10,7 @@ namespace RelentlessNight
     public class SaveSystem
     {
         [HarmonyPatch(typeof(Panel_ChooseSandbox), "AddSavesOfTypeToMenu", null)]
-        internal class Panel_MainMenu_AddSavesOfTypeToMenu_Pos
+        internal class Panel_MainMenu_AddSavesOfTypeToMenu_Post
         {
             public static bool Prefix(Panel_ChooseSandbox __instance)
             {
@@ -72,7 +72,7 @@ namespace RelentlessNight
 
                     List<SaveSlotInfo> sortedSaveSlots = SaveGameSystem.GetSortedSaveSlots(Episode.One, RnGl.RnSlotType);
 
-                    // Pre 4.0 RN save exists, disallow loading, not compatible
+                    // Pre 4.0 RN save exists, prevent loading, not compatible
                     if (sortedSaveSlots.Count == 0) return;
 
                     string text = SaveGameSlots.LoadDataFromSlot(sortedSaveSlots[0].m_SaveSlotName, "RelentlessNight");
@@ -94,6 +94,7 @@ namespace RelentlessNight
                         RnGl.glMinWildlifeAmount = rnSd.sdMinWildlifeAmount;
                         RnGl.glFireFuelFactor = rnSd.sdFireFuelFactor;
                         RnGl.glLanternFuelFactor = rnSd.sdLanternFuelFactor;
+                        RnGl.glTorchFuelFactor = rnSd.sdTorchFuelFactor;
                         RnGl.glDayTidallyLocked = rnSd.sdDayTidallyLocked;
                         RnGl.glDayNum = rnSd.sdDayNum;
                     }
@@ -105,18 +106,19 @@ namespace RelentlessNight
                     Settings.options.coTemperatureEffect = RnGl.glTemperatureEffect;
                     Settings.options.coMinimumTemperature = RnGl.glMinimumTemperature;
                     Settings.options.coHeatRetention = RnGl.glHeatRetention;
-                    Settings.options.coExtraFreezing = RnGl.glRealisticFreezing;
+                    Settings.options.coRealisticFreezing = RnGl.glRealisticFreezing;
                     Settings.options.coWildlifeFreezing = RnGl.glWildlifeFreezing;
                     Settings.options.coMinWildlifeAmount = RnGl.glMinWildlifeAmount;
                     Settings.options.coMinWildlifeDay = RnGl.glMinWildlifeDay;
                     Settings.options.coFireFuelFactor = RnGl.glFireFuelFactor;
                     Settings.options.coLanternFuelFactor = RnGl.glLanternFuelFactor;
+                    Settings.options.coTorchFuelFactor = RnGl.glTorchFuelFactor;
                 }
             }
         }
 
         [HarmonyPatch(typeof(Panel_MainMenu), "OnLoadGame", null)]
-        public class Panel_MainMenu_OnLoadGame_Pos
+        public class Panel_MainMenu_OnLoadGame_Post
         {
             private static void Postfix()
             {
@@ -140,6 +142,7 @@ namespace RelentlessNight
                     RnGl.glMinWildlifeAmount = 10;
                     RnGl.glFireFuelFactor = 1f;
                     RnGl.glLanternFuelFactor = 1f;
+                    RnGl.glTorchFuelFactor = 1f;
                     RnGl.glIsCarryingCarcass = false;
                     RnGl.glSerializedCarcass = null;
                 }
@@ -160,6 +163,7 @@ namespace RelentlessNight
                     RnGl.glMinWildlifeAmount = rnSd.sdMinWildlifeAmount;
                     RnGl.glFireFuelFactor = rnSd.sdFireFuelFactor;
                     RnGl.glLanternFuelFactor = rnSd.sdLanternFuelFactor;
+                    RnGl.glTorchFuelFactor = rnSd.sdTorchFuelFactor;
                     RnGl.glDayTidallyLocked = rnSd.sdDayTidallyLocked;
                     RnGl.glDayNum = rnSd.sdDayNum;
                     RnGl.glIsCarryingCarcass = rnSd.sdIsCarryingCarcass;
@@ -172,12 +176,13 @@ namespace RelentlessNight
                     Settings.options.coTemperatureEffect = rnSd.sdTemperatureEffect;
                     Settings.options.coMinimumTemperature = rnSd.sdMinimumTemperature;
                     Settings.options.coHeatRetention = rnSd.sdHeatRetention;
-                    Settings.options.coExtraFreezing = rnSd.sdRealisticFreezing;
+                    Settings.options.coRealisticFreezing = rnSd.sdRealisticFreezing;
                     Settings.options.coWildlifeFreezing = rnSd.sdWildlifeFreezing;
                     Settings.options.coMinWildlifeDay = rnSd.sdMinWildlifeDay;
                     Settings.options.coMinWildlifeAmount = rnSd.sdMinWildlifeAmount;
                     Settings.options.coFireFuelFactor = rnSd.sdFireFuelFactor;
                     Settings.options.coLanternFuelFactor = rnSd.sdLanternFuelFactor;
+                    Settings.options.coTorchFuelFactor = rnSd.sdTorchFuelFactor;
                 }
             }
         }
@@ -204,6 +209,7 @@ namespace RelentlessNight
                     sdMinWildlifeAmount = RnGl.glMinWildlifeAmount,
                     sdFireFuelFactor = RnGl.glFireFuelFactor,
                     sdLanternFuelFactor = RnGl.glLanternFuelFactor,
+                    sdTorchFuelFactor = RnGl.glTorchFuelFactor,
                     sdDayTidallyLocked = RnGl.glDayTidallyLocked,
                     sdDayNum = RnGl.glDayNum,
                     sdIsCarryingCarcass = RnGl.glIsCarryingCarcass,
@@ -216,7 +222,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(MissionServicesManager), "SceneLoadCompleted", null)]
-        public class MissionServicesManager_SceneLoadCompleted_Pos
+        public class MissionServicesManager_SceneLoadCompleted_Post
         {
             private static void Postfix()
             {
@@ -227,7 +233,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Panel_ChooseSandbox), "ProcessMenu", null)]
-        internal class Panel_ChooseSandbox_ProcessMenu_Pos
+        internal class Panel_ChooseSandbox_ProcessMenu_Post
         {
             private static void Postfix()
             {

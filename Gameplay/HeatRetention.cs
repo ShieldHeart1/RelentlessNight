@@ -7,7 +7,7 @@ namespace RelentlessNight
     public class HeatRetention
     {
         [HarmonyPatch(typeof(GameManager), "CacheComponents", null)]
-        internal static class GameManager_CacheComponents_Pos
+        internal static class GameManager_CacheComponents_Post
         {
             private static void Postfix(GameManager __instance)
             {
@@ -90,7 +90,7 @@ namespace RelentlessNight
         public delegate void ForceBurnResearchItem();
 
         [HarmonyPatch(typeof(Fire), "AddFuel", null)]
-        public class Fire_AddFuel_Pos
+        public class Fire_AddFuel_Post
         {
             private static void Postfix(Fire __instance)
             {
@@ -102,7 +102,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Fire), "Deserialize", null)]
-        public class Fire_Deserialize_Pos
+        public class Fire_Deserialize_Post
         {
             private static void Postfix(Fire __instance)
             {
@@ -128,7 +128,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(Fire), "TurnOn", null)]
-        public class Fire_TurnOn_Pos
+        public class Fire_TurnOn_Post
         {
             private static void Postfix(Fire __instance)
             {
@@ -161,7 +161,7 @@ namespace RelentlessNight
             }
         }
 
-        // Makes sure to track how long has passed even after the fire has gone out, for future calculation on how much heat remains
+        // Tracks how long has passed even after the fire has gone out, for future calculation on how much heat remains
         [HarmonyPatch(typeof(Fire), "Update", null)]
         public class Fire_Update_Pre
         {

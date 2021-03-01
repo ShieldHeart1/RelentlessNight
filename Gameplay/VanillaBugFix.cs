@@ -46,7 +46,7 @@ namespace RelentlessNight
         public class TurnOffPhantomHeatSource
         {
             [HarmonyPatch(typeof(FirstPersonLightSource), "TurnOnEffects", null)]
-            public class FirstPersonLightSource_TurnOnEffects_Pos
+            public class FirstPersonLightSource_TurnOnEffects_Postt
             {
                 private static void Postfix(FirstPersonLightSource __instance)
                 {

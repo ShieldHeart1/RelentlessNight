@@ -66,7 +66,7 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(InteriorLightingManager), "Update", null)]
-        internal static class InteriorLightingManager_Update_Pos
+        internal static class InteriorLightingManager_Update_Post
         {
             private static void Postfix(InteriorLightingManager __instance)
             {

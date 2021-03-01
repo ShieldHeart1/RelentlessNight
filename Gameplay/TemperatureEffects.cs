@@ -6,6 +6,16 @@ namespace RelentlessNight
 {
     public class TemperatureChange
     {
+        public static float GetRnTempIncrease(int curDay)
+        {
+            return RnGl.glRotationDecline * (curDay - 1f) * 0.015f;
+        }
+
+        public static float GetRnTempDecrease(int curDay)
+        {
+            return 1.5f * GetRnTempIncrease(curDay);
+        }
+
         public static void MaybeApplyNewDailyTempOffset(int curDay)
         {
             if (RnGl.glCurrentDay != curDay)
@@ -15,6 +25,19 @@ namespace RelentlessNight
                 System.Random rnd = new System.Random();
                 RnGl.glCurrentDayTempOffset = rnd.Next(-5, 5);
             }
+        }
+
+        public static float MaybeGetMorningTempBonus(int curDay, int curCelestialMinutes)
+        {
+            if (RnGl.glRotationDecline == 0) return 0f;
+
+            float curCelestialHour = curCelestialMinutes / 60f;
+
+            if (curCelestialHour > 7 && curCelestialHour < 9) return GetRnTempDecrease(curDay) * 0.4f * (curCelestialHour - 7);
+            
+            if (curCelestialHour > 9 && curCelestialHour < 11) return GetRnTempDecrease(curDay) * 0.4f * (11f - curCelestialHour);
+
+            return 0f;
         }
 
         [HarmonyPatch(typeof(Weather), "CalculateCurrentTemperature", null)]
@@ -35,8 +58,8 @@ namespace RelentlessNight
                 bool m_GenerateNewTempHigh = __instance.m_GenerateNewTempHigh;
                 bool m_GenerateNewTempLow = __instance.m_GenerateNewTempLow;
 
-                float tempIncrease = RnGl.glRotationDecline * (curDay - 1f) * 0.015f;
-                float tempDecrease = 1.5f * tempIncrease;
+                float tempIncrease = GetRnTempIncrease(curDay);
+                float tempDecrease = GetRnTempDecrease(curDay);
 
                 if (curCelestialHour >= __instance.m_HourWarmingBegins && curCelestialHour < __instance.m_HourCoolingBegins)
                 {
@@ -96,7 +119,7 @@ namespace RelentlessNight
                 float m_CurrentBlizzardDegreesDrop = __instance.m_CurrentBlizzardDegreesDrop;
 
                 MaybeApplyNewDailyTempOffset(curDay);
-                __instance.m_CurrentTemperature += RnGl.glCurrentDayTempOffset;
+                __instance.m_CurrentTemperature += RnGl.glCurrentDayTempOffset + MaybeGetMorningTempBonus(curDay, curCelestialMinutes);
 
                 bool isCountedIndoors = false;
                 if (__instance.IsIndoorEnvironment())
@@ -152,10 +175,12 @@ namespace RelentlessNight
         }
 
         [HarmonyPatch(typeof(ExperienceModeManager), "GetOutdoorTempDropCelcius", null)]
-        public class ExperienceModeManager_GetOutdoorTempDropCelcius_Pos
+        public class ExperienceModeManager_GetOutdoorTempDropCelcius_Post
         {
             private static void Postfix(ref float __result)
             {
+                if (!RnGl.rnActive) return;
+
                 __result = 0f;
             }
         }
