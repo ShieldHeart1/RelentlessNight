@@ -1,4 +1,4 @@
-# RelentlessNight
+# Relentless Night
 
 Relentless Night is a gameplay mod for The Long Dark that introduces a new sandbox scenario where the spin of the Earth is slowing down. Slowly but surely, days and nights are getting longer over time, leading to a world with continuously changing temperatures, weather patterns, wildlife changes, and more.
 
@@ -20,6 +20,8 @@ Relentless Night will add a progress difficulty into survival mode that at first
 
 **Complete List of Mod Features and Options (Up to current version - 4.30)**
 
+* (V4.30) - Vanilla feature of global temperature drop in higher diffiulties now reduced, rather than eliminated entirely
+
 * (V4.30) - Carrying carcasses will now produce scent
 
 * (V4.30) - Global temperature drop from harder difficulties now reduced rather than eliminated completely
@@ -36,13 +38,13 @@ Relentless Night will add a progress difficulty into survival mode that at first
 
 * (V4.00) Minimum reachable temperature is now also configurable. This determines how fast temperatures drop with lengthening nights, as well at the minimum temperature possible at the end game.
 
-* (V3.00) Indoor environments will retain heat from fires much longer after the fire has burnt out through the Heat Retention mechanic. The hotter the fire, the longer it will keep the place warm. In enclosed buildings, fires will heat the whole house/space and better insulated environments will keep warm for longer.
-
 * (V3.00) (optional/configurable) - Ability to adjust how long fuels will burn in a fire or how long lantern fuel will last while in use.
 
-* (V3.00) (optional/configurable) - Realistic freezing damage option added, causing the player to suffer freezing damage faster if travelling below -40C. 
+* (V3.00) (optional/configurable) - Realistic freezing damage option added, causing the player to suffer freezing damage faster if travelling below -40C.
 
-* (V2.00) Coals can be added to a fire without a waiting period (late-game balancing)
+* (V3.00) - Indoor environments will retain heat from fires much longer after the fire has burnt out through the Heat Retention mechanic. The hotter the fire, the longer it will keep the place warm. In enclosed buildings, fires will heat the whole house/space and better insulated environments will keep warm for longer.
+
+* (V2.00) - Coal can be added to a fire without a waiting period (late-game balancing)
 
 * (V2.00) - Surveying is now possible at night, provided the weather is clear and enough light is present.
 
