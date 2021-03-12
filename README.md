@@ -24,9 +24,9 @@ Relentless Night will add a progress difficulty into survival mode that at first
 
 * (V4.30) - Global temperature drop from harder difficulties now reduced rather than eliminated completely
 
-* (V4.00) (Optional/Configurable) - Added option to have permanent aurora when the endgame is reach in Relentless Night. 
+* (V4.00) (optional/configurable) - Added option to have permanent aurora when the endgame is reach in Relentless Night. 
 
-* (V4.00) (Optional/Configurable) - Torch burn times can now also be adjusted
+* (V4.00) (optional/configurable) - Torch burn times can now also be adjusted
 
 * (V4.00) All mod gameplay features can now be customized dynamically within game Option > Mod Settings > Relentless Night.
 
@@ -38,23 +38,23 @@ Relentless Night will add a progress difficulty into survival mode that at first
 
 * (V3.00) Indoor environments will retain heat from fires much longer after the fire has burnt out through the Heat Retention mechanic. The hotter the fire, the longer it will keep the place warm. In enclosed buildings, fires will heat the whole house/space and better insulated environments will keep warm for longer.
 
-* (V3.00) (Optional/Configurable) - Ability to adjust how long fuels will burn in a fire or how long lantern fuel will last while in use.
+* (V3.00) (optional/configurable) - Ability to adjust how long fuels will burn in a fire or how long lantern fuel will last while in use.
 
-* (V3.00) (Optional/Configurable) - Realistic freezing damage option added, causing the player to suffer freezing damage faster if travelling below -40C. 
+* (V3.00) (optional/configurable) - Realistic freezing damage option added, causing the player to suffer freezing damage faster if travelling below -40C. 
 
 * (V2.00) Coals can be added to a fire without a waiting period (late-game balancing)
 
 * (V2.00) - Surveying is now possible at night, provided the weather is clear and enough light is present.
 
-* (V1.00) (made optional/configurable in (V3.00)) - Days and nights get increasingly longer eventually ending in the tidal locking of the Earth and survival in perpetual darkness.
+* (V1.00) (made optional/configurable in V3.00) - Days and nights get increasingly longer eventually ending in the tidal locking of the Earth and survival in perpetual darkness.
 
 * (V1.00) (made optional/configurable in V3.00) - Outdoor Temperature will affect wildlife populations. Roaming wildlife will be less abundant and harder to find in extreme cold temperatures, but also more abundant in relatively warm temperatures.
 
-* (V1.00 )(made optional/configurable in (V3.00)) - Outdoor temperatures become increasingly warmer/colder with lengthening duration of days/nights.
+* (V1.00 ) (made optional/configurable in V3.00) - Outdoor temperatures become increasingly warmer/colder with lengthening duration of days/nights.
 
-* (V1.00) (made optional/configurable in (V3.00)) - Indoor temperatures can be configured to have a certain level of dependence to outdoor temperatures.
+* (V1.00) (made optional/configurable in V3.00) - Indoor temperatures can be configured to have a certain level of dependence to outdoor temperatures.
 
-* (V1.00) (made optional/configurable in (V3.00)) - Roaming wildlife become increasingly scarce as outdoor conditions become more extreme and harsh.
+* (V1.00) (made optional/configurable in V3.00) - Roaming wildlife become increasingly scarce as outdoor conditions become more extreme and harsh.
 
 * (V1.00) - Blizzards and stronger winds become more frequent as days/nights become longer and weather becomes more extreme.
 
