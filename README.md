@@ -22,17 +22,17 @@ Dynamic Settings - All Relentless Night settings are now dynamic and can be chan
 
 Installation Instructions:
 
-Ensure you are using game version 1.77 or above (indicated top-left on game main menu).
+1. Ensure you are using game version 1.93 or above (indicated top-left on game main menu).
 
-Follow the instructions on how to install mods at the top of Xpazemen’s great list of TLD mods.
+2. Follow the instructions on how to install mods at the top of Xpazemen’s great list of TLD mods.
 
-Ensure you have downloaded ModSetting as well as Relentless Night, and ensure you have placed them both in the “Mods” folder.
+3. Ensure you have downloaded ModSetting as well as Relentless Night, and ensure you have placed them both in the “Mods” folder.
 
-Launch your game and enjoy!
+4. Launch your game and enjoy!
 
-Complete List of Mod Features and Options (v4.0):
+Complete List of Mod Features and Options (v4.30):
 
-new All mod gameplay features can now be customized in game Option > Mod Settings > Relentless Night Settings.
+* new All mod gameplay features can now be customized dynamically within game Option > Mod Settings > Relentless Night.
 
 new Electric Torch Lighting – During an aurora, you can light torches without a match directly from electric outlets and live electric cables.
 
