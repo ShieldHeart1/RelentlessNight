@@ -342,7 +342,7 @@ namespace RelentlessNight
             {
                 if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
 
-                __result += Mathf.Clamp(100f - currentBodyHarvest.m_PercentFrozen, 33f, 100f);           
+                __result += 33f;           
             }
         }
 
