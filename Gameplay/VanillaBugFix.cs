@@ -50,7 +50,7 @@ namespace RelentlessNight
             {
                 private static void Postfix(FirstPersonLightSource __instance)
                 {
-                    if (!RnGlobal.rnActive || !HeatRetention.rnFireShouldHeatWholeScene) return;
+                    if (!RnGlobal.rnActive || !HeatRetention.fireShouldHeatWholeScene) return;
 
                     HeatSource componentInChildren = __instance.m_FXGameObject.GetComponentInChildren<HeatSource>();
                     if (componentInChildren)

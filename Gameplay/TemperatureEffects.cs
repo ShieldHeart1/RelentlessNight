@@ -130,7 +130,7 @@ namespace RelentlessNight
                 {
                     if (RnGlobal.glTemperatureEffect != 0)
                     {
-                        __instance.m_CurrentTemperature = __instance.m_IndoorTemperatureCelsius + (1f + RnGlobal.glTemperatureEffect / 10f) + __instance.m_CurrentTemperature * (RnGlobal.glTemperatureEffect / 100f) * HeatRetention.rnIndoorOutdoorTempFactor;
+                        __instance.m_CurrentTemperature = __instance.m_IndoorTemperatureCelsius + (1f + RnGlobal.glTemperatureEffect / 10f) + __instance.m_CurrentTemperature * (RnGlobal.glTemperatureEffect / 100f) * HeatRetention.indoorOutdoorTempReliance;
                     }
                     else
                     {
