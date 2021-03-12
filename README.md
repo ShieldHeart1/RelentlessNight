@@ -8,7 +8,7 @@ The player, realizing what is happening, must take advantage of the longer days 
 
 Relentless Night will add a progress difficulty into survival mode that at first doesn't seem any different than regular run, but the effects will slowly add up and bring about conditions that make gameplay harder. All this eventually leads to a world that's incredibly harsh and difficult to survive in for even veterans and expert survivalists of the game.
 
-New Features in v4.0
+**New Features in v4.0**
 
 Carcass Moving – Medium sized kills such as deer and wolves can be picked up and hauled around the game world at the cost of speed, additional fatigue, and calories burned. The carcasses can be taken indoors and between scenes. Demos Here and Here - apologies for the volume, those with headphones might want to turn it down.
 
@@ -20,7 +20,7 @@ Minimum Temperature Setting – Minimum temperature is now configurable within a
 
 Dynamic Settings - All Relentless Night settings are now dynamic and can be changed during your run. Mod settings are now placed under game Options > Mod Settings > Relentless Night Settings.
 
-Installation Instructions:
+**Installation Instructions:**
 
 1. Ensure you are using game version 1.93 or above (indicated top-left on game main menu).
 
@@ -30,15 +30,15 @@ Installation Instructions:
 
 4. Launch your game and enjoy!
 
-Complete List of Mod Features and Options (v4.30):
+Complete List of Mod Features and Options (Up to currrent version - 4.30):
 
-* new All mod gameplay features can now be customized dynamically within game Option > Mod Settings > Relentless Night.
+* (V4.00) All mod gameplay features can now be customized dynamically within game Option > Mod Settings > Relentless Night.
 
-new Electric Torch Lighting – During an aurora, you can light torches without a match directly from electric outlets and live electric cables.
+* (V4.00) Electric Torch Lighting – During an aurora, you can light torches without a match directly from electric outlets and live electric cables.
 
-new Medium sized kills such as deer and wolves can be picked up and hauled around the game world at the cost of speed, additional fatigue, and calories burned. The carcasses can be taken indoors and between scenes.
+* (V4.00) Medium sized kills such as deer and wolves can be picked up and hauled around the game world at the cost of speed, additional fatigue, and calories burned. The carcasses can be taken indoors and between scenes.
 
-new Minimum reachable temperature is now also configurable within a Relentless Night run. This determines how fast temperatures drop with lengthening nights, as well at the minimum temperature possible at the end game.
+* (V4.00) Minimum reachable temperature is now also configurable within a Relentless Night run. This determines how fast temperatures drop with lengthening nights, as well at the minimum temperature possible at the end game.
 
 Coals can be added to a fire without a waiting period (late-game balancing)
 
@@ -48,23 +48,23 @@ Coals can be added to a fire without a waiting period (late-game balancing)
 
 (configurable) Ability to adjust how long fuels will burn in a fire or how long lantern fuel will last while in use. All can be adjusted to provide up to 3 times their regular burn times.
 
-(configurable) Days and nights get increasingly longer eventually ending in the tidal locking of the Earth and survival in perpetual darkness.
+* (V1.00) (made configurable in (V3.00)) Days and nights get increasingly longer eventually ending in the tidal locking of the Earth and survival in perpetual darkness.
 
-(configurable) Temperatures become increasingly warmer/colder with duration of days/nights.
+* (V3.00 )(configurable) Temperatures become increasingly warmer/colder with duration of days/nights.
 
-(configurable) Indoor temperatures can be configured to have a correlation with outdoor temperatures.
+* (V3.00) (configurable) Indoor temperatures can be configured to have a correlation with outdoor temperatures.
 
-Blizzards and stronger winds become more frequent as days/nights become longer and weather becomes more extreme.
+* (V1.00) Blizzards and stronger winds become more frequent as days/nights become longer and weather becomes more extreme.
 
-(configurable) Roaming wildlife become increasingly scarce as outdoor conditions become more extreme and harsh.
+* (V3.00) (configurable) Roaming wildlife become increasingly scarce as outdoor conditions become more extreme and harsh.
 
-Cabin fever affliction is disabled due to the eventuality of long nights and extreme outdoor temperatures.
+* (V1.00) Cabin fever affliction is disabled due to the eventuality of long nights and extreme outdoor temperatures.
 
-Indoor environments can become more lit during nights depending on weather and available moonlight outdoors. During the brightest phases of the moon, crafting/breaking of items indoors can become available again.
+* (V1.00) Indoor environments can become brighter during nights depending on weather and available moonlight outdoors. During the brightest phases of the moon, crafting/breaking of items indoors can become available again.
 
-Surveying is now possible at night, provided the weather is clear and enough light is present.
+* (V2.00) Surveying is now possible at night, provided the weather is clear and enough light is present.
 
-(optional) For every additional 1C below a feels-like temperature of -40C, the rate at which the player suffers freezing damage is increased. This effect can accumulate up to a maximum of 3x the original rate at the extreme end of Relentless Night temperatures, do bring a jacket.
+* (V3.00) For every additional 1C below a feels-like temperature of -40C, the rate at which the player suffers freezing damage is increased. This effect can accumulate up to a maximum of 3x the original rate at the extreme end of Relentless Night temperatures, do bring a jacket.
 
 The mod scenario can be played in all sandbox difficulties and can be set up in its own sandbox page. The mod does not prevent playing regular sandbox or other vanilla modes. Relentless night saves are kept completely separate from other save data and cannot be played by regular sandbox mode and vice versa.
 
