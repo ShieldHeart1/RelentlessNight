@@ -11,11 +11,11 @@ namespace RelentlessNight
         {
             private static void Prefix(Feat_EfficientMachine __instance, ref float hours)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 if (GameManager.m_IsPaused) return;
 
-                hours = RnGl.rnHours;
+                hours = RnGlobal.rnHours;
             }
         }
 
@@ -24,14 +24,13 @@ namespace RelentlessNight
         {
             private static void Prefix(Panel_MainMenu __instance)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                RnGl.glDayTidallyLocked = -1;
-                RnGl.glDayNum = 1;
-                RnGl.rnIndoorTempFactor = 1f;
-                RnGl.rnFireShouldHeatWholeScene = false;
-                RnGl.rnHeatDissapationFactor = 15f;
-                RnGl.glIsCarryingCarcass = false;
+                RnGlobal.glDayTidallyLocked = -1;
+                RnGlobal.glDayNum = 1;
+                RnGlobal.glIsCarryingCarcass = false;
+
+                HeatRetention.UpdateHeatRetentionFactors();                
             }
         }
 
@@ -40,9 +39,9 @@ namespace RelentlessNight
         {
             private static void Postfix()
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                if (RnGl.glEndgameActive && RnGl.glEndgameDay == 0) GameManager.GetTimeOfDayComponent().SetNormalizedTime(0f);
+                if (RnGlobal.glEndgameActive && RnGlobal.glEndgameDay == 0) GameManager.GetTimeOfDayComponent().SetNormalizedTime(0f);
             }
         }
 
@@ -51,14 +50,14 @@ namespace RelentlessNight
         {
             private static bool Prefix(UniStormWeatherSystem __instance, ref float time)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 float m_DeltaTime = __instance.m_DeltaTime;
-                RnGl.rnHours = m_DeltaTime / Mathf.Clamp((7200f * __instance.m_DayLengthScale / RnGl.rnTimeAccel) * GameManager.GetExperienceModeManagerComponent().GetTimeOfDayScale(), 1f, float.PositiveInfinity) * 24f;
+                RnGlobal.rnHours = m_DeltaTime / Mathf.Clamp((7200f * __instance.m_DayLengthScale / RnGlobal.rnTimeAccel) * GameManager.GetExperienceModeManagerComponent().GetTimeOfDayScale(), 1f, float.PositiveInfinity) * 24f;
 
-                if (RnGl.glEndgameActive && __instance.m_DayCounter >= RnGl.glEndgameDay && GameManager.GetTimeOfDayComponent().IsNight())
+                if (RnGlobal.glEndgameActive && __instance.m_DayCounter >= RnGlobal.glEndgameDay && GameManager.GetTimeOfDayComponent().IsNight())
                 {
-                    if (RnGl.glDayTidallyLocked == -1) RnGl.glDayTidallyLocked = __instance.m_DayCounter;
+                    if (RnGlobal.glDayTidallyLocked == -1) RnGlobal.glDayTidallyLocked = __instance.m_DayCounter;
                     time = __instance.m_NormalizedTime;
                 }
                 return true;
@@ -70,7 +69,7 @@ namespace RelentlessNight
         {
             private static void Postfix(TimeWidget __instance)
             {
-                if (RnGl.rnActive && RnGl.glEndgameActive && RnGl.glDayTidallyLocked != -1 && RnGl.glDayTidallyLocked > Settings.options.coEndgameDay)
+                if (RnGlobal.rnActive && RnGlobal.glEndgameActive && RnGlobal.glDayTidallyLocked != -1 && RnGlobal.glDayTidallyLocked > Settings.options.coEndgameDay)
                 {
                     __instance.m_MoonSprite.color = new Color(0.2f, 0.2f, 0.6f, 1f);
                 }
@@ -86,9 +85,9 @@ namespace RelentlessNight
         {
             private static void Prefix(UniStormWeatherSystem __instance, ref float timeDeltaHours)
             {
-                if (!RnGl.rnActive || GameManager.m_IsPaused || !__instance.m_MainCamera) return;
+                if (!RnGlobal.rnActive || GameManager.m_IsPaused || !__instance.m_MainCamera) return;
 
-                timeDeltaHours = RnGl.rnHours;
+                timeDeltaHours = RnGlobal.rnHours;
             }
         }
 
@@ -97,14 +96,14 @@ namespace RelentlessNight
         {
             private static void Prefix(UniStormWeatherSystem __instance)
             {
-                if (!RnGl.rnActive || GameManager.m_IsPaused || !__instance.m_MainCamera) return;
+                if (!RnGlobal.rnActive || GameManager.m_IsPaused || !__instance.m_MainCamera) return;
 
-                float dayLengthFactor = (float)RnGl.glRotationDecline * 72f;
+                float dayLengthFactor = (float)RnGlobal.glRotationDecline * 72f;
                 float curDay = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() / 24f;
-                __instance.m_DayLength = ((7200f + curDay * dayLengthFactor) / RnGl.rnTimeAccel) * GameManager.GetExperienceModeManagerComponent().GetTimeOfDayScale();
+                __instance.m_DayLength = ((7200f + curDay * dayLengthFactor) / RnGlobal.rnTimeAccel) * GameManager.GetExperienceModeManagerComponent().GetTimeOfDayScale();
 
-                RnGl.rnElapsedHoursAccumulator = __instance.m_ElapsedHoursAccumulator;
-                RnGl.rnElapsedHours = __instance.m_ElapsedHours;
+                RnGlobal.rnElapsedHoursAccumulator = __instance.m_ElapsedHoursAccumulator;
+                RnGlobal.rnElapsedHours = __instance.m_ElapsedHours;
             }
         }
 
@@ -113,23 +112,23 @@ namespace RelentlessNight
         {
             private static void Postfix(UniStormWeatherSystem __instance)
             {
-                if (!RnGl.rnActive || GameManager.m_IsPaused || !__instance.m_MainCamera) return;
+                if (!RnGlobal.rnActive || GameManager.m_IsPaused || !__instance.m_MainCamera) return;
 
-                RnGl.rnElapsedHoursAccumulator += RnGl.rnHours;
+                RnGlobal.rnElapsedHoursAccumulator += RnGlobal.rnHours;
 
-                if (RnGl.rnElapsedHoursAccumulator > 0.5f)
+                if (RnGlobal.rnElapsedHoursAccumulator > 0.5f)
                 {
-                    RnGl.rnElapsedHours += RnGl.rnElapsedHoursAccumulator;
-                    RnGl.rnElapsedHoursAccumulator = 0f;
+                    RnGlobal.rnElapsedHours += RnGlobal.rnElapsedHoursAccumulator;
+                    RnGlobal.rnElapsedHoursAccumulator = 0f;
                     __instance.SetMoonPhase();
                 }
 
-                __instance.m_ElapsedHoursAccumulator = RnGl.rnElapsedHoursAccumulator;
-                __instance.m_ElapsedHours = RnGl.rnElapsedHours;
+                __instance.m_ElapsedHoursAccumulator = RnGlobal.rnElapsedHoursAccumulator;
+                __instance.m_ElapsedHours = RnGlobal.rnElapsedHours;
 
                 __instance.m_DayCounter = 1 + (int)(GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() / 24f);
-                RnGl.glDayNum = __instance.m_DayCounter;
-                __instance.m_DayLength = (7200f / RnGl.rnTimeAccel) * GameManager.GetExperienceModeManagerComponent().GetTimeOfDayScale();
+                RnGlobal.glDayNum = __instance.m_DayCounter;
+                __instance.m_DayLength = (7200f / RnGlobal.rnTimeAccel) * GameManager.GetExperienceModeManagerComponent().GetTimeOfDayScale();
             }
         }
     }

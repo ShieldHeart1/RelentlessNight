@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace RelentlessNight
 {    
-    public class RnGl
+    public class RnGlobal
     {
-        public const string RnVersion = "v4.20";
+        public const string RnVersion = "v4.30";
         public const string RnSlotPrefix = "relentless";
         public const Panel_MainMenu.MainMenuItem.MainMenuItemType MY_MENU_ITEM_TYPE = (Panel_MainMenu.MainMenuItem.MainMenuItemType)7;
         public const SaveSlotType RnSlotType = (SaveSlotType)21070;
@@ -32,12 +32,7 @@ namespace RelentlessNight
         public static int glDayTidallyLocked = -1;
         public static int glDayNum = 1;
         public static bool glIsCarryingCarcass = false;
-        public static string glSerializedCarcass;
-        public static float rnCurrentRetainedHeat = 0f;        
-
-        public static bool rnFireShouldHeatWholeScene = false;
-        public static float rnIndoorTempFactor = 1f;
-        public static float rnHeatDissapationFactor = 15f;
+        public static string glSerializedCarcass;       
 
         public static bool rnActive = false;
         public static int rnTimeAccel = 1;
@@ -46,45 +41,7 @@ namespace RelentlessNight
 
         public static float rnElapsedHours;
         public static float rnElapsedHoursAccumulator;
-        public static float rnHours;
-
-        public static void UpdateRnGlobalsForScene()
-        {
-            string activeScene = GameManager.m_ActiveScene.ToLower();
-            
-            if (GameManager.GetWeatherComponent().IsIndoorScene())
-            {
-                if (activeScene.Contains("cave") || activeScene.Contains("mine"))
-                {
-                    rnIndoorTempFactor = 0.80f;
-                    rnFireShouldHeatWholeScene = false;
-                    rnHeatDissapationFactor = 3f;
-                }
-                else
-                {
-                    // Update Buildings here
-                    bool tempAffectedIndoorScene = activeScene.Contains("whalingwarehouse") || activeScene.Contains("dam") || activeScene.Contains("damtransitionzone") ||
-                        activeScene.Contains("whalingship") || activeScene.Contains("barnhouse") || activeScene.Contains("maintenanceshed");
-                    if (tempAffectedIndoorScene)
-                    {
-                        rnIndoorTempFactor = 1f;
-                        rnFireShouldHeatWholeScene = false;
-                        rnHeatDissapationFactor = 3f;
-                    }
-                    else
-                    {
-                        rnIndoorTempFactor = 1f;
-                        rnFireShouldHeatWholeScene = true;
-                        rnHeatDissapationFactor = 1f;
-                    }
-                }
-            }
-            else
-            {
-                rnFireShouldHeatWholeScene = false;
-                rnHeatDissapationFactor = 15f;
-            }
-        }        
+        public static float rnHours;                
     }
 
     internal class RnSd

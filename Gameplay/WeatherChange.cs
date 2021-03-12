@@ -8,17 +8,17 @@ namespace RelentlessNight
     {
         public static void MaybeEliminateDenseFog(WeatherSet currentWeatherSet, int dayNumber)
         {
-            if (RnGl.glRotationDecline * dayNumber > 1000) currentWeatherSet.m_DenseFogAsNextSelectionWeight = 0;
+            if (RnGlobal.glRotationDecline * dayNumber > 1000) currentWeatherSet.m_DenseFogAsNextSelectionWeight = 0;
         }
 
         public static void MaybeEliminateLightFog(WeatherSet currentWeatherSet, int dayNumber)
         {
-            if (RnGl.glRotationDecline * dayNumber > 2000) currentWeatherSet.m_LightFogAsNextSelectionWeight = 0;
+            if (RnGlobal.glRotationDecline * dayNumber > 2000) currentWeatherSet.m_LightFogAsNextSelectionWeight = 0;
         }
 
         public static bool ShouldSetPermanentAuroraForEndGame()
         {
-            if (RnGl.glEndgameActive && RnGl.glEndgameAurora) return true;
+            if (RnGlobal.glEndgameActive && RnGlobal.glEndgameAurora) return true;
 
             return false;
         }
@@ -28,7 +28,7 @@ namespace RelentlessNight
         {
             public static void Prefix(WeatherTransition __instance)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 int dayNumber = GameManager.GetTimeOfDayComponent().GetDayNumber();
                 WeatherSet m_CurrentWeatherSet = __instance.m_CurrentWeatherSet;
@@ -44,10 +44,10 @@ namespace RelentlessNight
         {
             private static bool Prefix(Wind __instance, bool forceCalm)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 int dayNumber = GameManager.GetTimeOfDayComponent().GetDayNumber();
-                if (RnGl.glRotationDecline * dayNumber < 500) return true;
+                if (RnGlobal.glRotationDecline * dayNumber < 500) return true;
 
                 WindStrength strength;
                 if (GameManager.GetWeatherComponent().IsBlizzard())
@@ -75,7 +75,7 @@ namespace RelentlessNight
         {
             private static void Prefix(ref WeatherStage reqType)
             {
-                if (!RnGl.rnActive || !ShouldSetPermanentAuroraForEndGame()) return;
+                if (!RnGlobal.rnActive || !ShouldSetPermanentAuroraForEndGame()) return;
 
                 reqType = WeatherStage.ClearAurora;
             }

@@ -8,7 +8,7 @@ namespace RelentlessNight
     {
         public static float GetRnTempIncrease(int curDay)
         {
-            return RnGl.glRotationDecline * (curDay - 1f) * 0.015f;
+            return RnGlobal.glRotationDecline * (curDay - 1f) * 0.015f;
         }
 
         public static float GetRnTempDecrease(int curDay)
@@ -18,18 +18,18 @@ namespace RelentlessNight
 
         public static void MaybeApplyNewDailyTempOffset(int curDay)
         {
-            if (RnGl.glCurrentDay != curDay)
+            if (RnGlobal.glCurrentDay != curDay)
             {
-                RnGl.glCurrentDay = curDay;
+                RnGlobal.glCurrentDay = curDay;
 
                 System.Random rnd = new System.Random();
-                RnGl.glCurrentDayTempOffset = rnd.Next(-5, 5);
+                RnGlobal.glCurrentDayTempOffset = rnd.Next(-5, 5);
             }
         }
 
         public static float MaybeGetMorningTempBonus(int curDay, int curCelestialMinutes)
         {
-            if (RnGl.glRotationDecline == 0) return 0f;
+            if (RnGlobal.glRotationDecline == 0) return 0f;
 
             float curCelestialHour = curCelestialMinutes / 60f;
 
@@ -45,7 +45,7 @@ namespace RelentlessNight
         {
             private static bool Prefix(Weather __instance)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 int curDay = GameManager.GetTimeOfDayComponent().GetDayNumber();
 
@@ -70,9 +70,9 @@ namespace RelentlessNight
                     int num8 = curCelestialMinutes - __instance.m_HourWarmingBegins * 60;
                     float num9 = (__instance.m_HourCoolingBegins - __instance.m_HourWarmingBegins) * 60f;
 
-                    if (m_TempLow - tempDecrease < RnGl.glMinimumTemperature)
+                    if (m_TempLow - tempDecrease < RnGlobal.glMinimumTemperature)
                     {
-                        tempDecrease = Mathf.Abs(RnGl.glMinimumTemperature + 5f) + m_TempLow;
+                        tempDecrease = Mathf.Abs(RnGlobal.glMinimumTemperature + 5f) + m_TempLow;
                     }
 
                     if (m_TempHigh + tempIncrease > 2f)
@@ -100,26 +100,26 @@ namespace RelentlessNight
                         tempIncrease = 2f - m_TempHigh;
                     }
 
-                    if (m_TempLow - tempDecrease < RnGl.glMinimumTemperature)
+                    if (m_TempLow - tempDecrease < RnGlobal.glMinimumTemperature)
                     {
-                        tempDecrease = Mathf.Abs(RnGl.glMinimumTemperature + 5f) + m_TempLow;
+                        tempDecrease = Mathf.Abs(RnGlobal.glMinimumTemperature + 5f) + m_TempLow;
                     }
                     __instance.m_CurrentTemperature = m_TempHigh + tempIncrease - (num10 / num11 * (m_TempHigh + (tempIncrease + tempDecrease) - m_TempLow));
                 }
 
-                if (RnGl.glDayTidallyLocked != -1)
+                if (RnGlobal.glDayTidallyLocked != -1)
                 {
-                    __instance.m_CurrentTemperature -= (curDay - RnGl.glDayTidallyLocked) * 2f;
+                    __instance.m_CurrentTemperature -= (curDay - RnGlobal.glDayTidallyLocked) * 2f;
 
-                    if (__instance.m_CurrentTemperature < RnGl.glMinimumTemperature + 5) __instance.m_CurrentTemperature = RnGl.glMinimumTemperature + 5;
+                    if (__instance.m_CurrentTemperature < RnGlobal.glMinimumTemperature + 5) __instance.m_CurrentTemperature = RnGlobal.glMinimumTemperature + 5;
                 }
 
-                RnGl.glOutdoorTempWithoutBlizDrop = __instance.m_CurrentBlizzardDegreesDrop;
+                RnGlobal.glOutdoorTempWithoutBlizDrop = __instance.m_CurrentBlizzardDegreesDrop;
 
                 float m_CurrentBlizzardDegreesDrop = __instance.m_CurrentBlizzardDegreesDrop;
 
                 MaybeApplyNewDailyTempOffset(curDay);
-                __instance.m_CurrentTemperature += RnGl.glCurrentDayTempOffset + MaybeGetMorningTempBonus(curDay, curCelestialMinutes);
+                __instance.m_CurrentTemperature += RnGlobal.glCurrentDayTempOffset + MaybeGetMorningTempBonus(curDay, curCelestialMinutes);
 
                 bool isCountedIndoors = false;
                 if (__instance.IsIndoorEnvironment())
@@ -128,9 +128,9 @@ namespace RelentlessNight
                 }
                 if (isCountedIndoors)
                 {
-                    if (RnGl.glTemperatureEffect != 0)
+                    if (RnGlobal.glTemperatureEffect != 0)
                     {
-                        __instance.m_CurrentTemperature = __instance.m_IndoorTemperatureCelsius + (1f + RnGl.glTemperatureEffect / 10f) + __instance.m_CurrentTemperature * (RnGl.glTemperatureEffect / 100f) * RnGl.rnIndoorTempFactor;
+                        __instance.m_CurrentTemperature = __instance.m_IndoorTemperatureCelsius + (1f + RnGlobal.glTemperatureEffect / 10f) + __instance.m_CurrentTemperature * (RnGlobal.glTemperatureEffect / 100f) * HeatRetention.rnIndoorOutdoorTempFactor;
                     }
                     else
                     {
@@ -179,9 +179,9 @@ namespace RelentlessNight
         {
             private static void Postfix(ref float __result)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                __result = 0f;
+                __result /= 2f;
             }
         }
     }

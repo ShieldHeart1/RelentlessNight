@@ -11,7 +11,7 @@ namespace RelentlessNight
         {
             private static bool Prefix(CabinFever __instance)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 if (__instance.HasCabinFever())
                 {
@@ -26,7 +26,7 @@ namespace RelentlessNight
         {
             private static bool Prefix(DamageTrigger __instance)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 if (__instance.m_DamageSource == DamageSource.Electrical)
                 {
@@ -44,7 +44,7 @@ namespace RelentlessNight
         {
             private static bool Prefix(DamageTrigger __instance)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 if (__instance.m_DamageSource == DamageSource.Electrical)
                 {
@@ -62,7 +62,7 @@ namespace RelentlessNight
         {
             private static bool Prefix(DamageTrigger __instance)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 if (__instance.m_DamageSource == DamageSource.Electrical)
                 {

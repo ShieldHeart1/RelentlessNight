@@ -14,7 +14,7 @@ namespace RelentlessNight
         {
             public static bool Prefix(Panel_ChooseSandbox __instance)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 string descriptionText = Localization.Get("GAMEPLAY_DescriptionLoadSurvival");
                 int numSandboxSaveSlots = InterfaceManager.m_Panel_MainMenu.GetNumSandboxSaveSlots();
@@ -22,7 +22,7 @@ namespace RelentlessNight
                 {
                     SaveSlotInfo sandboxSaveSlotInfo = InterfaceManager.m_Panel_MainMenu.GetSandboxSaveSlotInfo(i);
 
-                    if (sandboxSaveSlotInfo.m_GameMode == RnGl.RnSlotType)
+                    if (sandboxSaveSlotInfo.m_GameMode == RnGlobal.RnSlotType)
                     {
                         BasicMenu basicMenu = __instance.m_BasicMenu;
                         string saveSlotName = sandboxSaveSlotInfo.m_SaveSlotName;
@@ -64,13 +64,13 @@ namespace RelentlessNight
 
                     foreach (SlotData slotData in m_SaveSlots)
                     {
-                        if (slotData.m_Name.Contains("relentless") && slotData.m_GameMode != RnGl.RnSlotType)
+                        if (slotData.m_Name.Contains("relentless") && slotData.m_GameMode != RnGlobal.RnSlotType)
                         {
-                            slotData.m_GameMode = RnGl.RnSlotType;
+                            slotData.m_GameMode = RnGlobal.RnSlotType;
                         }
                     }
 
-                    List<SaveSlotInfo> sortedSaveSlots = SaveGameSystem.GetSortedSaveSlots(Episode.One, RnGl.RnSlotType);
+                    List<SaveSlotInfo> sortedSaveSlots = SaveGameSystem.GetSortedSaveSlots(Episode.One, RnGlobal.RnSlotType);
 
                     // Pre 4.0 RN save exists, prevent loading, not compatible
                     if (sortedSaveSlots.Count == 0) return;
@@ -81,38 +81,38 @@ namespace RelentlessNight
                     if (text != null)
                     {
                         RnSd rnSd = JsonConvert.DeserializeObject<RnSd>(text);
-                        RnGl.glEndgameActive = rnSd.sdEndgameActive;
-                        RnGl.glEndgameDay = rnSd.sdEndgameDay;
-                        RnGl.glEndgameAurora = rnSd.sdEndgameAurora;
-                        RnGl.glRotationDecline = rnSd.sdRotationDecline;
-                        RnGl.glTemperatureEffect = rnSd.sdTemperatureEffect;
-                        RnGl.glMinimumTemperature = rnSd.sdMinimumTemperature;
-                        RnGl.glHeatRetention = rnSd.sdHeatRetention;
-                        RnGl.glRealisticFreezing = rnSd.sdRealisticFreezing;
-                        RnGl.glWildlifeFreezing = rnSd.sdWildlifeFreezing;
-                        RnGl.glMinWildlifeDay = rnSd.sdMinWildlifeDay;
-                        RnGl.glMinWildlifeAmount = rnSd.sdMinWildlifeAmount;
-                        RnGl.glFireFuelFactor = rnSd.sdFireFuelFactor;
-                        RnGl.glLanternFuelFactor = rnSd.sdLanternFuelFactor;
-                        RnGl.glTorchFuelFactor = rnSd.sdTorchFuelFactor;
-                        RnGl.glDayTidallyLocked = rnSd.sdDayTidallyLocked;
-                        RnGl.glDayNum = rnSd.sdDayNum;
+                        RnGlobal.glEndgameActive = rnSd.sdEndgameActive;
+                        RnGlobal.glEndgameDay = rnSd.sdEndgameDay;
+                        RnGlobal.glEndgameAurora = rnSd.sdEndgameAurora;
+                        RnGlobal.glRotationDecline = rnSd.sdRotationDecline;
+                        RnGlobal.glMinimumTemperature = rnSd.sdMinimumTemperature;
+                        RnGlobal.glTemperatureEffect = rnSd.sdTemperatureEffect;                        
+                        RnGlobal.glHeatRetention = rnSd.sdHeatRetention;
+                        RnGlobal.glRealisticFreezing = rnSd.sdRealisticFreezing;
+                        RnGlobal.glWildlifeFreezing = rnSd.sdWildlifeFreezing;
+                        RnGlobal.glMinWildlifeDay = rnSd.sdMinWildlifeDay;
+                        RnGlobal.glMinWildlifeAmount = rnSd.sdMinWildlifeAmount;
+                        RnGlobal.glFireFuelFactor = rnSd.sdFireFuelFactor;
+                        RnGlobal.glLanternFuelFactor = rnSd.sdLanternFuelFactor;
+                        RnGlobal.glTorchFuelFactor = rnSd.sdTorchFuelFactor;
+                        RnGlobal.glDayTidallyLocked = rnSd.sdDayTidallyLocked;
+                        RnGlobal.glDayNum = rnSd.sdDayNum;
                     }
 
-                    Settings.options.coEndgameActive = RnGl.glEndgameActive;
-                    Settings.options.coEndgameDay = RnGl.glEndgameDay;
-                    Settings.options.coEndgameAurora = RnGl.glEndgameAurora;
-                    Settings.options.coRotationDecline = RnGl.glRotationDecline;
-                    Settings.options.coTemperatureEffect = RnGl.glTemperatureEffect;
-                    Settings.options.coMinimumTemperature = RnGl.glMinimumTemperature;
-                    Settings.options.coHeatRetention = RnGl.glHeatRetention;
-                    Settings.options.coRealisticFreezing = RnGl.glRealisticFreezing;
-                    Settings.options.coWildlifeFreezing = RnGl.glWildlifeFreezing;
-                    Settings.options.coMinWildlifeAmount = RnGl.glMinWildlifeAmount;
-                    Settings.options.coMinWildlifeDay = RnGl.glMinWildlifeDay;
-                    Settings.options.coFireFuelFactor = RnGl.glFireFuelFactor;
-                    Settings.options.coLanternFuelFactor = RnGl.glLanternFuelFactor;
-                    Settings.options.coTorchFuelFactor = RnGl.glTorchFuelFactor;
+                    Settings.options.coEndgameActive = RnGlobal.glEndgameActive;
+                    Settings.options.coEndgameDay = RnGlobal.glEndgameDay;
+                    Settings.options.coEndgameAurora = RnGlobal.glEndgameAurora;
+                    Settings.options.coRotationDecline = RnGlobal.glRotationDecline;
+                    Settings.options.coMinimumTemperature = RnGlobal.glMinimumTemperature;
+                    Settings.options.coTemperatureEffect = RnGlobal.glTemperatureEffect;                    
+                    Settings.options.coHeatRetention = RnGlobal.glHeatRetention;
+                    Settings.options.coRealisticFreezing = RnGlobal.glRealisticFreezing;
+                    Settings.options.coWildlifeFreezing = RnGlobal.glWildlifeFreezing;
+                    Settings.options.coMinWildlifeAmount = RnGlobal.glMinWildlifeAmount;
+                    Settings.options.coMinWildlifeDay = RnGlobal.glMinWildlifeDay;
+                    Settings.options.coFireFuelFactor = RnGlobal.glFireFuelFactor;
+                    Settings.options.coLanternFuelFactor = RnGlobal.glLanternFuelFactor;
+                    Settings.options.coTorchFuelFactor = RnGlobal.glTorchFuelFactor;
                 }
             }
         }
@@ -122,59 +122,59 @@ namespace RelentlessNight
         {
             private static void Postfix()
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 string currentSaveName = SaveGameSystem.GetCurrentSaveName();
                 string rnSaveData = SaveGameSlots.LoadDataFromSlot(currentSaveName, "RelentlessNight");
 
                 if (rnSaveData == null)
                 {
-                    RnGl.glEndgameActive = true;
-                    RnGl.glEndgameDay = 100;
-                    RnGl.glEndgameAurora = false;
-                    RnGl.glRotationDecline = 15;
-                    RnGl.glTemperatureEffect = 50;
-                    RnGl.glMinimumTemperature = -80;
-                    RnGl.glHeatRetention = true;
-                    RnGl.glRealisticFreezing = false;
-                    RnGl.glWildlifeFreezing = true;
-                    RnGl.glMinWildlifeDay = 100;
-                    RnGl.glMinWildlifeAmount = 10;
-                    RnGl.glFireFuelFactor = 1f;
-                    RnGl.glLanternFuelFactor = 1f;
-                    RnGl.glTorchFuelFactor = 1f;
-                    RnGl.glIsCarryingCarcass = false;
-                    RnGl.glSerializedCarcass = null;
+                    RnGlobal.glEndgameActive = true;
+                    RnGlobal.glEndgameDay = 100;
+                    RnGlobal.glEndgameAurora = false;
+                    RnGlobal.glRotationDecline = 15;
+                    RnGlobal.glMinimumTemperature = -80;
+                    RnGlobal.glTemperatureEffect = 50;                    
+                    RnGlobal.glHeatRetention = true;
+                    RnGlobal.glRealisticFreezing = false;
+                    RnGlobal.glWildlifeFreezing = true;
+                    RnGlobal.glMinWildlifeDay = 100;
+                    RnGlobal.glMinWildlifeAmount = 10;
+                    RnGlobal.glFireFuelFactor = 1f;
+                    RnGlobal.glLanternFuelFactor = 1f;
+                    RnGlobal.glTorchFuelFactor = 1f;
+                    RnGlobal.glIsCarryingCarcass = false;
+                    RnGlobal.glSerializedCarcass = null;
                 }
                 else
                 {
                     RnSd rnSd = JsonConvert.DeserializeObject<RnSd>(rnSaveData);
 
-                    RnGl.glEndgameActive = rnSd.sdEndgameActive;
-                    RnGl.glEndgameDay = rnSd.sdEndgameDay;
-                    RnGl.glEndgameAurora = rnSd.sdEndgameAurora;
-                    RnGl.glRotationDecline = rnSd.sdRotationDecline;
-                    RnGl.glTemperatureEffect = rnSd.sdTemperatureEffect;
-                    RnGl.glMinimumTemperature = rnSd.sdMinimumTemperature;
-                    RnGl.glHeatRetention = rnSd.sdHeatRetention;
-                    RnGl.glRealisticFreezing = rnSd.sdRealisticFreezing;
-                    RnGl.glWildlifeFreezing = rnSd.sdWildlifeFreezing;
-                    RnGl.glMinWildlifeDay = rnSd.sdMinWildlifeDay;
-                    RnGl.glMinWildlifeAmount = rnSd.sdMinWildlifeAmount;
-                    RnGl.glFireFuelFactor = rnSd.sdFireFuelFactor;
-                    RnGl.glLanternFuelFactor = rnSd.sdLanternFuelFactor;
-                    RnGl.glTorchFuelFactor = rnSd.sdTorchFuelFactor;
-                    RnGl.glDayTidallyLocked = rnSd.sdDayTidallyLocked;
-                    RnGl.glDayNum = rnSd.sdDayNum;
-                    RnGl.glIsCarryingCarcass = rnSd.sdIsCarryingCarcass;
-                    RnGl.glSerializedCarcass = rnSd.sdSerializedCarcass;
+                    RnGlobal.glEndgameActive = rnSd.sdEndgameActive;
+                    RnGlobal.glEndgameDay = rnSd.sdEndgameDay;
+                    RnGlobal.glEndgameAurora = rnSd.sdEndgameAurora;
+                    RnGlobal.glRotationDecline = rnSd.sdRotationDecline;
+                    RnGlobal.glMinimumTemperature = rnSd.sdMinimumTemperature;
+                    RnGlobal.glTemperatureEffect = rnSd.sdTemperatureEffect;                 
+                    RnGlobal.glHeatRetention = rnSd.sdHeatRetention;
+                    RnGlobal.glRealisticFreezing = rnSd.sdRealisticFreezing;
+                    RnGlobal.glWildlifeFreezing = rnSd.sdWildlifeFreezing;
+                    RnGlobal.glMinWildlifeDay = rnSd.sdMinWildlifeDay;
+                    RnGlobal.glMinWildlifeAmount = rnSd.sdMinWildlifeAmount;
+                    RnGlobal.glFireFuelFactor = rnSd.sdFireFuelFactor;
+                    RnGlobal.glLanternFuelFactor = rnSd.sdLanternFuelFactor;
+                    RnGlobal.glTorchFuelFactor = rnSd.sdTorchFuelFactor;
+                    RnGlobal.glDayTidallyLocked = rnSd.sdDayTidallyLocked;
+                    RnGlobal.glDayNum = rnSd.sdDayNum;
+                    RnGlobal.glIsCarryingCarcass = rnSd.sdIsCarryingCarcass;
+                    RnGlobal.glSerializedCarcass = rnSd.sdSerializedCarcass;
 
                     Settings.options.coEndgameActive = rnSd.sdEndgameActive;
                     Settings.options.coEndgameDay = rnSd.sdEndgameDay;
                     Settings.options.coEndgameAurora = rnSd.sdEndgameAurora;
                     Settings.options.coRotationDecline = rnSd.sdRotationDecline;
-                    Settings.options.coTemperatureEffect = rnSd.sdTemperatureEffect;
                     Settings.options.coMinimumTemperature = rnSd.sdMinimumTemperature;
+                    Settings.options.coTemperatureEffect = rnSd.sdTemperatureEffect;                    
                     Settings.options.coHeatRetention = rnSd.sdHeatRetention;
                     Settings.options.coRealisticFreezing = rnSd.sdRealisticFreezing;
                     Settings.options.coWildlifeFreezing = rnSd.sdWildlifeFreezing;
@@ -192,43 +192,32 @@ namespace RelentlessNight
         {
             private static void Prefix(SaveSlotType gameMode, string name)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 RnSd value = new RnSd
                 {
-                    sdEndgameActive = RnGl.glEndgameActive,
-                    sdEndgameDay = RnGl.glEndgameDay,
-                    sdEndgameAurora = RnGl.glEndgameAurora,
-                    sdRotationDecline = RnGl.glRotationDecline,
-                    sdTemperatureEffect = RnGl.glTemperatureEffect,
-                    sdMinimumTemperature = RnGl.glMinimumTemperature,
-                    sdHeatRetention = RnGl.glHeatRetention,
-                    sdRealisticFreezing = RnGl.glRealisticFreezing,
-                    sdWildlifeFreezing = RnGl.glWildlifeFreezing,
-                    sdMinWildlifeDay = RnGl.glMinWildlifeDay,
-                    sdMinWildlifeAmount = RnGl.glMinWildlifeAmount,
-                    sdFireFuelFactor = RnGl.glFireFuelFactor,
-                    sdLanternFuelFactor = RnGl.glLanternFuelFactor,
-                    sdTorchFuelFactor = RnGl.glTorchFuelFactor,
-                    sdDayTidallyLocked = RnGl.glDayTidallyLocked,
-                    sdDayNum = RnGl.glDayNum,
-                    sdIsCarryingCarcass = RnGl.glIsCarryingCarcass,
-                    sdSerializedCarcass = RnGl.glSerializedCarcass,
+                    sdEndgameActive = RnGlobal.glEndgameActive,
+                    sdEndgameDay = RnGlobal.glEndgameDay,
+                    sdEndgameAurora = RnGlobal.glEndgameAurora,
+                    sdRotationDecline = RnGlobal.glRotationDecline,
+                    sdMinimumTemperature = RnGlobal.glMinimumTemperature,
+                    sdTemperatureEffect = RnGlobal.glTemperatureEffect,                    
+                    sdHeatRetention = RnGlobal.glHeatRetention,
+                    sdRealisticFreezing = RnGlobal.glRealisticFreezing,
+                    sdWildlifeFreezing = RnGlobal.glWildlifeFreezing,
+                    sdMinWildlifeDay = RnGlobal.glMinWildlifeDay,
+                    sdMinWildlifeAmount = RnGlobal.glMinWildlifeAmount,
+                    sdFireFuelFactor = RnGlobal.glFireFuelFactor,
+                    sdLanternFuelFactor = RnGlobal.glLanternFuelFactor,
+                    sdTorchFuelFactor = RnGlobal.glTorchFuelFactor,
+                    sdDayTidallyLocked = RnGlobal.glDayTidallyLocked,
+                    sdDayNum = RnGlobal.glDayNum,
+                    sdIsCarryingCarcass = RnGlobal.glIsCarryingCarcass,
+                    sdSerializedCarcass = RnGlobal.glSerializedCarcass,
                 };
 
                 string data = JsonConvert.SerializeObject(value);
                 SaveGameSlots.SaveDataToSlot(gameMode, SaveGameSystem.m_CurrentEpisode, SaveGameSystem.m_CurrentGameId, name, "RelentlessNight", data);
-            }
-        }
-
-        [HarmonyPatch(typeof(MissionServicesManager), "SceneLoadCompleted", null)]
-        public class MissionServicesManager_SceneLoadCompleted_Post
-        {
-            private static void Postfix()
-            {
-                if (!RnGl.rnActive || !RnGl.glHeatRetention) return;
-
-                RnGl.UpdateRnGlobalsForScene();
             }
         }
 
@@ -237,7 +226,7 @@ namespace RelentlessNight
         {
             private static void Postfix()
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 SaveGameSlots.SANDBOX_SLOT_PREFIX = "sandbox";
             }
@@ -248,7 +237,7 @@ namespace RelentlessNight
         {
             public static bool Prefix(SaveSlotType slotType, int n, ref string __result)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 __result = "ep1relentless" + n.ToString();
                 return false;
@@ -260,9 +249,9 @@ namespace RelentlessNight
         {
             public static bool Prefix(string name, ref SaveSlotType __result)
             {
-                if (name != null && !name.Contains(RnGl.RnSlotPrefix)) return true;
+                if (name != null && !name.Contains(RnGlobal.RnSlotPrefix)) return true;
 
-                __result = RnGl.RnSlotType;
+                __result = RnGlobal.RnSlotType;
                 return false;
             }
         }
@@ -272,9 +261,9 @@ namespace RelentlessNight
         {
             public static bool Prefix(SaveSlotType slotType, ref string __result)
             {
-                if (slotType != RnGl.RnSlotType) return true;
+                if (slotType != RnGlobal.RnSlotType) return true;
 
-                __result = RnGl.RnSlotPrefix;
+                __result = RnGlobal.RnSlotPrefix;
                 return false;
             }
         }
@@ -284,9 +273,9 @@ namespace RelentlessNight
         {
             private static void Prefix(ref SaveSlotType gameMode)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                gameMode = RnGl.RnSlotType;
+                gameMode = RnGlobal.RnSlotType;
             }
         }
 
@@ -295,9 +284,9 @@ namespace RelentlessNight
         {
             private static void Prefix(ref SaveSlotType gameMode)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                gameMode = RnGl.RnSlotType;
+                gameMode = RnGlobal.RnSlotType;
             }
         }
 
@@ -306,9 +295,9 @@ namespace RelentlessNight
         {
             public static void Prefix(ref SaveSlotType slotType)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                slotType = RnGl.RnSlotType;
+                slotType = RnGlobal.RnSlotType;
             }
         }
 
@@ -317,9 +306,9 @@ namespace RelentlessNight
         {
             public static void Prefix(ref SaveSlotType slotType)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                slotType = RnGl.RnSlotType;
+                slotType = RnGlobal.RnSlotType;
             }
         }
 
@@ -328,9 +317,9 @@ namespace RelentlessNight
         {
             public static void Prefix(ref SaveSlotType slotType)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                slotType = RnGl.RnSlotType;
+                slotType = RnGlobal.RnSlotType;
             }
         }        
     }

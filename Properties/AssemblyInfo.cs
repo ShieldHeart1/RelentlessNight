@@ -16,8 +16,8 @@ using MelonLoader;
 
 [assembly: Guid("e5516a81-1b2a-4850-940f-f05a8cba6ea0")]
 
-[assembly: AssemblyVersion("4.20")]
-[assembly: AssemblyFileVersion("4.20")]
+[assembly: AssemblyVersion("4.30")]
+[assembly: AssemblyFileVersion("4.30")]
 
-[assembly: MelonModInfo(typeof(RelentlessNight.Mod), "Relentless Night", "4.20", "ShieldHeart")]
-[assembly: MelonModGame("Hinterland", "TheLongDark")]
+[assembly: MelonInfo(typeof(RelentlessNight.Mod), "Relentless Night", "4.30", "ShieldHeart")]
+[assembly: MelonGame("Hinterland", "TheLongDark")]

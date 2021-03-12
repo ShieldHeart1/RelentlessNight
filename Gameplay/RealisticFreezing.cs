@@ -25,7 +25,7 @@ namespace RelentlessNight
         {
             private static void Prefix(ref float hp, DamageSource cause)
             {
-                if (!RnGl.rnActive || !RnGl.glRealisticFreezing || cause != DamageSource.Freezing) return;
+                if (!RnGlobal.rnActive || !RnGlobal.glRealisticFreezing || cause != DamageSource.Freezing) return;
 
                 hp *= MaybeApplyFreezingDamageMultiplier();
             }

@@ -23,7 +23,7 @@ namespace RelentlessNight
 
                 if (list[index].m_LabelText == "Relentless Night")
                 {
-                    RnGl.rnActive = true;
+                    RnGlobal.rnActive = true;
                 }
             }
         }
@@ -33,7 +33,7 @@ namespace RelentlessNight
         {
             private static void Postfix(BasicMenu __instance)
             {
-                if (!RnGl.rnActive || !InterfaceManager.m_Panel_SelectExperience.IsEnabled()) return;
+                if (!RnGlobal.rnActive || !InterfaceManager.m_Panel_SelectExperience.IsEnabled()) return;
 
                 __instance.m_TitleHeaderLabel.capsLock = false;
                 __instance.m_TitleHeaderLabel.fontSize = 16;
@@ -45,7 +45,7 @@ namespace RelentlessNight
         {
             private static void Postfix(ref string __result)
             {
-                __result += "Relentless Night " + RnGl.RnVersion;
+                __result += "Relentless Night " + RnGlobal.RnVersion;
             }
         }
 
@@ -54,9 +54,9 @@ namespace RelentlessNight
         {
             private static void Postfix()
             {
-                if (RnGl.rnFeatsActive)
+                if (RnGlobal.rnFeatsActive)
                 {
-                    RnGl.rnActive = true;
+                    RnGlobal.rnActive = true;
                 }
             }
         }
@@ -66,7 +66,7 @@ namespace RelentlessNight
         {
             private static void Postfix(Panel_ChooseSandbox __instance)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 __instance.m_BasicMenu.UpdateTitle("Relentless Night", string.Empty, Vector3.zero);
             }
@@ -77,9 +77,9 @@ namespace RelentlessNight
         {
             private static void Prefix()
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                SaveGameSlots.SANDBOX_SLOT_PREFIX = RnGl.RnSlotPrefix;
+                SaveGameSlots.SANDBOX_SLOT_PREFIX = RnGlobal.RnSlotPrefix;
             }
         }
 
@@ -88,7 +88,7 @@ namespace RelentlessNight
         {
             private static void Prefix()
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
             }
         }
 
@@ -97,7 +97,7 @@ namespace RelentlessNight
         {
             private static void Prefix(ref string locID, ref string currentName)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 currentName = "Relentless " + (InterfaceManager.m_Panel_OptionsMenu.m_State.m_NumGamesPlayed + 1).ToString();
                 locID = "GAMEPLAY_NameSandbox";
@@ -143,7 +143,7 @@ namespace RelentlessNight
         {
             private static void Postfix(Panel_MainMenu __instance)
             {
-                if (!RnGl.rnActive || InterfaceManager.IsMainMenuActive()) return;
+                if (!RnGlobal.rnActive || InterfaceManager.IsMainMenuActive()) return;
 
                 __instance.m_BasicMenu.UpdateTitle("Relentless Night", string.Empty, Vector3.zero);
             }
@@ -154,28 +154,28 @@ namespace RelentlessNight
         {
             private static bool Prefix(Panel_MainMenu __instance)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 IL2CPP.List<SlotData> m_SaveSlots = SaveGameSlots.m_SaveSlots;
                 foreach (SlotData slotData in m_SaveSlots)
                 {
-                    if (slotData.m_Name.Contains("relentless") && slotData.m_GameMode != RnGl.RnSlotType) slotData.m_GameMode = RnGl.RnSlotType;
+                    if (slotData.m_Name.Contains("relentless") && slotData.m_GameMode != RnGlobal.RnSlotType) slotData.m_GameMode = RnGlobal.RnSlotType;
                 }
 
                 bool m_Quit = __instance.m_Quit;
                 if (m_Quit) return false;
 
-                if (SaveGameSlots.SlotsAreLoading(RnGl.RnSlotType))
+                if (SaveGameSlots.SlotsAreLoading(RnGlobal.RnSlotType))
                 {
-                    SaveGameSlots.SetLoadingPriority(RnGl.RnSlotType);
+                    SaveGameSlots.SetLoadingPriority(RnGlobal.RnSlotType);
                     GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     return false;
                 }
 
-                IL2CPP.List<SaveSlotInfo> sortedSaveSlots = SaveGameSystem.GetSortedSaveSlots(Episode.One, RnGl.RnSlotType);
+                IL2CPP.List<SaveSlotInfo> sortedSaveSlots = SaveGameSystem.GetSortedSaveSlots(Episode.One, RnGlobal.RnSlotType);
                 __instance.m_SandboxSlots = sortedSaveSlots;
                 GameAudioManager.PlayGUIButtonClick();
-                SaveSlotType saveSlotType = RnGl.RnSlotType;
+                SaveSlotType saveSlotType = RnGlobal.RnSlotType;
                 __instance.m_SlotTypeSelected = saveSlotType;
                 __instance.m_AllObjects.SetActive(false);
                 InterfaceManager.m_Panel_Sandbox.Enable(true);
@@ -189,7 +189,7 @@ namespace RelentlessNight
         {
             private static bool Prefix(Panel_MainMenu __instance)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 InterfaceManager.m_Panel_SelectExperience.Enable(true);
                 return false;
@@ -201,7 +201,7 @@ namespace RelentlessNight
         {
             private static bool Prefix(Panel_MainMenu __instance)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 GameAudioManager.PlayGuiConfirm();
                 int numUnlockedFeats = __instance.GetNumUnlockedFeats();
@@ -226,7 +226,7 @@ namespace RelentlessNight
             {
                 if (InterfaceManager.IsMainMenuActive() && !__instance.IsSubMenuEnabled())
                 {
-                    RnGl.rnActive = false;
+                    RnGlobal.rnActive = false;
                 }
             }
         }
@@ -236,24 +236,24 @@ namespace RelentlessNight
         {
             private static void Postfix(Panel_PauseMenu __instance)
             {
-                if (!RnGl.rnActive || !InterfaceManager.m_Panel_PauseMenu.IsEnabled()) return;
+                if (!RnGlobal.rnActive || !InterfaceManager.m_Panel_PauseMenu.IsEnabled()) return;
 
                 string[] array = new string[]
                 {
-                    (RnGl.glEndgameActive) ? ("ENDGAME ACTIVE: YES") : ("ENDGAME ACTIVE: NO"),                   
-                    "ENDGAME DAY: " + RnGl.glEndgameDay.ToString(),                 
-                    (RnGl.glEndgameAurora) ? ("ENDGAME AURORA: YES") : ("ENDGAME AURORA: NO"),
-                    "DAY LENGTH CHANGE RATE: " + RnGl.glRotationDecline.ToString() + "%",
-                    "INDOOR/OUTDOOR TEMP: " + RnGl.glTemperatureEffect.ToString() + "%",
-                    "MINIMUM AIR TEMPERATURE: " + RnGl.glMinimumTemperature.ToString() + "°C",
-                    (RnGl.glHeatRetention) ? ("HEAT RETENTION: YES") : ("HEAT RETENTION: NO"),                 
-                    (RnGl.glRealisticFreezing) ? ("REALISTIC FREEZING: YES") : ("REALISTIC FREEZING: NO"),   
-                    (RnGl.glWildlifeFreezing) ? ("TEMP AFFECTS WILDLIFE: YES") : ("TEMP AFFECTS WILDLIFE: NO"),
-                    "MIN WILDLIFE AMOUNT: " + RnGl.glMinWildlifeAmount.ToString() + "%",
-                    "MIN WILDLIFE DAY: " + RnGl.glMinWildlifeDay.ToString(),
-                    "FIRE FUEL BURN TIME: " + RnGl.glFireFuelFactor.ToString() + "X",
-                    "LANTERN FUEL BURN TIME: " + RnGl.glLanternFuelFactor.ToString() + "X",
-                    "TORCH BURN TIME: " + RnGl.glTorchFuelFactor.ToString() + "X"
+                    (RnGlobal.glEndgameActive) ? ("ENDGAME ACTIVE: YES") : ("ENDGAME ACTIVE: NO"),                   
+                    "ENDGAME DAY: " + RnGlobal.glEndgameDay.ToString(),                 
+                    (RnGlobal.glEndgameAurora) ? ("ENDGAME AURORA: YES") : ("ENDGAME AURORA: NO"),
+                    "DAY LENGTH CHANGE RATE: " + RnGlobal.glRotationDecline.ToString() + "%",
+                    "MINIMUM AIR TEMPERATURE: " + RnGlobal.glMinimumTemperature.ToString() + "°C",
+                    "INDOOR/OUTDOOR TEMP: " + RnGlobal.glTemperatureEffect.ToString() + "%",                    
+                    (RnGlobal.glHeatRetention) ? ("HEAT RETENTION: YES") : ("HEAT RETENTION: NO"),                 
+                    (RnGlobal.glRealisticFreezing) ? ("REALISTIC FREEZING: YES") : ("REALISTIC FREEZING: NO"),   
+                    (RnGlobal.glWildlifeFreezing) ? ("TEMP AFFECTS WILDLIFE: YES") : ("TEMP AFFECTS WILDLIFE: NO"),
+                    "MIN WILDLIFE AMOUNT: " + RnGlobal.glMinWildlifeAmount.ToString() + "%",
+                    "MIN WILDLIFE DAY: " + RnGlobal.glMinWildlifeDay.ToString(),
+                    "FIRE FUEL BURN TIME: " + RnGlobal.glFireFuelFactor.ToString() + "X",
+                    "LANTERN FUEL BURN TIME: " + RnGlobal.glLanternFuelFactor.ToString() + "X",
+                    "TORCH BURN TIME: " + RnGlobal.glTorchFuelFactor.ToString() + "X"
                 };
 
                 string rnSettings = "";
@@ -276,7 +276,7 @@ namespace RelentlessNight
         {
             private static void Postfix(Panel_Sandbox __instance)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 __instance.m_BasicMenu.UpdateTitle("Relentless Night", string.Empty, Vector3.zero);
             }
@@ -287,7 +287,7 @@ namespace RelentlessNight
         {
             private static void Prefix()
             {
-                RnGl.rnFeatsActive = RnGl.rnActive;
+                RnGlobal.rnFeatsActive = RnGlobal.rnActive;
             }
         }
 
@@ -296,7 +296,7 @@ namespace RelentlessNight
         {
             private static void Postfix(Panel_SelectExperience __instance)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 __instance.m_BasicMenu.UpdateTitle("Relentless Night", "See game Options and Mod Settings to\nconfigure your Relentless Night run.", new Vector3(0f, -75f, 0f));
             }

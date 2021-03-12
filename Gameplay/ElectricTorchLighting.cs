@@ -48,7 +48,7 @@ namespace RelentlessNight
         {
             private static void Postfix(PlayerManager __instance)
             {
-                if (!RnGl.rnActive || !GameManager.GetAuroraManager().AuroraIsActive() || !PlayerInteractingWithElectricLightSource(__instance) || !PlayerHoldingUnlitTorch(__instance)) return;
+                if (!RnGlobal.rnActive || !GameManager.GetAuroraManager().AuroraIsActive() || !PlayerInteractingWithElectricLightSource(__instance) || !PlayerHoldingUnlitTorch(__instance)) return;
 
                 if (InterfaceManager.m_Panel_TorchLight != null) InterfaceManager.m_Panel_TorchLight.StartTorchIgnite(2f, string.Empty, true);
             }

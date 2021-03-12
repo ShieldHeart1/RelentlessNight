@@ -11,9 +11,9 @@ namespace RelentlessNight
         {
             private static void Postfix(ref float __result)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                __result *= RnGl.glFireFuelFactor;
+                __result *= RnGlobal.glFireFuelFactor;
             }
         }
 
@@ -22,9 +22,9 @@ namespace RelentlessNight
         {
             private static void Postfix(KeroseneLampItem __instance)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                __instance.m_FuelBurnLitersPerHour /= RnGl.glLanternFuelFactor;
+                __instance.m_FuelBurnLitersPerHour /= RnGlobal.glLanternFuelFactor;
             }
         }
 
@@ -33,9 +33,9 @@ namespace RelentlessNight
         {
             private static void Postfix(TorchItem __instance)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
-                __instance.m_BurnLifetimeMinutes *= RnGl.glTorchFuelFactor;
+                __instance.m_BurnLifetimeMinutes *= RnGlobal.glTorchFuelFactor;
             }
         }
     }

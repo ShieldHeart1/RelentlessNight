@@ -43,7 +43,7 @@ namespace RelentlessNight
         {
             private static bool Prefix(CharcoalItem __instance)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 return StartDetailSurveyRewrite(__instance);
             }
@@ -54,7 +54,7 @@ namespace RelentlessNight
         {
             private static void Prefix(InteriorLightingGroup __instance, ref float intensityMultiplier)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 int moonPhaseIndex = GameManager.GetTimeOfDayComponent().m_WeatherSystem.GetMoonPhaseIndex();
 
@@ -70,7 +70,7 @@ namespace RelentlessNight
         {
             private static void Postfix(InteriorLightingManager __instance)
             {
-                if (!RnGl.rnActive || GameManager.m_IsPaused) return;
+                if (!RnGlobal.rnActive || GameManager.m_IsPaused) return;
 
                 float m_AuroraFade = __instance.m_AuroraFade;
                 float m_ScrubTimer = __instance.m_ScrubTimer;
@@ -100,7 +100,7 @@ namespace RelentlessNight
         {
             private static bool Prefix(Weather __instance)
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 int moonPhaseIndex = GameManager.GetTimeOfDayComponent().m_WeatherSystem.GetMoonPhaseIndex();
                 bool enoughMoonlightForAction = GameManager.GetTimeOfDayComponent().IsNight() && __instance.IsClear() && moonPhaseIndex >= 3 && moonPhaseIndex <= 5;

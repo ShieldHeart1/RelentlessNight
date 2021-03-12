@@ -17,7 +17,7 @@ namespace RelentlessNight
         public const float carryFatigueMultiplier = 0.05f;
 
         //% Player speed slow down per kilo of carcass being carried
-        public const float carrySlowDownMultiplier = 0.04f;
+        public const float carrySlowDownMultiplier = 0.05f;
 
         //Additional calories burned per hour for every kilo of the carcass being carried
         public const float carryCaloryBurnRateMultiplier = 15f;         
@@ -48,7 +48,7 @@ namespace RelentlessNight
 
         internal static void MaybeAddCarcassMoveButton(Panel_BodyHarvest panelInstance, BodyHarvest bodyHarvest)
         {
-            if (IsMovableCarcass(bodyHarvest))
+            if (IsMovableCarcass(bodyHarvest) && !PlayerIsCarryingCarcass)
             {
                 if (moveCarcassBtnObj == null)
                 {
@@ -196,7 +196,7 @@ namespace RelentlessNight
         {
             private static void Postfix(Panel_BodyHarvest __instance, BodyHarvest bh, bool enable)
             {
-                if (!RnGl.rnActive || !enable || !__instance.CanEnable(bh)) return;
+                if (!RnGlobal.rnActive || !enable || !__instance.CanEnable(bh)) return;
 
                 currentCarryObj = bh.gameObject;
                 currentBodyHarvest = bh;
@@ -210,7 +210,7 @@ namespace RelentlessNight
         {
             private static void Prefix()
             {
-                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
+                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
 
                 if (currentBodyHarvest != null)
                 {
@@ -226,7 +226,7 @@ namespace RelentlessNight
         {
             private static void Postfix()
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 ResetBodyHarvestManager();
 
@@ -267,7 +267,7 @@ namespace RelentlessNight
         {
             private static void Postfix(LoadScene __instance)
             {
-                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
+                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
 
                 if (currentCarryObj != null)
                 {
@@ -280,14 +280,23 @@ namespace RelentlessNight
             }
         }
 
+        [HarmonyPatch(typeof(RopeClimbPoint), "OnRopeTransition", null)]
+        public static class RopeClimbPoint_OnRopeTransition_Post
+        {
+            private static void Postfix()
+            {
+                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
 
+                DropCarcass();
+            }
+        }
 
         [HarmonyPatch(typeof(PlayerManager), "PlayerCanSprint", null)]
         public static class PlayerManager_PlayerCanSprint_Post
         {
             private static void Postfix(ref bool __result)
             {
-                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
+                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
 
                 __result = false;
             }
@@ -298,7 +307,7 @@ namespace RelentlessNight
         {
             private static void Postfix(ref float __result)
             {
-                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
+                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
 
                 __result *= (1f + carcassWeight * carryFatigueMultiplier);
             }
@@ -309,7 +318,7 @@ namespace RelentlessNight
         {
             private static void Postfix(ref float __result)
             {
-                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
+                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
 
                 __result += carcassWeight * carryCaloryBurnRateMultiplier;
             }
@@ -320,9 +329,20 @@ namespace RelentlessNight
         {
             private static void Postfix(ref float __result)
             {
-                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
+                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
 
                 __result *= Mathf.Clamp((1f - carcassWeight * carrySlowDownMultiplier), 0.1f, 0.8f);
+            }
+        }
+
+        [HarmonyPatch(typeof(Inventory), "GetExtraScentIntensity", null)]
+        internal class Inventory_GetExtraScentIntensity_Post
+        {
+            private static void Postfix(ref float __result)
+            {
+                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
+
+                __result += Mathf.Clamp(100f - currentBodyHarvest.m_PercentFrozen, 33f, 100f);           
             }
         }
 
@@ -331,7 +351,7 @@ namespace RelentlessNight
         {
             private static void Postfix(ref bool __result)
             {
-                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return;
+                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
 
                 __result = false;
             }
@@ -342,7 +362,7 @@ namespace RelentlessNight
         {
             private static void Postfix(BodyHarvest bodyHarvest, ref bool __result)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 if (IsMovableCarcass(bodyHarvest) && !(bodyHarvest.GetCondition() < 0.5f)) __result = true;
             }
@@ -353,7 +373,7 @@ namespace RelentlessNight
         {
             private static bool Prefix()
             {
-                if (!RnGl.rnActive || !PlayerIsCarryingCarcass) return true;
+                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return true;
 
                 HUDMessage.AddMessage("CANNOT EQUIP ITEM WHILE CARRYING CARCASS", false);
                 GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
@@ -366,7 +386,7 @@ namespace RelentlessNight
         {
             private static void Postfix(Panel_HUD __instance)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 MaybeChangeSprintSpriteColors(__instance);
             }
@@ -377,7 +397,7 @@ namespace RelentlessNight
         {
             private static bool Prefix()
             {
-                if (!RnGl.rnActive) return true;
+                if (!RnGlobal.rnActive) return true;
 
                 Panel_BodyHarvest panel_BodyHarvest = InterfaceManager.m_Panel_BodyHarvest;
                 if (panel_BodyHarvest != null)
@@ -396,7 +416,7 @@ namespace RelentlessNight
         {
             private static void Postfix()
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 string data = BodyHarvestManager.Serialize();
                 BodyHarvestManager.DeleteAllActive();

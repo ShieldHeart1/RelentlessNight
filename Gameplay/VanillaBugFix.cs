@@ -16,7 +16,7 @@ namespace RelentlessNight
                     bool bedProvidesAboveFreezing = __instance.m_Bed.m_WarmthBonusCelsius + GameManager.GetFreezingComponent().CalculateBodyTemperature() > 0;
                     bool playerIsFreezing = GameManager.GetFreezingComponent().IsFreezing();
 
-                    if (!RnGl.rnActive || !playerIsFreezing || playerIsFreezing && bedProvidesAboveFreezing) return true;
+                    if (!RnGlobal.rnActive || !playerIsFreezing || playerIsFreezing && bedProvidesAboveFreezing) return true;
 
                     GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     HUDMessage.AddMessage("You cannot sleep while freezing", false);
@@ -34,7 +34,7 @@ namespace RelentlessNight
                         bool bodyTemperatureInBedIsPositive = GameManager.GetFreezingComponent().CalculateBodyTemperature() > 0;
                         bool playerIsFreezing = GameManager.GetFreezingComponent().IsFreezing();
 
-                        if (!RnGl.rnActive || !playerIsFreezing || bodyTemperatureInBedIsPositive) return;
+                        if (!RnGlobal.rnActive || !playerIsFreezing || bodyTemperatureInBedIsPositive) return;
 
                         __instance.EndSleeping(true);
                         HUDMessage.AddMessage("You woke up due to freezing", false);                        
@@ -50,7 +50,7 @@ namespace RelentlessNight
             {
                 private static void Postfix(FirstPersonLightSource __instance)
                 {
-                    if (!RnGl.rnActive || !RnGl.rnFireShouldHeatWholeScene) return;
+                    if (!RnGlobal.rnActive || !HeatRetention.rnFireShouldHeatWholeScene) return;
 
                     HeatSource componentInChildren = __instance.m_FXGameObject.GetComponentInChildren<HeatSource>();
                     if (componentInChildren)

@@ -6,15 +6,69 @@ namespace RelentlessNight
 {
     public class HeatRetention
     {
+        public static float currentRetainedHeatInDegrees = 0f;
+        public static float currentDegreeHeatLossPerHour = 15f;
+        public static bool fireShouldHeatWholeScene = false;
+        public static float indoorOutdoorTempReliance = 1f;        
+
+        [HarmonyPatch(typeof(MissionServicesManager), "PostSceneLoadCo", null)]
+        public class MissionServicesManager_PostSceneLoadCo_Post
+        {
+            private static void Postfix()
+            {
+                if (!RnGlobal.rnActive || !RnGlobal.glHeatRetention) return;
+
+                UpdateHeatRetentionFactors();
+            }
+        }
+
+        public static void UpdateHeatRetentionFactors()
+        {
+            string activeScene = GameManager.m_ActiveScene.ToLower();
+
+            if (GameManager.GetWeatherComponent().IsIndoorScene())
+            {
+                if (activeScene.Contains("cave") || activeScene.Contains("mine"))
+                {
+                    indoorOutdoorTempReliance = 0.80f;
+                    fireShouldHeatWholeScene = false;
+                    currentDegreeHeatLossPerHour = 3f;
+                }
+                else
+                {
+                    bool largeIndoorScene = activeScene.Contains("whalingwarehouse") || activeScene.Contains("dam") || activeScene.Contains("damtransitionzone") ||
+                        activeScene.Contains("whalingship") || activeScene.Contains("barnhouse") || activeScene.Contains("maintenanceshed");
+
+                    if (largeIndoorScene)
+                    {
+                        indoorOutdoorTempReliance = 1f;
+                        fireShouldHeatWholeScene = false;
+                        currentDegreeHeatLossPerHour = 3f;
+                    }
+                    else
+                    {
+                        indoorOutdoorTempReliance = 1f;
+                        fireShouldHeatWholeScene = true;
+                        currentDegreeHeatLossPerHour = 1f;
+                    }
+                }
+            }
+            else
+            {
+                fireShouldHeatWholeScene = false;
+                currentDegreeHeatLossPerHour = 15f;
+            }
+        }
+
         [HarmonyPatch(typeof(GameManager), "CacheComponents", null)]
         internal static class GameManager_CacheComponents_Post
         {
             private static void Postfix(GameManager __instance)
             {
-                if (!RnGl.rnActive) return;
+                if (!RnGlobal.rnActive) return;
 
                 GameManager.GetFireManagerComponent().m_MaxHeatIncreaseOfFire = 120f;
-                GameManager.GetFireManagerComponent().m_TakeTorchReduceBurnMinutes *= RnGl.glFireFuelFactor;
+                GameManager.GetFireManagerComponent().m_TakeTorchReduceBurnMinutes *= RnGlobal.glFireFuelFactor;
             }
         }
 
@@ -23,36 +77,41 @@ namespace RelentlessNight
         {
             private static bool Prefix(Panel_FeedFire __instance)
             {
-                if (!RnGl.rnActive || !RnGl.glHeatRetention) return true;
+                if (!RnGlobal.rnActive || !RnGlobal.glHeatRetention) return true;
 
                 if (__instance.ProgressBarIsActive())
                 {
                     GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     return false;
                 }
+
                 GearItem selectedFuelSource = __instance.GetSelectedFuelSource();
                 if (selectedFuelSource == null)
                 {
                     GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     return false;
                 }
+
                 FuelSourceItem fuelSourceItem = selectedFuelSource.m_FuelSourceItem;
                 if (fuelSourceItem == null)
                 {
                     GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     return false;
                 }
+
                 GameObject m_FireContainer = __instance.m_FireContainer;
                 if (!m_FireContainer)
                 {
                     GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
                     return false;
                 }
+
                 Fire m_Fire = __instance.m_Fire;
                 if (!m_Fire)
                 {
                     return false;
                 }
+
                 if (m_Fire.FireShouldBlowOutFromWind())
                 {
                     HUDMessage.AddMessage(Localization.Get("GAMEPLAY_TooWindyToAddFuel"), false);
@@ -94,7 +153,7 @@ namespace RelentlessNight
         {
             private static void Postfix(Fire __instance)
             {
-                if (!RnGl.rnActive || !RnGl.glHeatRetention) return;
+                if (!RnGlobal.rnActive || !RnGlobal.glHeatRetention) return;
 
                 __instance.m_HeatSource.m_MaxTempIncreaseInnerRadius = 1000f;
                 __instance.m_HeatSource.m_MaxTempIncreaseOuterRadius = 1000f;
@@ -106,16 +165,14 @@ namespace RelentlessNight
         {
             private static void Postfix(Fire __instance)
             {
-                if (!RnGl.rnActive || !RnGl.glHeatRetention) return;
+                if (!RnGlobal.rnActive || !RnGlobal.glHeatRetention) return;
 
-                float m_ElapsedOnTODSeconds = __instance.m_ElapsedOnTODSeconds;
-                float m_MaxOnTODSeconds = __instance.m_MaxOnTODSeconds;
                 FireState m_FireState = __instance.m_FireState;
 
-                float hourAfterburnOut = (m_ElapsedOnTODSeconds - m_MaxOnTODSeconds) / 3600f;
-                float heatRemaining = __instance.m_HeatSource.m_MaxTempIncrease - hourAfterburnOut * 2.5f;
+                float hourAfterburnOut = (__instance.m_ElapsedOnTODSeconds - __instance.m_MaxOnTODSeconds) / 3600f;
+                float heatRemaining = __instance.m_HeatSource.m_MaxTempIncrease - (hourAfterburnOut * currentDegreeHeatLossPerHour);
 
-                if (m_FireState == FireState.Off && __instance.m_HeatSource.m_MaxTempIncrease > 0f && m_MaxOnTODSeconds > 0f)
+                if (m_FireState == FireState.Off && __instance.m_HeatSource.m_MaxTempIncrease > 0f && __instance.m_MaxOnTODSeconds > 0f)
                 {
                     if (heatRemaining > 0f)
                     {
@@ -132,12 +189,12 @@ namespace RelentlessNight
         {
             private static void Postfix(Fire __instance)
             {
-                if (!RnGl.rnActive || !RnGl.glHeatRetention) return;
+                if (!RnGlobal.rnActive || !RnGlobal.glHeatRetention) return;
 
-                __instance.m_HeatSource.m_MaxTempIncrease += RnGl.rnCurrentRetainedHeat;
+                __instance.m_HeatSource.m_MaxTempIncrease += currentRetainedHeatInDegrees;
                 __instance.m_FuelHeatIncrease = __instance.m_HeatSource.m_MaxTempIncrease;
 
-                if (RnGl.rnFireShouldHeatWholeScene)
+                if (fireShouldHeatWholeScene)
                 {
                     __instance.m_HeatSource.m_MaxTempIncreaseInnerRadius = 1000f;
                     __instance.m_HeatSource.m_MaxTempIncreaseOuterRadius = 1000f;
@@ -149,14 +206,15 @@ namespace RelentlessNight
         [HarmonyPatch(typeof(Fire), "TurnOn", null)]
         public class Fire_TurnOn_Pre
         {
-            private static void Prefix(Fire __instance, ref bool maskTempIncrease)
+            private static void Prefix(ref bool maskTempIncrease)
             {
-                if (!RnGl.rnActive || !RnGl.glHeatRetention) return;
+                if (!RnGlobal.rnActive || !RnGlobal.glHeatRetention) return;
+
                 maskTempIncrease = false;
 
                 if (!GameManager.GetFireManagerComponent().PointInRadiusOfBurningFire(GameManager.GetPlayerTransform().position))
                 {
-                    RnGl.rnCurrentRetainedHeat = GameManager.GetHeatSourceManagerComponent().GetTemperatureIncrease(GameManager.GetPlayerTransform().position);
+                    currentRetainedHeatInDegrees = GameManager.GetHeatSourceManagerComponent().GetTemperatureIncrease(GameManager.GetPlayerTransform().position);
                 }
             }
         }
@@ -167,7 +225,7 @@ namespace RelentlessNight
         {
             private static void Prefix(Fire __instance)
             {
-                if (!RnGl.rnActive || !RnGl.glHeatRetention || GameManager.m_IsPaused) return;
+                if (!RnGlobal.rnActive || !RnGlobal.glHeatRetention || GameManager.m_IsPaused) return;
 
                 if (__instance.m_HeatSource.m_MaxTempIncreaseInnerRadius == 1000f || __instance.m_HeatSource.m_MaxTempIncreaseOuterRadius == 1000f)
                 {
@@ -175,8 +233,7 @@ namespace RelentlessNight
                     __instance.m_HeatSource.m_MaxTempIncreaseOuterRadius = 30;
                 }
 
-                FireState fireState = __instance.m_FireState;
-                if (fireState == FireState.Off)
+                if (__instance.m_FireState == FireState.Off)
                 {
                     __instance.m_ElapsedOnTODSeconds += GameManager.GetTimeOfDayComponent().GetTODSeconds(Time.deltaTime);
                 }
@@ -188,9 +245,10 @@ namespace RelentlessNight
         {
             private static bool Prefix(HeatSource __instance)
             {
-                if (!RnGl.rnActive || !RnGl.glHeatRetention) return true;
+                if (!RnGlobal.rnActive || !RnGlobal.glHeatRetention) return true;
 
                 if (__instance.m_TempIncrease > 0f) return false;
+
                 return true;
             }
         }
@@ -201,7 +259,7 @@ namespace RelentlessNight
         {
             private static bool Prefix(HeatSource __instance)
             {
-                if (!RnGl.rnActive || !RnGl.glHeatRetention) return true;
+                if (!RnGlobal.rnActive || !RnGlobal.glHeatRetention) return true;                
 
                 if (GameManager.m_IsPaused) return false;
 
@@ -222,7 +280,7 @@ namespace RelentlessNight
                     }
                     else
                     {
-                        m_TempIncrease -= todminutes / 24f * RnGl.rnHeatDissapationFactor;
+                        m_TempIncrease -= todminutes / 24f * currentDegreeHeatLossPerHour;
                     }
 
                     if (__instance.m_MaxTempIncrease > 0f)

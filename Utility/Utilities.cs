@@ -68,8 +68,8 @@ namespace RelentlessNight
 
         public static void HyperTime()
         {
-            if (RnGl.rnTimeAccel != 1000) RnGl.rnTimeAccel = 1000;
-            else RnGl.rnTimeAccel = 1;
+            if (RnGlobal.rnTimeAccel != 1000) RnGlobal.rnTimeAccel = 1000;
+            else RnGlobal.rnTimeAccel = 1;
         }
 
         public static void Fires()

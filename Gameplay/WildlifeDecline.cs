@@ -11,25 +11,25 @@ namespace RelentlessNight
         {
             private static void Prefix(SpawnRegion __instance)
             {
-                if (!RnGl.rnActive || GameManager.IsStoryMode()) return;
+                if (!RnGlobal.rnActive || GameManager.IsStoryMode()) return;
 
                 bool m_StartHasBeenCalled = __instance.m_StartHasBeenCalled;
                 if (m_StartHasBeenCalled) return;
 
-                int glDayNum = RnGl.glDayNum;
+                int glDayNum = RnGlobal.glDayNum;
                 float curDayFactor = 1f;
                 float curTempFactor = 1f;
                 int minPopulation = 1;
 
-                if (RnGl.glMinWildlifeAmount < 100)
+                if (RnGlobal.glMinWildlifeAmount < 100)
                 {
-                    curDayFactor = 1f - Mathf.Clamp((float)glDayNum / RnGl.glMinWildlifeDay, 0f, 0.98f) * ((100 - RnGl.glMinWildlifeAmount) * 0.01f);
+                    curDayFactor = 1f - Mathf.Clamp((float)glDayNum / RnGlobal.glMinWildlifeDay, 0f, 0.98f) * ((100 - RnGlobal.glMinWildlifeAmount) * 0.01f);
                 }
-                if (RnGl.glWildlifeFreezing)
+                if (RnGlobal.glWildlifeFreezing)
                 {
-                    curTempFactor = 1f + Mathf.Clamp((RnGl.glOutdoorTempWithoutBlizDrop + 30f) * 0.01f, -0.75f, 0.5f);
+                    curTempFactor = 1f + Mathf.Clamp((RnGlobal.glOutdoorTempWithoutBlizDrop + 30f) * 0.01f, -0.75f, 0.5f);
                 }
-                if (RnGl.glMinWildlifeAmount == 0)
+                if (RnGlobal.glMinWildlifeAmount == 0)
                 {
                     minPopulation = 0;
                 }
