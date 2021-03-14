@@ -24,6 +24,8 @@ Relentless Night will add a progress difficulty into survival mode that at first
 
 * (V4.30) - Carrying carcasses will now produce scent
 
+* (V4.30) - Player no longer takes damage from walking over live wires
+
 * (V4.30) - Global temperature drop from harder difficulties now reduced rather than eliminated completely
 
 * (V4.00) (optional/configurable) - Added option to have permanent aurora when the endgame is reach in Relentless Night. 
