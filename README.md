@@ -46,6 +46,8 @@ Relentless Night will add a progress difficulty into survival mode that at first
 
 * (V3.00) - Indoor environments will retain heat from fires much longer after the fire has burnt out through the Heat Retention mechanic. The hotter the fire, the longer it will keep the place warm. In enclosed buildings, fires will heat the whole house/space and better insulated environments will keep warm for longer.
 
+* (V3.00) - Player will be woken up when freezing
+
 * (V2.00) - Coal can be added to a fire without a waiting period (late-game balancing)
 
 * (V2.00) - Surveying is now possible at night, provided the weather is clear and enough light is present.
