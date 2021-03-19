@@ -12,7 +12,7 @@ Relentless Night will add a progress difficulty into survival mode that at first
 
 1. Ensure you are using game version 1.93 or above (indicated top-left on game main menu).
 
-2. Follow the instructions on how to install mods at the top of Xpazemen’s great list of TLD mods.
+2. Follow the instructions on how to install mods at the top of [Xpazemen’s great list of TLD mods](http://xpazeman.com/tld-mod-list/).
 
 3. Ensure you have downloaded ModSetting as well as Relentless Night, and ensure you have placed them both in the “Mods” folder.
 
