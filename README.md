@@ -1,4 +1,4 @@
-# Relentless Night
+# Relentless Night V4.40
 
 Relentless Night is a gameplay mod for The Long Dark that introduces a new sandbox scenario where the spin of the Earth is slowing down. Slowly but surely, days and nights are getting longer over time, leading to a world with continuously changing temperatures, weather patterns, wildlife changes, and more.
 
@@ -8,62 +8,86 @@ The player, realizing what is happening, must take advantage of the longer days 
 
 Relentless Night will add a progress difficulty into survival mode that at first doesn't seem any different than regular run, but the effects will slowly add up and bring about conditions that make gameplay harder. All this eventually leads to a world that's incredibly harsh and difficult to survive in for even veterans and expert survivalists of the game.
 
-**Installation Instructions**
+## Installation Instructions
 
-1. Ensure you are using game version 1.93 or above (indicated top-left on game main menu).
+1. Ensure you are using game version 1.99 or above (indicated top-left on game main menu).
 
-2. Follow the instructions on how to install mods at the top of Xpazemen’s great list of TLD mods.
+2. Follow the instructions at the top of [Xpazemen’s list of TLD mods](http://xpazeman.com/tld-mod-list/).
 
 3. Ensure you have downloaded ModSetting as well as Relentless Night, and ensure you have placed them both in the “Mods” folder.
 
-4. Launch your game and enjoy!
+4. Launch and enjoy!
 
-**Complete List of Mod Features and Options (Up to current version - 4.30)**
+## Features and Configurable Mod Settings
 
-* (V4.30) - Vanilla feature of global temperature drop in higher diffiulties now reduced, rather than eliminated entirely
+![RN_4 40_Settings_RnClassic](https://user-images.githubusercontent.com/43711346/154806599-8057e950-62f7-4731-89ac-62c0f8011e92.png)
 
-* (V4.30) - Carrying carcasses will now produce scent
+What you see above are the classic Relentless Night settings, though you are free to configure your games as you like. All mod settings are dynmaic and can be change during your run. Detailed descriptions of each setting/feature are below:
 
-* (V4.30) - Global temperature drop from harder difficulties now reduced rather than eliminated completely
+### How Fast Days And Nights Get Longer
 
-* (V4.00) (optional/configurable) - Added option to have permanent aurora when the endgame is reach in Relentless Night. 
+Controls how fast the earth's spin slows down, and so how quickly the duration of days and nights increase
 
-* (V4.00) (optional/configurable) - Torch burn times can now also be adjusted
+### Perpetual Night Endgame
 
-* (V4.00) All mod gameplay features can now be customized dynamically within game Option > Mod Settings > Relentless Night.
+Enables the Relentless Night endgame where the earth eventually becomes tidally locked with the sun and you are left to survive in perpetual darkness for the rest of the game.
 
-* (V4.00) Electric Torch Lighting – During an aurora, you can now light torches without a match directly from electric outlets and live electric cables.
+If disabled, the earth's spin will simply keep slowing down forever.
 
-* (V4.00) Medium sized kills such as deer and wolves can be picked up and hauled around the game world at the cost of speed, additional fatigue, and calories burned. The carcasses can be taken indoors and between scenes.
+### Endgame Start Day
 
-* (V4.00) Minimum reachable temperature is now also configurable. This determines how fast temperatures drop with lengthening nights, as well at the minimum temperature possible at the end game.
+The endgame will start during the next nightfall after this many days survived, measured in 24 hour days.
 
-* (V3.00) (optional/configurable) - Ability to adjust how long fuels will burn in a fire or how long lantern fuel will last while in use.
+### Permanent Aurora At Endgame
 
-* (V3.00) (optional/configurable) - Realistic freezing damage option added, causing the player to suffer freezing damage faster if travelling below -40C.
+The aurora borealis will be present throughout the endgame, ensuring you some light at the new dark side of earth.
 
-* (V3.00) - Indoor environments will retain heat from fires much longer after the fire has burnt out through the Heat Retention mechanic. The hotter the fire, the longer it will keep the place warm. In enclosed buildings, fires will heat the whole house/space and better insulated environments will keep warm for longer.
+### Minimum Air Temperature
 
-* (V2.00) - Coal can be added to a fire without a waiting period (late-game balancing)
+The minimum air temperature that will be reached at the endgame or during a sufficiently long night.
 
-* (V2.00) - Surveying is now possible at night, provided the weather is clear and enough light is present.
+### Outdoor Affect On Indoor Temperatures
 
-* (V1.00) (made optional/configurable in V3.00) - Days and nights get increasingly longer eventually ending in the tidal locking of the Earth and survival in perpetual darkness.
+Controls how much of an effect outdoor temperature will have on indoor temperatures, with a high enough setting no place will be completely safe from the cold.
 
-* (V1.00) (made optional/configurable in V3.00) - Outdoor Temperature will affect wildlife populations. Roaming wildlife will be less abundant and harder to find in extreme cold temperatures, but also more abundant in relatively warm temperatures.
+### Carcass Moving
 
-* (V1.00 ) (made optional/configurable in V3.00) - Outdoor temperatures become increasingly warmer/colder with lengthening duration of days/nights.
+Add ability to haul medium sized kills such as deer and wolves around the world map, including indoors.
 
-* (V1.00) (made optional/configurable in V3.00) - Indoor temperatures can be configured to have a certain level of dependence to outdoor temperatures.
+### Electric Torch Lighting
 
-* (V1.00) (made optional/configurable in V3.00) - Roaming wildlife become increasingly scarce as outdoor conditions become more extreme and harsh.
+Add ability to light torches using live wires and household outlets during auroras.
 
-* (V1.00) - Blizzards and stronger winds become more frequent as days/nights become longer and weather becomes more extreme.
+### Fire Heat Retention
 
-* (V1.00) - Cabin fever affliction is disabled due to the eventuality of long nights and extreme outdoor temperatures.
+Fires indoors will keep the building warm for much longer, even after the fire has burnt out. The hotter the fire, the longer it will keep the place warm. Better insulated indoor locations will keep warm for longer.
 
-* (V1.00) - Indoor environments can become brighter during nights depending on weather and available moonlight outdoors. During the brightest phases of the moon, crafting/breaking of items indoors can become available again.
+### Realistic Freezing Damage
 
-The mod scenario can be played in all sandbox difficulties and can be set up in its own sandbox page. The mod does not prevent playing regular sandbox or other vanilla modes. Relentless night saves are kept completely separate from other save data and cannot be played by regular sandbox mode and vice versa.
+For temperatures below a 'feels like' temperature of -40C, the rate at which you suffer freezing damage will be increased.
 
-Note: Journal statistics and days survived are still tracked in regular 24-hour days, as if the player is still keeping track with a watch.
+### Wildlife Final Minimum Population
+
+The wildlife population and respawn rates will decline over time as longer nights make temperatures outside harsher for you and wildlife alike. This setting determines the minimum population that the wildlife population can fall to.
+
+### Day Wildlife Decline Reaches Minimum
+
+Day at which wildlife populations will reach the minimum value set above.
+
+### Fire Fuel Burn Time
+
+Extends how long books, wood, and coal fuels for fires will last after being placed in the fire.
+
+### Lantern Fuel Burn Time
+
+Extends how long lantern fuel will last while in use.
+
+### Torch Burn Time
+
+Extends how long torches will last while in use.
+
+## To Conclude
+
+You're all set to get started! Thank you for all the players who have been supportive of the mod during development, it's been a lot of fun to work on it, and I will continue to do so with your feedback!
+
+Please do feel free to join the mod [discord community](https://discord.gg/9ndTkCF). I am most active there for mod announcements and to answer any questions.
