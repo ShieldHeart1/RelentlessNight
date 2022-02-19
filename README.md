@@ -22,9 +22,7 @@ Relentless Night will add a progress difficulty into survival mode that at first
 
 ![RN_4 40_Settings_RnClassic](https://user-images.githubusercontent.com/43711346/154806599-8057e950-62f7-4731-89ac-62c0f8011e92.png)
 
-What you see above is the classic Relentless Night settings, though you are free to configure your games as you like. 
-
-Detailed descriptions of each setting/feature are below:
+What you see above are the classic Relentless Night settings, though you are free to configure your games as you like. All mod settings are dynmaic and can be change during your run. Detailed descriptions of each setting/feature are below:
 
 ### How Fast Days And Nights Get Longer
 
