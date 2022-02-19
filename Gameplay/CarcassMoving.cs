@@ -1,427 +1,396 @@
 ﻿using System;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using AK;
 
 namespace RelentlessNight
 {
-    public class CarcassMoving : MonoBehaviour
+    internal class CarcassMoving : MonoBehaviour
     {
         static CarcassMoving()
         {
             UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<CarcassMoving>();
         }
+
         public CarcassMoving(IntPtr ptr) : base(ptr) { }
 
-        //% fatigue rate increase per kilo of carcass being carried
-        public const float carryFatigueMultiplier = 0.05f;
+        internal const float carryAddedFatiguePerKilo = 0.05f;
+        internal const float carryAddedSlowDownPerKilo = 0.05f;
+        internal const float carryAddedCaloryBurnPerKilo = 15f;
 
-        //% Player speed slow down per kilo of carcass being carried
-        public const float carrySlowDownMultiplier = 0.05f;
+        internal static GameObject moveCarcassBtnObj;
+        internal static GameObject carcassObj;
+        internal static BodyHarvest bodyHarvest;
+        internal static string carcassOriginalScene;
+        internal static float carcassWeight;
+        internal static bool isCarryingCarcass;
+        internal static bool saveTrigger;
 
-        //Additional calories burned per hour for every kilo of the carcass being carried
-        public const float carryCaloryBurnRateMultiplier = 15f;         
-
-        public static GameObject currentCarryObj;
-        public static BodyHarvest currentBodyHarvest;
-        public static EquipItemPopup equipItemPopup;
-
-        public static GameObject moveCarcassBtnObj;
-        public static UIButton moveCarcassUIBtn;
-        public static Panel_BodyHarvest currentHarvestPanel;
-
-        public static bool PlayerIsCarryingCarcass = false;
-        public static string carcassOriginalScene;
-        public static float carcassWeight;
-
-        private void Update()
+        [HarmonyPatch(typeof(Panel_BodyHarvest), "CanEnable", null)]
+        internal class Panel_BodyHarvest_CanEnable
         {
-            if (!PlayerIsCarryingCarcass) return;
-
-            DisplayDropCarcassPopUp();
-
-            if (HasInjuryPreventingCarry() || GameManager.GetPlayerStruggleComponent().InStruggle() || InputManager.GetAltFirePressed(this))
+            private static void Postfix(BodyHarvest bodyHarvest, ref bool __result)
             {
-                DropCarcass();
-            }
-        }
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled) return;
 
-        internal static void MaybeAddCarcassMoveButton(Panel_BodyHarvest panelInstance, BodyHarvest bodyHarvest)
-        {
-            if (IsMovableCarcass(bodyHarvest) && !PlayerIsCarryingCarcass)
-            {
-                if (moveCarcassBtnObj == null)
+                if (!(bodyHarvest.GetCondition() < 0.5f))
                 {
-                    moveCarcassBtnObj = Instantiate(panelInstance.m_Mouse_Button_Harvest, panelInstance.m_Mouse_Button_Harvest.transform);
-                    moveCarcassBtnObj.GetComponentInChildren<UILocalize>().key = "MOVE CARCASS";
-
-                    panelInstance.m_Mouse_Button_Harvest.transform.localPosition += new Vector3(-100f, 0f, 0f);
-                    moveCarcassBtnObj.transform.localPosition = new Vector3(+200f, 0f, 0f);
-
-                    moveCarcassUIBtn = moveCarcassBtnObj.GetComponentInChildren<UIButton>();
-                    moveCarcassUIBtn.onClick.Clear();
-                    moveCarcassUIBtn.onClick.Add(new EventDelegate(new Action(OnMoveCarcass)));
-                }
-            }
-            else
-            {
-                if (moveCarcassBtnObj != null)
-                {
-                    DestroyImmediate(moveCarcassBtnObj);
-                    panelInstance.m_Mouse_Button_Harvest.transform.localPosition += new Vector3(+100f, 0f, 0f);
+                    __result = true;
                 }
             }
         }
-
-        internal static bool IsMovableCarcass(BodyHarvest bodyHarvest)
-        {
-            return (bodyHarvest.name.Contains("Stag") || bodyHarvest.name.Contains("Deer") || bodyHarvest.name.Contains("Wolf")) && !bodyHarvest.name.Contains("Quarter");
-        }
-
-        internal static void OnMoveCarcass()
-        {
-            if (HasInjuryPreventingCarry())
-            {
-                GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
-                currentHarvestPanel.DisplayErrorMessage("CANNOT MOVE CARCASS WHILE INJURED");
-                return;
-            }
-
-            PickUpCarcass();
-        }
-
-        internal static void PickUpCarcass()
-        {
-            PlayerIsCarryingCarcass = true;
-            carcassWeight = currentBodyHarvest.m_MeatAvailableKG + currentBodyHarvest.GetGutsAvailableWeightKg() + currentBodyHarvest.GetHideAvailableWeightKg();
-            currentHarvestPanel.OnBack();
-            carcassOriginalScene = GameManager.m_ActiveScene;
-
-            CarcassMoving carcassMoving = currentCarryObj.GetComponent<CarcassMoving>();
-            if (carcassMoving == null)
-            {
-                carcassMoving = currentCarryObj.AddComponent<CarcassMoving>();
-            }
-
-            GameManager.GetPlayerManagerComponent().UnequipItemInHands();
-
-            HideCarcassFromView();
-            PlayCarcassPickUpAudio();
-        }
-
-        internal static void DropCarcass()
-        {
-            PlayerIsCarryingCarcass = false;
-            MoveCarcassToPlayerPosition();
-            BringCarcassBackIntoView();
-
-            if (GameManager.m_ActiveScene != carcassOriginalScene)
-            {                
-                AddCarcassToSceneSaveData(currentBodyHarvest);
-            }
-
-            PlayCarcassDropAudio();
-            currentCarryObj = null;
-            currentBodyHarvest = null;
-            ResetBodyHarvestManager();
-        }
-
-        internal static void HideCarcassFromView()
-        {
-            currentCarryObj.transform.localScale = new Vector3(0f, 0f, 0f);
-        }
-
-        internal static void BringCarcassBackIntoView()
-        {
-            currentCarryObj.transform.localScale = new Vector3(1f, 1f, 1f);
-        }
-
-        internal static void DisplayDropCarcassPopUp()
-        {
-            InterfaceManager.m_Panel_HUD.m_EquipItemPopup.ShowGenericPopupWithDefaultActions(string.Empty, Localization.Get("DROP CARCASS"));
-        }
-
-        internal static bool HasInjuryPreventingCarry()
-        {
-            return GameManager.GetSprainedAnkleComponent().HasSprainedAnkle() || GameManager.GetSprainedWristComponent().HasSprainedWrist() ||
-                GameManager.GetSprainedWristComponent().HasSprainedWrist() || GameManager.GetBrokenRibComponent().HasBrokenRib();
-        }
-
-        internal static void MoveCarcassToPlayerPosition()
-        {
-            currentCarryObj.transform.position = GameManager.GetPlayerTransform().position;
-            currentCarryObj.transform.rotation = GameManager.GetPlayerTransform().rotation * Quaternion.Euler(0f, 90f, 0f);
-        }
-
-        internal static void AddCarcassToSceneSaveData(BodyHarvest bodyHarvest)
-        {
-            BodyHarvestManager.AddBodyHarvest(currentBodyHarvest);
-            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(currentCarryObj.transform.root.gameObject, UnityEngine.SceneManagement.SceneManager.GetActiveScene());
-        }
-
-        internal static void PlayCarcassPickUpAudio()
-        {
-            GameAudioManager.PlaySound("Play_RopeGetOn", InterfaceManager.GetSoundEmitter());
-            GameAudioManager.PlaySound(EVENTS.PLAY_EXERTIONLOW, InterfaceManager.GetSoundEmitter());
-        }
-
-        internal static void PlayCarcassDropAudio()
-        {
-            GameAudioManager.PlaySound(EVENTS.PLAY_BODYFALLLARGE, InterfaceManager.GetSoundEmitter());
-        }
-
-        internal static bool HarvestAmmountsAreSelected(Panel_BodyHarvest __instance)
-        {
-            return (__instance.m_MenuItem_Meat.m_HarvestAmount > 0f || __instance.m_MenuItem_Hide.m_HarvestAmount > 0f || __instance.m_MenuItem_Gut.m_HarvestAmount > 0f);
-        }
-
-        internal static void MaybeChangeSprintSpriteColors(Panel_HUD __instance)
-        {
-            if (PlayerIsCarryingCarcass)
-            {
-                __instance.m_Sprite_SprintCenter.color = __instance.m_SprintBarNoSprintColor;
-                __instance.m_Sprite_SprintBar.color = __instance.m_SprintBarNoSprintColor;
-            }
-        }
-        public static void ResetBodyHarvestManager()
-        {
-            if (currentCarryObj != null && PlayerIsCarryingCarcass) MoveCarcassToPlayerPosition();
-            string data = BodyHarvestManager.Serialize();
-            BodyHarvestManager.DeleteAllActive();
-            BodyHarvestManager.Deserialize(data);
-        }
-
-        [HarmonyPatch(typeof(Panel_BodyHarvest), "Enable", null)]
-        internal class Panel_BodyHarvest_Start_Post
+        [HarmonyPatch(typeof(Panel_BodyHarvest), "Enable", new Type[] { typeof(bool), typeof(BodyHarvest), typeof(bool), typeof(ComingFromScreenCategory) })]
+        internal class Panel_BodyHarvest_Enable
         {
             private static void Postfix(Panel_BodyHarvest __instance, BodyHarvest bh, bool enable)
             {
-                if (!RnGlobal.rnActive || !enable || !__instance.CanEnable(bh)) return;
+                if (!MenuManager.modEnabled || !enable || !__instance.CanEnable(bh)) return;
 
-                currentCarryObj = bh.gameObject;
-                currentBodyHarvest = bh;
-                currentHarvestPanel = __instance;
-                MaybeAddCarcassMoveButton(__instance, bh);
-            }
-        }
+                if (isCarryingCarcass) DropCarcass();
 
-        [HarmonyPatch(typeof(GameManager), "TriggerSurvivalSaveAndDisplayHUDMessage", null)]
-        internal class GameManager_TriggerSurvivalSaveAndDisplayHUDMessage_Pre
-        {
-            private static void Prefix()
-            {
-                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
-
-                if (currentBodyHarvest != null)
+                if (Global.carcassMovingEnabled)
                 {
-                    currentBodyHarvest.enabled = true;
-                    MoveCarcassToPlayerPosition();
-                    AddCarcassToSceneSaveData(currentBodyHarvest);
+                    if (IsMovableCarcass(bh) && !isCarryingCarcass)
+                    {
+                        bodyHarvest = bh;
+                        carcassObj = bh.gameObject;
+
+                        if (moveCarcassBtnObj == null)
+                        {
+                            AddCarcassMoveButton(__instance);
+                        }
+                    }
+                }
+                else
+                {
+                    if (moveCarcassBtnObj != null)
+                    {
+                        RemoveCarcassMoveButton(__instance);
+                    }
                 }
             }
         }
-
+        //Ensures carried carcass is repopulated from save data if the player was carrying a carcass on last save of the game
         [HarmonyPatch(typeof(GameManager), "SetAudioModeForLoadedScene")]
-        internal class GameManager_SetAudioModeForLoadedScene_Post
+        internal class GameManager_SetAudioModeForLoadedScene
         {
             private static void Postfix()
             {
-                if (!RnGlobal.rnActive) return;
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return;
 
-                ResetBodyHarvestManager();
+                if (carcassObj == null) isCarryingCarcass = false;
+                if (bodyHarvest != null) bodyHarvest.enabled = true;
 
-                if (!PlayerIsCarryingCarcass) return;
-
-                if (currentCarryObj == null)
-                {
-                    PlayerIsCarryingCarcass = false;
-                }
-
-                if (currentBodyHarvest != null) currentBodyHarvest.enabled = true;
-
-                SaveTrigger.trigger = true;
+                saveTrigger = true;
             }
         }
-
-        internal class SaveTrigger
-        {
-            public static bool trigger = false;
-        }
-
         [HarmonyPatch(typeof(PlayerManager), "Update")]
         internal class PlayerManager_Update_Post
         {
             private static void Postfix(PlayerManager __instance)
             {
-                if (SaveTrigger.trigger)
+                if (saveTrigger == true)
                 {
-                    SaveTrigger.trigger = false;
+                    saveTrigger = false;
                     GearManager.UpdateAll();
                     GameManager.TriggerSurvivalSaveAndDisplayHUDMessage();
                 }
             }
         }
-
         [HarmonyPatch(typeof(LoadScene), "Activate", null)]
-        internal class LoadScene_Activate_Post
-        {
-            private static void Postfix(LoadScene __instance)
-            {
-                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
-
-                if (currentCarryObj != null)
-                {
-                    //Do not destroy carcass object through scene transition
-                    DontDestroyOnLoad(currentCarryObj.transform.root.gameObject);
-
-                    //Disable carcass object to prevent its saving in the scene being left
-                    currentBodyHarvest.enabled = false; 
-                }                
-            }
-        }
-
-        [HarmonyPatch(typeof(RopeClimbPoint), "OnRopeTransition", null)]
-        public static class RopeClimbPoint_OnRopeTransition_Post
+        internal class LoadScene_Activate
         {
             private static void Postfix()
             {
-                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass || carcassObj == null) return;
 
-                DropCarcass();
+                //Do not destroy carcass object through scene transition
+                DontDestroyOnLoad(carcassObj.transform.root.gameObject);
+
+                //Disable carcass to prevent it saving in the previous scene
+                bodyHarvest.enabled = false;
             }
         }
-
-        [HarmonyPatch(typeof(PlayerManager), "PlayerCanSprint", null)]
-        public static class PlayerManager_PlayerCanSprint_Post
+        [HarmonyPatch(typeof(GameManager), "TriggerSurvivalSaveAndDisplayHUDMessage", null)]
+        internal class GameManager_TriggerSurvivalSaveAndDisplayHUDMessage
         {
-            private static void Postfix(ref bool __result)
+            private static void Prefix()
             {
-                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return;
 
-                __result = false;
+                // Carcass carried through to indoor scene
+                if (bodyHarvest != null)
+                {
+                    // Reenable carcass so it will get saved in new scene
+                    bodyHarvest.enabled = true;
+                    MoveCarcassToPlayerPosition();
+                    AddCarcassToSceneSaveData();
+                }
             }
         }
-
-        [HarmonyPatch(typeof(Fatigue), "CalculateFatigueIncrease", null)]
-        internal class Fatigue_CalculateFatigueIncrease_Post
-        {
-            private static void Postfix(ref float __result)
-            {
-                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
-
-                __result *= (1f + carcassWeight * carryFatigueMultiplier);
-            }
-        }
-
-        [HarmonyPatch(typeof(PlayerManager), "CalculateModifiedCalorieBurnRate")]
-        internal static class PlayerManager_CalculateModifiedCalorieBurnRate_Post
-        {
-            private static void Postfix(ref float __result)
-            {
-                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
-
-                __result += carcassWeight * carryCaloryBurnRateMultiplier;
-            }
-        }
-
-        [HarmonyPatch(typeof(Encumber), "GetEncumbranceSlowdownMultiplier", null)]
-        internal class MaybeAdjustEncumbranceSlowDown_Post
-        {
-            private static void Postfix(ref float __result)
-            {
-                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
-
-                __result *= Mathf.Clamp((1f - carcassWeight * carrySlowDownMultiplier), 0.1f, 0.8f);
-            }
-        }
-
-        [HarmonyPatch(typeof(Inventory), "GetExtraScentIntensity", null)]
-        internal class Inventory_GetExtraScentIntensity_Post
-        {
-            private static void Postfix(ref float __result)
-            {
-                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
-
-                __result += 33f;           
-            }
-        }
-
-        [HarmonyPatch(typeof(EquipItemPopup), "ShouldHideEquipPopup", null)]
-        internal class EquipItemPopup_ShouldHideEquipAndAmmoPopups_Post
-        {
-            private static void Postfix(ref bool __result)
-            {
-                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return;
-
-                __result = false;
-            }
-        }
-
-        [HarmonyPatch(typeof(Panel_BodyHarvest), "CanEnable", null)]
-        internal class Panel_BodyHarvest_CarcassTooFrozenToHarvestBareHands_Post
-        {
-            private static void Postfix(BodyHarvest bodyHarvest, ref bool __result)
-            {
-                if (!RnGlobal.rnActive) return;
-
-                if (IsMovableCarcass(bodyHarvest) && !(bodyHarvest.GetCondition() < 0.5f)) __result = true;
-            }
-        }
-
-        [HarmonyPatch(typeof(PlayerManager), "EquipItem", null)]
-        internal class PlayerManager_EquipItem_Pre
-        {
-            private static bool Prefix()
-            {
-                if (!RnGlobal.rnActive || !PlayerIsCarryingCarcass) return true;
-
-                HUDMessage.AddMessage("CANNOT EQUIP ITEM WHILE CARRYING CARCASS", false);
-                GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
-                return false;
-            }
-        }
-
-        [HarmonyPatch(typeof(Panel_HUD), "Update", null)]
-        internal class Panel_HUD_Update_Post
-        {
-            private static void Postfix(Panel_HUD __instance)
-            {
-                if (!RnGlobal.rnActive) return;
-
-                MaybeChangeSprintSpriteColors(__instance);
-            }
-        }
-
         [HarmonyPatch(typeof(GameAudioManager), "PlayGUIError", null)]
         internal class GameAudioManager_PlayGUIError_Pre
         {
             private static bool Prefix()
             {
-                if (!RnGlobal.rnActive) return true;
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled) return true;
 
-                Panel_BodyHarvest panel_BodyHarvest = InterfaceManager.m_Panel_BodyHarvest;
-                if (panel_BodyHarvest != null)
-                {
-                    if (!HarvestAmmountsAreSelected(panel_BodyHarvest))
-                    {
-                        return false;
-                    }
-                }
-                return true;
+                return StopErrorDueToCarcassBeingFrozen(InterfaceManager.m_Panel_BodyHarvest);
             }
         }
-
-        [HarmonyPatch(typeof(GameManager), "SetAudioModeForLoadedScene")]
-        internal class GameManager_SetAudioModeForLoadedScene_Postt
+        [HarmonyPatch(typeof(RopeClimbPoint), "OnRopeTransition", null)]
+        internal static class RopeClimbPoint_OnRopeTransition
         {
             private static void Postfix()
             {
-                if (!RnGlobal.rnActive) return;
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return;
 
-                string data = BodyHarvestManager.Serialize();
-                BodyHarvestManager.DeleteAllActive();
-                BodyHarvestManager.Deserialize(data);
+                DropCarcass();
             }
+        }
+        [HarmonyPatch(typeof(PlayerManager), "EquipItem", null)]
+        internal class PlayerManager_EquipItem
+        {
+            private static bool Prefix()
+            {
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return true;
+
+                Utilities.DisallowActionWithModMessage("CANNOT EQUIP ITEM WHILE CARRYING CARCASS");
+                return false;
+            }
+        }
+        [HarmonyPatch(typeof(InputManager), "ExecuteAltFire", null)]
+        internal class InputManager_ExecuteAltFire
+        {
+            private static bool Prefix()
+            {
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return true;
+
+                return false;
+            }
+        }
+        [HarmonyPatch(typeof(EquipItemPopup), "ShouldHideEquipPopup", null)]
+        internal class EquipItemPopup_ShouldHideEquipPopup
+        {
+            private static void Postfix(ref bool __result)
+            {
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return;
+
+                __result = false;
+            }
+        }
+        [HarmonyPatch(typeof(PlayerManager), "PlayerCanSprint", null)]
+        internal static class PlayerManager_PlayerCanSprint
+        {
+            private static void Postfix(ref bool __result)
+            {
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return;
+
+                __result = false;
+            }
+        }
+        [HarmonyPatch(typeof(Panel_HUD), "Update", null)]
+        internal class Panel_HUD_Update
+        {
+            private static void Postfix(Panel_HUD __instance)
+            {
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return;
+
+                __instance.m_Sprite_SprintCenter.color = __instance.m_SprintBarNoSprintColor;
+                __instance.m_Sprite_SprintBar.color = __instance.m_SprintBarNoSprintColor;
+            }
+        }
+        [HarmonyPatch(typeof(Fatigue), "CalculateFatigueIncrease", null)]
+        internal class Fatigue_CalculateFatigueIncrease
+        {
+            private static void Postfix(ref float __result)
+            {
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return;
+
+                __result *= (1f + carcassWeight * carryAddedFatiguePerKilo);
+            }
+        }
+        [HarmonyPatch(typeof(PlayerManager), "CalculateModifiedCalorieBurnRate")]
+        internal static class PlayerManager_CalculateModifiedCalorieBurnRate
+        {
+            private static void Postfix(ref float __result)
+            {
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return;
+
+                __result += carcassWeight * carryAddedCaloryBurnPerKilo;
+            }
+        }
+        [HarmonyPatch(typeof(Encumber), "GetEncumbranceSlowdownMultiplier", null)]
+        internal class Encumber_GetEncumbranceSlowdownMultiplier
+        {
+            private static void Postfix(ref float __result)
+            {
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return;
+
+                __result *= Mathf.Clamp((1f - carcassWeight * carryAddedSlowDownPerKilo), 0.1f, 0.8f);
+            }
+        }
+        [HarmonyPatch(typeof(Inventory), "GetExtraScentIntensity", null)]
+        internal class Inventory_GetExtraScentIntensity
+        {
+            private static void Postfix(ref float __result)
+            {
+                if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return;
+
+                __result += 33f;
+            }
+        }
+        [HarmonyPatch(typeof(BaseAi), "SetDamageImpactParameter", null)]
+        internal class BaseAi_SetDamageImpactParameter
+        {
+            private static void Prefix(BaseAi __instance, ref BaseAi.DamageSide side)
+            {
+                if (!MenuManager.modEnabled) return;
+
+                if (__instance.m_AiWolf != null || __instance.m_AiStag != null)
+                {
+                    //Ensures kills land on left side when dead - prevents camera orientation bug when reviewing dropped carcasses in harvest panel and simplifies positioning
+                    side = BaseAi.DamageSide.DamageSideLeft;
+                }
+            }
+        }
+
+        internal void Update()
+        {
+            if (GameManager.m_IsPaused || !isCarryingCarcass) return;
+
+            if (!Global.carcassMovingEnabled)
+            {
+                DropCarcass();
+            }
+            else
+            {
+                DisplayDropCarcassPopUp();
+                if (InputManager.GetAltFirePressed(this) || HasInjuryPreventingCarry() || GameManager.GetPlayerStruggleComponent().InStruggle())
+                {
+                    DropCarcass();
+                }
+            }
+        }
+        internal static void AddCarcassMoveButton(Panel_BodyHarvest panelBodyHarvest)
+        {
+            moveCarcassBtnObj = Instantiate(panelBodyHarvest.m_Mouse_Button_Harvest, panelBodyHarvest.m_Mouse_Button_Harvest.transform);
+            moveCarcassBtnObj.GetComponentInChildren<UILocalize>().key = "MOVE CARCASS";
+
+            panelBodyHarvest.m_Mouse_Button_Harvest.transform.localPosition += new Vector3(-100f, 0f, 0f);
+            moveCarcassBtnObj.transform.localPosition = new Vector3(+200f, 0f, 0f);
+
+            UIButton moveCarcassButton = moveCarcassBtnObj.GetComponentInChildren<UIButton>();
+            moveCarcassButton.onClick.Clear();
+            moveCarcassButton.onClick.Add(new EventDelegate(new Action(OnMoveCarcass)));
+        }
+        internal static void RemoveCarcassMoveButton(Panel_BodyHarvest panelBodyHarvest)
+        {
+            DestroyImmediate(moveCarcassBtnObj);
+            panelBodyHarvest.m_Mouse_Button_Harvest.transform.localPosition += new Vector3(+100f, 0f, 0f);
+        }
+        internal static bool IsMovableCarcass(BodyHarvest bodyHarvest)
+        {
+            return (bodyHarvest.name.Contains("Stag") || bodyHarvest.name.Contains("Deer") || bodyHarvest.name.Contains("Wolf")) && !bodyHarvest.name.Contains("Quarter");
+        }
+        internal static void OnMoveCarcass()
+        {
+            if (HasInjuryPreventingCarry())
+            {
+                Utilities.DisallowActionWithModMessage("cannot move carcass while injured");
+            }
+            else
+            {
+                PickUpCarcass();
+                InterfaceManager.m_Panel_BodyHarvest.OnBack();
+            }
+        }
+        internal static void PickUpCarcass()
+        {
+            isCarryingCarcass = true;
+            carcassWeight = bodyHarvest.m_MeatAvailableKG + bodyHarvest.GetGutsAvailableWeightKg() + bodyHarvest.GetHideAvailableWeightKg();
+            carcassOriginalScene = GameManager.m_ActiveScene;
+            CarcassMoving carcassMoving = carcassObj.GetComponent<CarcassMoving>();
+            if (carcassMoving == null)
+            {
+                carcassMoving = carcassObj.AddComponent<CarcassMoving>();
+            }      
+            GameManager.GetPlayerManagerComponent().UnequipItemInHands();
+            HideCarcassFromView();
+            PlayCarcassPickUpAudio();
+        }
+        internal static void DropCarcass()
+        {
+            isCarryingCarcass = false;
+            MoveCarcassToPlayerPosition();
+            BringCarcassBackIntoView();
+            if (GameManager.m_ActiveScene != carcassOriginalScene)
+            {
+                AddCarcassToSceneSaveData();
+            }
+            PlayCarcassDropAudio();
+            EnableCarcassMeshes();
+            bodyHarvest = null;
+            carcassObj = null;
+        }
+        internal static void EnableCarcassMeshes()
+        {
+            SkinnedMeshRenderer[] skinnedMeshRenderers = carcassObj.GetComponentsInChildren<SkinnedMeshRenderer>();
+            foreach (SkinnedMeshRenderer skinnedMeshRenderer in skinnedMeshRenderers)
+            {
+                skinnedMeshRenderer.enabled = true;
+            }
+        }
+        internal static void HideCarcassFromView()
+        {
+            carcassObj.transform.localScale = new Vector3(0f, 0f, 0f);
+        }
+        internal static void BringCarcassBackIntoView()
+        {
+            carcassObj.transform.localScale = new Vector3(1f, 1f, 1f);
+        }
+        internal static void DisplayDropCarcassPopUp()
+        {
+            InterfaceManager.m_Panel_HUD.m_EquipItemPopup.ShowGenericPopupWithDefaultActions(string.Empty, "DROP CARCASS");
+        }
+        internal static bool HasInjuryPreventingCarry()
+        {
+            return GameManager.GetSprainedAnkleComponent().HasSprainedAnkle() || GameManager.GetSprainedWristComponent().HasSprainedWrist() ||
+                GameManager.GetSprainedWristComponent().HasSprainedWrist() || GameManager.GetBrokenRibComponent().HasBrokenRib();
+        }
+        internal static void MoveCarcassToPlayerPosition()
+        {
+            carcassObj.transform.position = GameManager.GetPlayerTransform().position;
+            carcassObj.transform.rotation = GameManager.GetPlayerTransform().rotation * Quaternion.Euler(0f, 90f, 0f);
+        }
+        internal static void AddCarcassToSceneSaveData()
+        {
+            BodyHarvestManager.AddBodyHarvest(bodyHarvest);
+            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(carcassObj.transform.root.gameObject, UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+        }
+        internal static void PlayCarcassPickUpAudio()
+        {
+            GameAudioManager.PlaySound("Play_RopeGetOn", InterfaceManager.GetSoundEmitter());
+            GameAudioManager.PlaySound(EVENTS.PLAY_EXERTIONLOW, InterfaceManager.GetSoundEmitter());
+        }
+        internal static void PlayCarcassDropAudio()
+        {
+            GameAudioManager.PlaySound(EVENTS.PLAY_BODYFALLLARGE, InterfaceManager.GetSoundEmitter());
+        }
+        internal static bool HarvestAmmountsAreSelected(Panel_BodyHarvest __instance)
+        {
+            return (__instance.m_MenuItem_Meat.m_HarvestAmount > 0f || __instance.m_MenuItem_Hide.m_HarvestAmount > 0f || __instance.m_MenuItem_Gut.m_HarvestAmount > 0f);
+        }
+        internal static bool StopErrorDueToCarcassBeingFrozen(Panel_BodyHarvest panelBodyHarvest)
+        {
+            if (panelBodyHarvest != null)
+            {
+                if (!HarvestAmmountsAreSelected(panelBodyHarvest))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

@@ -1,34 +1,35 @@
 ﻿using System;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 
 namespace RelentlessNight
 {
-    public class RealisticFreezing
+    internal class RealisticFreezing
     {
-        private const float accelFreezingTempThreshold = -40f;      //Player starts taking extra damage when body temp goes below this number
-        private const float addedDamageRatePerDegree = 1 / 30f;     //Severity of the damage increase per degreeC below threshold
-        private const int maximumDamageMultiplier = 3;              //Maximum possible multiplier for freezing damage rate
-
-        private static float MaybeApplyFreezingDamageMultiplier()
-        {
-            float bodyTemp = GameManager.GetFreezingComponent().CalculateBodyTemperature();
-            if (bodyTemp < accelFreezingTempThreshold)
-            {
-                return Mathf.Clamp(1f + (accelFreezingTempThreshold - bodyTemp) * addedDamageRatePerDegree, 1f, maximumDamageMultiplier);
-            }
-            return 1f;
-        }
+        internal const float damageRateIncreaseTemperature = -40f;
+        internal const float addedDamageRatePerDegree = 1 / 30f;
+        internal const int maximumDamageMultiplier = 3;
 
         [HarmonyPatch(typeof(Condition), "AddHealth", new Type[] { typeof(float), typeof(DamageSource), typeof(bool) })]
-        public class Condition_AddHealth_Pre
+        internal class Condition_AddHealth
         {
             private static void Prefix(ref float hp, DamageSource cause)
             {
-                if (!RnGlobal.rnActive || !RnGlobal.glRealisticFreezing || cause != DamageSource.Freezing) return;
+                if (!MenuManager.modEnabled || !Global.realisticFreezingEnabled || cause != DamageSource.Freezing) return;
 
                 hp *= MaybeApplyFreezingDamageMultiplier();
             }
+        }
+
+        internal static float MaybeApplyFreezingDamageMultiplier()
+        {
+            float bodyTemp = GameManager.GetFreezingComponent().CalculateBodyTemperature();
+
+            if (bodyTemp < damageRateIncreaseTemperature)
+            {
+                return Mathf.Clamp(1f + (damageRateIncreaseTemperature - bodyTemp) * addedDamageRatePerDegree, 1f, maximumDamageMultiplier);
+            }
+            return 1f;
         }
     }
 }

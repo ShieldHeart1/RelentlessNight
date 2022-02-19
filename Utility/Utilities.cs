@@ -1,33 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using IL2CPP = Il2CppSystem.Collections.Generic;
 
 namespace RelentlessNight
 {
-    public class Utilities
+    internal class Utilities
     {
+        // A multiplier to speed up time through console a console command, helps test time-dependent features much faster
+        internal static int devTimeSpeedMultiplier = 1;
+
+        [HarmonyPatch(typeof(ConsoleManager), "RegisterCommands", new Type[] { })]
+        internal class ConsoleManager_RegisterCommands
+        {
+            private static void Postfix()
+            {
+                uConsole.RegisterCommand("rn_active", new Action(ModLogIsRnActive));
+                uConsole.RegisterCommand("rn_hypertime", new Action(ToggleTimeSpeedUp));
+                uConsole.RegisterCommand("rn_scene", new Action(ModLogActiveScene));
+                uConsole.RegisterCommand("rn_panels", new Action(ModLogListActivePanels));
+                uConsole.RegisterCommand("rn_fires", new Action(ModLogListFires));
+                uConsole.RegisterCommand("rn_carcassmoving", new Action(ModLogCarcassMoving));
+            }
+        }
+
+        internal static void ModLog(string message)
+        {
+            Debug.Log("RN > " + message);
+        }
+        internal static void PlayGameErrorAudio()
+        {
+            GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
+        }
+        internal static void DisallowActionWithGameMessage(string message)
+        {
+            PlayGameErrorAudio();
+            HUDMessage.AddMessage(Localization.Get(message), false);
+        }
+        internal static void DisallowActionWithModMessage(string message)
+        {
+            PlayGameErrorAudio();
+            HUDMessage.AddMessage(message, false);
+        }
         internal static List<GameObject> GetRootObjects()
         {
             List<GameObject> rootObj = new List<GameObject>();
-
             for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
             {
-                Scene scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
-
-                GameObject[] sceneObj = scene.GetRootGameObjects();
+                GameObject[] sceneObj = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).GetRootGameObjects();
 
                 foreach (GameObject obj in sceneObj)
                 {
                     rootObj.Add(obj);
                 }
             }
-
             return rootObj;
         }
-
         internal static void GetChildrenWithName(GameObject obj, string name, List<GameObject> result)
         {
             if (obj.transform.childCount > 0)
@@ -35,18 +64,15 @@ namespace RelentlessNight
                 for (int i = 0; i < obj.transform.childCount; i++)
                 {
                     GameObject child = obj.transform.GetChild(i).gameObject;
-
                     if (child.name.ToLower().Contains(name))
                     {
                         result.Add(child);
                     }
-
                     GetChildrenWithName(child, name, result);
                 }
             }
         }
-
-        internal static void CreateTorchLightingSceneItem(string objectName)
+        internal static void MakeSceneItemInteractible(string objectName)
         {
             List<GameObject> rObjs = GetRootObjects();
             List<GameObject> result = new List<GameObject>();
@@ -57,38 +83,52 @@ namespace RelentlessNight
 
                 if (result.Count > 0)
                 {
-                    foreach (GameObject child in result)
-                    {
-                        //Debug.Log(child.name);
-                        child.layer = 12;
-                    }
+                    foreach (GameObject child in result) child.layer = 12;
                 }
             }
         }
-
-        public static void HyperTime()
+        internal static void ModLogIsRnActive()
         {
-            if (RnGlobal.rnTimeAccel != 1000) RnGlobal.rnTimeAccel = 1000;
-            else RnGlobal.rnTimeAccel = 1;
+            ModLog(MenuManager.modEnabled.ToString());
+        }        
+        internal static void ModLogActiveScene()
+        {
+            ModLog(GameManager.m_ActiveScene);
         }
-
-        public static void Fires()
+        internal static void ModLogListActivePanels()
+        {
+            foreach (Il2CppSystem.Type panel in InterfaceManager.m_MainMenuPanels)
+            {
+                ModLog(panel.ToString());
+            }
+        }
+        internal static void ToggleTimeSpeedUp()
+        {
+            if (devTimeSpeedMultiplier == 1)
+            {
+                GameManager.GetPlayerManagerComponent().m_God = true;
+                devTimeSpeedMultiplier = 5000;
+            }
+            else
+            {
+                GameManager.GetPlayerManagerComponent().m_God = false;
+                devTimeSpeedMultiplier = 1;
+            }
+        }
+        internal static void ModLogListFires()
         {
             IL2CPP.List<HeatSource> heatsources = GameManager.GetHeatSourceManagerComponent().m_HeatSources;
+
             for (int i = 0; i < heatsources.Count; i++)
             {
-                Debug.Log("-RN- Fire" + i.ToString() + ": " + heatsources[i].GetTempIncrease(GameManager.GetPlayerTransform().position).ToString());
+                ModLog(i.ToString() + ": " + heatsources[i].GetTempIncrease(GameManager.GetPlayerTransform().position).ToString());
             }
+            ModLog(HeatRetentionManager.currentDegreesHeatLossPerHour.ToString());
         }
-
-        [HarmonyPatch(typeof(ConsoleManager), "RegisterCommands", new Type[] { })]
-        public class ConsoleManager_RegisterCommands_Post
+        internal static void ModLogCarcassMoving()
         {
-            public static void Postfix()
-            {
-                uConsole.RegisterCommand("rn_hypertime", new System.Action(HyperTime));
-                uConsole.RegisterCommand("rn_fires", new System.Action(Fires));
-            }
-        }           
+            ModLog("Is Carrying Carcass: " + CarcassMoving.isCarryingCarcass);
+            ModLog("Carcass Object Active: " + (CarcassMoving.carcassObj != null).ToString());
+        }
     }
 }

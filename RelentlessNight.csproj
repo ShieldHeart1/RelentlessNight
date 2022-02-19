@@ -36,59 +36,73 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <Private>False</Private>
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Il2Cppmscorlib">
       <Private>False</Private>
     </Reference>
-    <Reference Include="Il2CppSystem">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MelonLoader.ModHandler">
-      <Private>False</Private>
+    <Reference Include="MelonLoader, Version=0.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\MelonLoader.dll</HintPath>
     </Reference>
     <Reference Include="ModSettings, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\Mods\ModSettings.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
       <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="UnhollowerBaseLib">
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Json, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Managed\System.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="UnhollowerBaseLib, Version=0.4.15.4, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Il2CppAssemblyUnhollower\UnhollowerBaseLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnhollowerRuntimeLib">
+    <Reference Include="UnhollowerRuntimeLib, Version=0.4.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Il2CppAssemblyUnhollower\UnhollowerRuntimeLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
+    <Reference Include="UnityEngine.CoreModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.JSONSerializeModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gameplay\BurnDurationManager.cs" />
     <Compile Include="Gameplay\CarcassMoving.cs" />
-    <Compile Include="Gameplay\BurnTimes.cs" />
     <Compile Include="Gameplay\ElectricTorchLighting.cs" />
-    <Compile Include="Gameplay\VanillaBugFix.cs" />
+    <Compile Include="Gameplay\VanillaBugFixes.cs" />
     <Compile Include="Gameplay\RealisticFreezing.cs" />
-    <Compile Include="Gameplay\Affliction.cs" />
-    <Compile Include="Gameplay\NightChange.cs" />
-    <Compile Include="Gameplay\TimeChange.cs" />
-    <Compile Include="Gameplay\WeatherChange.cs" />
-    <Compile Include="Gameplay\TemperatureEffects.cs" />
-    <Compile Include="Gameplay\HeatRetention.cs" />
-    <Compile Include="Gameplay\WildlifeDecline.cs" />
+    <Compile Include="Gameplay\AfflictionManager.cs" />
+    <Compile Include="Gameplay\NightActivityManager.cs" />
+    <Compile Include="Gameplay\TimeManager.cs" />
+    <Compile Include="Gameplay\WeatherManager.cs" />
+    <Compile Include="Gameplay\TemperatureManager.cs" />
+    <Compile Include="Gameplay\HeatRetentionManager.cs" />
+    <Compile Include="Gameplay\WildlifeManager.cs" />
     <Compile Include="RnGlobals.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\SaveManager.cs" />
     <Compile Include="Utility\Utilities.cs" />
     <Compile Include="Utility\Mod.cs" />
     <Compile Include="Utility\Settings.cs" />
-    <Compile Include="Utility\SaveSystem.cs" />
-    <Compile Include="Utility\MenuChange.cs" />
+    <Compile Include="Utility\MenuManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Translations\" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
