@@ -14,7 +14,7 @@ Relentless Night will add a progress difficulty into survival mode that at first
 
 2. Follow the instructions at the top of [Xpazemen’s list of TLD mods](http://xpazeman.com/tld-mod-list/).
 
-3. Ensure you have downloaded ModSetting as well as Relentless Night, and ensure you have placed them both in the “Mods” folder.
+3. Ensure you download ModSetting as well as Relentless Night, and place them both in the “Mods” folder.
 
 4. Launch and enjoy!
 
