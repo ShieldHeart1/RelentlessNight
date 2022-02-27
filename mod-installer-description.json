@@ -1,20 +1,20 @@
 {
   "name": "Relentless Night",
   "url": "https://github.com/Burakalite/RelentlessNight",
-  "description": "An extensive gameplay mod adding a new sandbox scenario where the spin of the Earth is slowing down, introducing progressive diifulty which makes surival harder and harsher over time. Slowly but surely, days and nights get longer, leading to a world with continuously changing temperatures, weather patterns, wildlife populations, and more.",
+  "description": "An extensive gameplay mod adding a new sandbox scenario where the spin of the Earth is slowing down, introducing progressive diifulty which makes survival harder and harsher over time. Slowly but surely, days and nights get longer, leading to a world with continuously changing temperatures, weather patterns, wildlife populations, and more.",
   "author": "ShieldHeart",
   "releases": [
     {
       "name": "Relentless Night",
-      "version": "4.00",
+      "version": "4.40",
       "author": "ShieldHeart",
       "description": "An extensive gameplay mod adding a new sandbox scenario where the spin of the Earth is slowing down, introducing progressive diifulty which makes surival harder and harsher over time. Slowly but surely, days and nights get longer, leading to a world with continuously changing temperatures, weather patterns, wildlife populations, and more..",
-      "releaseDate": "2020-08-16",
+      "releaseDate": "2022-02-19",
       "changes": "",
       "dependencies": [
         {
           "name": "ModSettings",
-          "version": "1.6"
+          "version": "1.8.1"
         }
       ]
     }  
