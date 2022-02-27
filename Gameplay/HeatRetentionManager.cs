@@ -214,37 +214,39 @@ namespace RelentlessNight
         {
             if (__instance.ProgressBarIsActive())
             {
-                Utilities.PlayGameErrorAudio();
+                GameAudioManager.PlayGUIError();
                 return;
             }
             GearItem selectedFuelSource = __instance.GetSelectedFuelSource();
             if (selectedFuelSource == null)
             {
-                Utilities.PlayGameErrorAudio();
+                GameAudioManager.PlayGUIError();
                 return;
             }
             FuelSourceItem fuelSourceItem = selectedFuelSource.m_FuelSourceItem;
             if (fuelSourceItem == null)
             {
-                Utilities.PlayGameErrorAudio();
+                GameAudioManager.PlayGUIError();
                 return;
             }
             GameObject m_FireContainer = __instance.m_FireContainer;
             if (!m_FireContainer)
             {
-                Utilities.PlayGameErrorAudio(); 
+                GameAudioManager.PlayGUIError();
                 return;
             }
-
             Fire m_Fire = __instance.m_Fire;
-            if (!m_Fire) return;
-
+            if (!m_Fire)
+            {
+                return;
+            }
             if (m_Fire.FireShouldBlowOutFromWind())
             {
                 Utilities.DisallowActionWithGameMessage("GAMEPLAY_TooWindyToAddFuel");
                 return;
             }
-            if (!__instance.FireInForge())
+            bool fireInForge = __instance.FireInForge();
+            if (!fireInForge)
             {
                 float currentFireBurnDurationHours = m_Fire.GetRemainingLifeTimeSeconds() / 3600f;
                 float fuelSourceItemBurnDurationHours = fuelSourceItem.GetModifiedBurnDurationHours(selectedFuelSource.GetNormalizedCondition());
@@ -259,13 +261,21 @@ namespace RelentlessNight
             }
             if (selectedFuelSource.m_ResearchItem && !selectedFuelSource.m_ResearchItem.IsResearchComplete())
             {
+                __instance.m_ResearchItemToBurn = selectedFuelSource;
                 InterfaceManager.m_Panel_Confirmation.ShowBurnResearchNotification(new Action(() => __instance.ForceBurnResearchItem()));
                 return;
             }
+            if (selectedFuelSource == GameManager.GetPlayerManagerComponent().m_ItemInHands)
+            {
+                GameManager.GetPlayerManagerComponent().UnequipItemInHandsSkipAnimation();
+            }
+            if (selectedFuelSource == GameManager.GetPlayerManagerComponent().m_PickupGearItem)
+            {
+                GameManager.GetPlayerManagerComponent().ResetPickup();
+            }
             GameAudioManager.PlaySound(__instance.m_FeedFireAudio, InterfaceManager.GetSoundEmitter());
-            m_Fire.AddFuel(__instance.GetSelectedFuelSource(), __instance.FireInForge());
+            m_Fire.AddFuel(selectedFuelSource, __instance.FireInForge());
             GameManager.GetPlayerManagerComponent().ConsumeUnitFromInventory(fuelSourceItem.gameObject);
-            return;
         }
         // Update method of the HeatSource class is a large method, it's been patched and integrated here with RN logic following the last mono assembly.
         internal static void HeatSource_UpdateRewrite(HeatSource __instance)

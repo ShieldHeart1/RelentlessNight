@@ -2,9 +2,9 @@
 {
     public class Global
     {
-        internal const string RnVersion = "4.40";
+        internal const string RnVersion = "4.50";
 
-        // Rn globals representing current mod settings
+        // RN globals representing current mod settings
         internal static int worldSpinDeclinePercent;
         internal static bool endgameEnabled;        
         internal static int endgameDay;
@@ -15,8 +15,10 @@
         internal static bool electricTorchLightingEnabled;
         internal static bool heatRetentionEnabled;
         internal static bool realisticFreezingEnabled;
-        internal static int minWildlifeDay;
         internal static int minWildlifePercent;
+        internal static int minWildlifeDay;
+        internal static int minFishPercent;
+        internal static int minFishDay;        
         internal static float fireFuelDurationMultiplier;
         internal static float lanternFuelDurationMultiplier;
         internal static float torchBurnDurationMultiplier;
@@ -25,12 +27,12 @@
         internal static int lastTemperatureOffsetDay;
         internal static int dayTidalLocked;
 
-        public static void SetGameGlobalsForNewGame()
+        internal static void SetGameGlobalsForNewGame()
         {
             lastTemperatureOffsetDay = 0;
             dayTidalLocked = -1;
         }
-        public static void SetGameGlobalsFromSave(SaveManager.ModSaveData data)
+        internal static void SetGameGlobalsFromSave(SaveManager.ModSaveData data)
         {
             lastTemperatureOffsetDay = data.lastTemperatureOffsetDay;
             dayTidalLocked = data.dayTidalLocked;
@@ -47,8 +49,10 @@
             electricTorchLightingEnabled = data.electricTorchLightingEnabled;
             heatRetentionEnabled = data.heatRetentionEnabled;
             realisticFreezingEnabled = data.realisticFreezingEnabled;
-            minWildlifeDay = data.minWildlifeDay;
             minWildlifePercent = data.minWildlifePercent;
+            minWildlifeDay = data.minWildlifeDay;
+            minFishPercent = data.minFishPercent;
+            minFishDay = data.minFishDay;
             fireFuelDurationMultiplier = data.fireFuelDurationMultiplier;
             lanternFuelDurationMultiplier = data.lanternFuelDurationMultiplier;
             torchBurnDurationMultiplier = data.torchBurnDurationMultiplier;
@@ -65,8 +69,10 @@
             electricTorchLightingEnabled = Settings.options.electricTorchLightingEnabled;
             heatRetentionEnabled = Settings.options.heatRetentionEnabled;
             realisticFreezingEnabled = Settings.options.realisticFreezingEnabled;
-            minWildlifeDay = Settings.options.minWildlifeDay;
             minWildlifePercent = Settings.options.minWildlifePercent;
+            minWildlifeDay = Settings.options.minWildlifeDay;
+            minFishPercent = Settings.options.minFishPercent;
+            minFishDay = Settings.options.minFishDay;
             fireFuelDurationMultiplier = Settings.options.fireFuelDurationMultiplier;
             lanternFuelDurationMultiplier = Settings.options.lanternFuelDurationMultiplier;
             torchBurnDurationMultiplier = Settings.options.torchBurnDurationMultiplier;
@@ -83,8 +89,10 @@
             electricTorchLightingEnabled = true;
             heatRetentionEnabled = true;
             realisticFreezingEnabled = true;
-            minWildlifeDay = 120;
             minWildlifePercent = 10;
+            minWildlifeDay = 120;
+            minFishPercent = 20;
+            minFishDay = 120;
             fireFuelDurationMultiplier = 1.5f;
             lanternFuelDurationMultiplier = 1.5f;
             torchBurnDurationMultiplier = 1.5f;
@@ -93,7 +101,7 @@
         {
             worldSpinDeclinePercent = 0;
             endgameEnabled = true;
-            endgameDay = 0;
+            endgameDay = 1;
             endgameAuroraEnabled = true;
             minAirTemperature = -80;
             indoorOutdoorTemperaturePercent = 60;
@@ -101,8 +109,10 @@
             electricTorchLightingEnabled = true;
             heatRetentionEnabled = true;
             realisticFreezingEnabled = true;
-            minWildlifeDay = 120;
             minWildlifePercent = 10;
+            minWildlifeDay = 120;
+            minFishPercent = 20;
+            minFishDay = 150;
             fireFuelDurationMultiplier = 1.5f;
             lanternFuelDurationMultiplier = 1.5f;
             torchBurnDurationMultiplier = 1.5f;
@@ -111,7 +121,7 @@
         {
             worldSpinDeclinePercent = 0;
             endgameEnabled = true;
-            endgameDay = 0;
+            endgameDay = 1;
             endgameAuroraEnabled = true;
             minAirTemperature = -120;
             indoorOutdoorTemperaturePercent = 100;
@@ -119,8 +129,10 @@
             electricTorchLightingEnabled = false;
             heatRetentionEnabled = false;
             realisticFreezingEnabled = true;
-            minWildlifeDay = 0;
             minWildlifePercent = 0;
+            minWildlifeDay = 1;
+            minFishPercent = 0;
+            minFishDay = 1;
             fireFuelDurationMultiplier = 1f;
             lanternFuelDurationMultiplier = 1f;
             torchBurnDurationMultiplier = 1f;

@@ -17,6 +17,7 @@ namespace RelentlessNight
 
                 int dayNumber = GameManager.GetTimeOfDayComponent().GetDayNumber();
                 WeatherSet m_CurrentWeatherSet = __instance.m_CurrentWeatherSet;
+
                 MaybeEliminateDenseFog(m_CurrentWeatherSet, dayNumber);
                 MaybeEliminateLightFog(m_CurrentWeatherSet, dayNumber);
             }

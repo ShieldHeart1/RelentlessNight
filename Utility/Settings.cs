@@ -17,8 +17,8 @@ namespace RelentlessNight
         public bool endgameEnabled = Global.endgameEnabled;
 
         [Name("Endgame Start Day")]
-        [Description("The endgame will start during the next nightfall after this many days survived, measured in 24 hour days.\n\nSetting this to zero will begin the endgame at the start of the game.\n\nYour journal will still track days survived in regular 24-hour days no matter how long the earth takes to make one full rotation.")]
-        [Slider(0f, 500f, 251)]
+        [Description("The endgame will start during the next nightfall after this many days survived, measured in 24 hour days.\n\nSetting this to day one will begin the endgame at the start of the game.\n\nYour journal will still track days survived in regular 24-hour days no matter how long the earth takes to make one full rotation.")]
+        [Slider(1f, 500f, 500)]
         public int endgameDay = Global.endgameDay;
 
         [Name("Permanent Aurora At Endgame")]
@@ -26,7 +26,7 @@ namespace RelentlessNight
         public bool endgameAuroraEnabled = Global.endgameAuroraEnabled;
 
         [Name("Minimum Air Temperature")]
-        [Description("The minimum air temperature that will be reached at the endgame or during a sufficiently long night. Temperatures do not drop unless nights are set to get longer.")]
+        [Description("The minimum air temperature that will be reached at the endgame or during a sufficiently long night. Temperatures do not drop unless nights are set to get longer. This temperature decline, along with all other Relentless Night settings, will stack together with vanilla settings that adjust the same feature.")]
         [Slider(-20f, -120f, 101, NumberFormat = "{0,3:D}°C")]
         public int minAirTemperature = Global.minAirTemperature;
 
@@ -57,12 +57,22 @@ namespace RelentlessNight
         public int minWildlifePercent = Global.minWildlifePercent;
 
         [Name("Day Wildlife Decline Reaches Minimum")]
-        [Description("Day at which wildlife populations will reach the minimum value set above. Setting this day to zero will start the game at the minimum population. This does not affect fish or fishing.")]
-        [Slider(0f, 500f, 251)]
+        [Description("Day at which wildlife populations will reach the minimum value set above. Setting this day one will start the game at the minimum population. This does not affect fish or fishing.")]
+        [Slider(1f, 500f, 500)]
         public int minWildlifeDay = Global.minWildlifeDay;
 
+        [Name("Fish Final Minimum Population")]
+        [Description("Fish population and chances of catching fish will decline over time. This setting determines the minimum that fish population can fall to.\n\n0% - Catching fish will be impossible.\n\n100% - Fishing chances will not decline over time, disables this feature.")]
+        [Slider(0f, 100f, 101, NumberFormat = "{0,3:D}%")]
+        public int minFishPercent = Global.minFishPercent;
+
+        [Name("Day Fish Decline Reaches Minimum")]
+        [Description("Day at which fishing chances reach the minimum value set above. Setting this to day one will start the game at the minimum population.")]
+        [Slider(1f, 500f, 500)]
+        public int minFishDay = Global.minFishDay;
+
         [Name("Fire Fuel Burn Time")]
-        [Description("Extends how long books, wood, and coal fuels for fires will last after being placed in the fire.\n\n1x - No change in fuel burn time.")]
+        [Description("Extends how long wood, coal, and book fuels for fires will last after being placed in the fire.\n\n1x - No change in fuel burn time.")]
         [Slider(1f, 3f, 21, NumberFormat = "{0,2:F1}x")]
         public float fireFuelDurationMultiplier = Global.fireFuelDurationMultiplier;
 
@@ -78,12 +88,13 @@ namespace RelentlessNight
 
         protected override void OnConfirm()
         {
+            base.OnConfirm();
             Global.SetOptionGlobalsFromModOptions();
-            GameManager.SaveGame();
+            WildlifeManager.ResetWildlifePopulations();
         }
         protected override void OnChange(FieldInfo field, object oldValue, object newValue)
         {
-            if (field.Name == nameof(endgameEnabled) || field.Name == nameof(minWildlifePercent) || field.Name == nameof(worldSpinDeclinePercent))
+            if (field.Name == nameof(endgameEnabled) || field.Name == nameof(worldSpinDeclinePercent) || field.Name == nameof(minWildlifePercent) || field.Name == nameof(minFishPercent))
             {
                 RefreshFields();
             }
@@ -94,6 +105,7 @@ namespace RelentlessNight
             SetFieldVisible(nameof(endgameAuroraEnabled), endgameEnabled);
             SetFieldVisible(nameof(minAirTemperature), worldSpinDeclinePercent != 0);
             SetFieldVisible(nameof(minWildlifeDay), minWildlifePercent != 100);
+            SetFieldVisible(nameof(minFishDay), minFishPercent != 100);
         }
     }    
 
@@ -122,6 +134,8 @@ namespace RelentlessNight
             options.realisticFreezingEnabled = Global.realisticFreezingEnabled;
             options.minWildlifePercent = Global.minWildlifePercent;
             options.minWildlifeDay = Global.minWildlifeDay;
+            options.minFishPercent = Global.minFishPercent;
+            options.minFishDay = Global.minFishDay;
             options.fireFuelDurationMultiplier = Global.fireFuelDurationMultiplier;
             options.lanternFuelDurationMultiplier = Global.lanternFuelDurationMultiplier;
             options.torchBurnDurationMultiplier = Global.torchBurnDurationMultiplier;

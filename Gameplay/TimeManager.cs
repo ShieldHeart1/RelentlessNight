@@ -5,7 +5,7 @@ namespace RelentlessNight
 {
     internal class TimeManager
     {
-        // solarHours represents time in terms of position to the sun, after one rotation, it will be 24.
+        // solarHours represents time in terms of position to the sun
         internal static float solarHours = 0f;
         internal static float ticksInNormalDay = 7200f;
         internal static float elapsedHoursAccumulator = 0f;
@@ -18,7 +18,14 @@ namespace RelentlessNight
             {
                 if (!MenuManager.modEnabled) return;
 
-                if (GameIsStartingAtEndgame()) SetTimeToMidnight();
+                if (GameStartedAtEndgame())
+                {
+                    SetTimeToMidnight();
+                    if (Global.endgameAuroraEnabled && GameManager.GetWeatherComponent().m_CurrentWeatherStage != WeatherStage.ClearAurora)
+                    {
+                        GameManager.GetWeatherTransitionComponent().ActivateWeatherSet(WeatherStage.ClearAurora);
+                    }
+                }
             }
         }
         [HarmonyPatch(typeof(Feat_EfficientMachine), "IncrementElapsedHours", null)]
@@ -120,9 +127,9 @@ namespace RelentlessNight
         {
             return Global.endgameEnabled && GameManager.GetTimeOfDayComponent().GetDayNumber() >= Global.endgameDay && GameManager.GetTimeOfDayComponent().IsNight();
         }
-        internal static bool GameIsStartingAtEndgame()
+        internal static bool GameStartedAtEndgame()
         {
-            return Global.endgameEnabled && Global.endgameDay == 0;
+            return Global.endgameEnabled && Global.endgameDay == 1;
         }
         // Indicates to player that they are now in the endgame through viewing the time widget, white is the default game color
         internal static void MaybeChangeMoonColorInTimeWidget(TimeWidget __instance)

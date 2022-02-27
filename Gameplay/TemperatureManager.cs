@@ -7,7 +7,7 @@ namespace RelentlessNight
     {
         internal const float temperatureChangeMultiplier = 0.014f;
         internal const int maxOutdoorTemperature = 3;
-        internal const int dailyRandomTemperatureRange = 10;
+        internal const int dailyRandomTemperatureRange = 6;
 
         internal static float currentDayRandomTemperatureOffset = 0;
 

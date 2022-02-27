@@ -5,13 +5,13 @@ using Il2CppSystem.Collections.Generic;
 
 namespace RelentlessNight
 {
-    public class SaveManager
+    internal class SaveManager
     {
         internal const string rnSavePrefix = "relentlessnight";
 
         internal static bool isFirstMenuInitialize = true;
 
-        public class ModSaveData
+        internal class ModSaveData
         {
             // Mod settings
             public int worldSpinDeclinePercent;
@@ -24,8 +24,10 @@ namespace RelentlessNight
             public bool electricTorchLightingEnabled;
             public bool heatRetentionEnabled;
             public bool realisticFreezingEnabled;
-            public int minWildlifeDay;
             public int minWildlifePercent;
+            public int minWildlifeDay;
+            public int minFishPercent;
+            public int minFishDay;
             public float fireFuelDurationMultiplier;
             public float lanternFuelDurationMultiplier;
             public float torchBurnDurationMultiplier;
@@ -52,6 +54,7 @@ namespace RelentlessNight
                     ModSaveData data = JsonConvert.DeserializeObject<ModSaveData>(lastRnSaveData);
 
                     Global.SetOptionGlobalsFromSave(data);
+                    MaybeUpdateOptionGlobalsForNewModVersion(data);
                     Settings.SetModSettingsToOptionGlobals();
                 }
             }
@@ -80,6 +83,7 @@ namespace RelentlessNight
 
                     Global.SetOptionGlobalsFromSave(data);
                     Global.SetGameGlobalsFromSave(data);
+                    MaybeUpdateOptionGlobalsForNewModVersion(data);
                     Settings.SetModSettingsToOptionGlobals();
                 }
                 else
@@ -164,6 +168,20 @@ namespace RelentlessNight
                 return sandboxSaveSlots.Count;
             }
         }
+        internal static string GetLastRnSaveData()
+        {
+            SaveGameSlotHelper.RefreshSandboxSaveSlots();
+            List<SaveSlotInfo> sandboxSaveSlots = SaveGameSlotHelper.GetSaveSlotInfoList(SaveSlotType.SANDBOX);
+
+            foreach (SaveSlotInfo saveSlot in sandboxSaveSlots)
+            {
+                if (saveSlot.m_SaveSlotName.StartsWith(rnSavePrefix))
+                {
+                    return SaveGameSlots.LoadDataFromSlot(saveSlot.m_SaveSlotName, "Relentless Night");
+                }
+            }
+            return null;
+        }
         internal static void SaveGlobalsToSaveFile(SaveSlotType gameMode, string name)
         {
             ModSaveData data = new ModSaveData
@@ -178,8 +196,10 @@ namespace RelentlessNight
                 electricTorchLightingEnabled = Global.electricTorchLightingEnabled,
                 heatRetentionEnabled = Global.heatRetentionEnabled,
                 realisticFreezingEnabled = Global.realisticFreezingEnabled,
-                minWildlifeDay = Global.minWildlifeDay,
                 minWildlifePercent = Global.minWildlifePercent,
+                minWildlifeDay = Global.minWildlifeDay,
+                minFishPercent = Global.minFishPercent,
+                minFishDay = Global.minFishDay,
                 fireFuelDurationMultiplier = Global.fireFuelDurationMultiplier,
                 lanternFuelDurationMultiplier = Global.lanternFuelDurationMultiplier,
                 torchBurnDurationMultiplier = Global.torchBurnDurationMultiplier,
@@ -188,20 +208,6 @@ namespace RelentlessNight
                 dayTidalLocked = Global.dayTidalLocked,
             };
             SaveGameSlots.SaveDataToSlot(gameMode, SaveGameSystem.m_CurrentEpisode, SaveGameSystem.m_CurrentGameId, name, "RelentlessNight", JsonConvert.SerializeObject(data));
-        }
-        internal static string GetLastRnSaveData()
-        {
-            SaveGameSlotHelper.RefreshSandboxSaveSlots();
-            List<SaveSlotInfo> sandboxSaveSlots = SaveGameSlotHelper.GetSaveSlotInfoList(SaveSlotType.SANDBOX);
-
-            foreach (SaveSlotInfo saveSlot in sandboxSaveSlots)
-            {
-                if (saveSlot.m_SaveSlotName.StartsWith(rnSavePrefix))
-                {
-                    return SaveGameSlots.LoadDataFromSlot(saveSlot.m_SaveSlotName, "RelentlessNight");
-                }
-            }
-            return null;
         }
         internal static void LoadRnSaveFiles()
         {
@@ -226,6 +232,16 @@ namespace RelentlessNight
         {
             // Pre-4.40 save file name prefix
             return fileName.StartsWith("ep1relentless");
+        }
+        internal static void MaybeUpdateOptionGlobalsForNewModVersion(ModSaveData data)
+        {
+            if (data.endgameDay == 0) Global.endgameDay = 1;
+            if (data.minWildlifeDay == 0) Global.minWildlifeDay = 1;
+            if (data.minFishDay == 0) 
+            {
+                Global.minFishPercent = 20;
+                Global.minFishDay = 120;
+            }
         }
     }
 }

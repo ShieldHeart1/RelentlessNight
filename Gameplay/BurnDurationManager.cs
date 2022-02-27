@@ -24,27 +24,15 @@ namespace RelentlessNight
                 __instance.m_FuelBurnLitersPerHour = 0.25f / Global.lanternFuelDurationMultiplier;
             }
         }
-        [HarmonyPatch(typeof(TorchItem), "Update")]
-        internal static class TorchItem_Update
+        [HarmonyPatch(typeof(TorchItem), "Awake")]
+        internal static class TorchItem_Awake_Post
         {
             private static void Postfix(TorchItem __instance)
             {
                 if (!MenuManager.modEnabled) return;
 
-                if (TorchBurnDurationChanged(__instance))
-                {
-                    float oldBurnTime = __instance.m_BurnLifetimeMinutes;
-                    float newBurnTime = 90f * Global.torchBurnDurationMultiplier;
-
-                    __instance.m_ElapsedBurnMinutes *= newBurnTime / oldBurnTime;
-                }
-                __instance.m_BurnLifetimeMinutes = 90f * Global.torchBurnDurationMultiplier;
+                __instance.m_BurnLifetimeMinutes *= Global.torchBurnDurationMultiplier;
             }
-        }
-
-        internal static bool TorchBurnDurationChanged(TorchItem __instance)
-        {
-            return __instance.m_BurnLifetimeMinutes != 90f * Global.torchBurnDurationMultiplier;
         }
     }
 }

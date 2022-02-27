@@ -7,7 +7,7 @@ using MelonLoader;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Relentless Night")]
-[assembly: AssemblyCopyright("Copyright © 2021")]
+[assembly: AssemblyCopyright("Copyright © 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -15,8 +15,8 @@ using MelonLoader;
 
 [assembly: Guid("e5516a81-1b2a-4850-940f-f05a8cba6ea0")]
 
-[assembly: AssemblyVersion("4.40")]
-[assembly: AssemblyFileVersion("4.40")]
+[assembly: AssemblyVersion("4.50")]
+[assembly: AssemblyFileVersion("4.50")]
 
-[assembly: MelonInfo(typeof(RelentlessNight.Mod), "Relentless Night", "4.40", "ShieldHeart")]
+[assembly: MelonInfo(typeof(RelentlessNight.Mod), "Relentless Night", "4.50", "ShieldHeart")]
 [assembly: MelonGame("Hinterland", "TheLongDark")]

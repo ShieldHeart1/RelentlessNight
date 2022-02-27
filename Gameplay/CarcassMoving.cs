@@ -76,6 +76,11 @@ namespace RelentlessNight
         {
             private static void Postfix()
             {
+                foreach (AuroraElectrolizer auroraElectrolizer in AuroraManager.m_AuroraElectrolizerList)
+                {
+                    GameManager.GetAuroraManager().m_BoostAuroraElectrolyzer = true;
+                }
+
                 if (!MenuManager.modEnabled || !Global.carcassMovingEnabled || !isCarryingCarcass) return;
 
                 if (carcassObj == null) isCarryingCarcass = false;
@@ -333,6 +338,7 @@ namespace RelentlessNight
             bodyHarvest = null;
             carcassObj = null;
         }
+
         internal static void EnableCarcassMeshes()
         {
             SkinnedMeshRenderer[] skinnedMeshRenderers = carcassObj.GetComponentsInChildren<SkinnedMeshRenderer>();

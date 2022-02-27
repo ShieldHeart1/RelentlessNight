@@ -26,6 +26,20 @@ namespace RelentlessNight
                 return false;
             }
         }
+        // Ensures aurora-dependent indoor lights are active if in endgame and permemnant aurora is enabled
+        [HarmonyPatch(typeof(AuroraManager), "UpdateVisibility", null)]
+        internal static class AuroraManager_UpdateVisibility
+        {
+            private static void Postfix(AuroraManager __instance)
+            {
+                if (!MenuManager.modEnabled || !Global.endgameAuroraEnabled || !TimeManager.GameInEndgame()) return;
+
+                foreach (AuroraElectrolizer auroraElectrolizer in AuroraManager.m_AuroraElectrolizerList)
+                {
+                    __instance.m_BoostAuroraElectrolyzer = true;
+                }
+            }
+        }
         // Below two patches adjust the indoor light intensity during clear nights and bright moon phases
         [HarmonyPatch(typeof(InteriorLightingGroup), "ScrubUpdate", null)]
         internal static class InteriorLightingGroup_ScrubUpdate
