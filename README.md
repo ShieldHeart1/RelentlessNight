@@ -74,6 +74,14 @@ The wildlife population and respawn rates will decline over time as longer night
 
 Day at which wildlife populations will reach the minimum value set above.
 
+### Fish Final Minimum Population
+
+Fish population and chances of catching fish will decline over time. This setting determines the minimum that fish population can fall to.
+
+### Day Fish Decline Reaches Minimum
+
+Day at which fishing chances reach the minimum value set above.
+
 ### Fire Fuel Burn Time
 
 Extends how long books, wood, and coal fuels for fires will last after being placed in the fire.
