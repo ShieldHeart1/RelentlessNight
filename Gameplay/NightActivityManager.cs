@@ -32,11 +32,16 @@ namespace RelentlessNight
         {
             private static void Postfix(AuroraManager __instance)
             {
-                if (!MenuManager.modEnabled || !Global.endgameAuroraEnabled || !TimeManager.GameInEndgame()) return;
+                if (!MenuManager.modEnabled || !Global.endgameAuroraEnabled) return;
 
-                foreach (AuroraElectrolizer auroraElectrolizer in AuroraManager.m_AuroraElectrolizerList)
+                if (TimeManager.GameInEndgame())
                 {
-                    __instance.m_BoostAuroraElectrolyzer = true;
+
+                     __instance.m_BoostAuroraElectrolyzer = true;
+                }
+                else
+                {
+                    __instance.m_BoostAuroraElectrolyzer = false;
                 }
             }
         }

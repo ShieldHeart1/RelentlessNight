@@ -2,7 +2,7 @@
 {
     public class Global
     {
-        internal const string RnVersion = "4.50";
+        internal const string RnVersion = "4.51";
 
         // RN globals representing current mod settings
         internal static int worldSpinDeclinePercent;

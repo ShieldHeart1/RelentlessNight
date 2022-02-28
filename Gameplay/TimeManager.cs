@@ -125,7 +125,7 @@ namespace RelentlessNight
         }
         internal static bool GameInEndgame()
         {
-            return Global.endgameEnabled && GameManager.GetTimeOfDayComponent().GetDayNumber() >= Global.endgameDay && GameManager.GetTimeOfDayComponent().IsNight();
+            return Global.endgameEnabled && GameManager.GetTimeOfDayComponent().IsNight() && GameManager.GetTimeOfDayComponent().GetDayNumber() >= Global.endgameDay;
         }
         internal static bool GameStartedAtEndgame()
         {
