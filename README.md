@@ -1,4 +1,4 @@
-# Relentless Night V4.40
+# Relentless Night V4.50
 
 Relentless Night is a gameplay mod for The Long Dark that introduces a new sandbox scenario where the spin of the Earth is slowing down. Slowly but surely, days and nights are getting longer over time, leading to a world with continuously changing temperatures, weather patterns, wildlife changes, and more.
 
@@ -73,6 +73,14 @@ The wildlife population and respawn rates will decline over time as longer night
 ### Day Wildlife Decline Reaches Minimum
 
 Day at which wildlife populations will reach the minimum value set above.
+
+### Fish Final Minimum Population
+
+Fish population and chances of catching fish will decline over time. This setting determines the minimum that fish population can fall to.
+
+### Day Fish Decline Reaches Minimum
+
+Day at which fishing chances reach the minimum value set above.
 
 ### Fire Fuel Burn Time
 
