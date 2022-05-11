@@ -98,4 +98,4 @@ Extends how long torches will last while in use.
 
 You're all set to get started! Thank you for all the players who have been supportive of the mod during development, it's been a lot of fun to work on it, and I will continue to do so with your feedback!
 
-Please do feel free to join the mod [discord community](https://discord.gg/9ndTkCF). I am most active there for mod announcements and to answer any questions.
+Please do feel free to join the mod [discord community](https://discord.gg/GjAG9XNfR7). I am most active there for mod announcements and to answer any questions.
