@@ -177,7 +177,7 @@ namespace RelentlessNight
             {
                 if (saveSlot.m_SaveSlotName.StartsWith(rnSavePrefix))
                 {
-                    return SaveGameSlots.LoadDataFromSlot(saveSlot.m_SaveSlotName, "Relentless Night");
+                    return SaveGameSlots.LoadDataFromSlot(saveSlot.m_SaveSlotName, "RelentlessNight");
                 }
             }
             return null;
