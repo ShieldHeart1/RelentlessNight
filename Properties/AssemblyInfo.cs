@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 using MelonLoader;
+using RelentlessNight;
 
 [assembly: AssemblyTitle("RelentlessNight")]
 [assembly: AssemblyDescription("Relentless Night Mod")]
@@ -15,8 +16,8 @@ using MelonLoader;
 
 [assembly: Guid("e5516a81-1b2a-4850-940f-f05a8cba6ea0")]
 
-[assembly: AssemblyVersion("4.51")]
-[assembly: AssemblyFileVersion("4.51")]
+[assembly: AssemblyVersion(Global.RnVersion)]
+[assembly: AssemblyFileVersion(Global.RnVersion)]
 
-[assembly: MelonInfo(typeof(RelentlessNight.Mod), "Relentless Night", "4.51", "ShieldHeart")]
+[assembly: MelonInfo(typeof(RelentlessNight.Mod), "Relentless Night", Global.RnVersion, "ShieldHeart")]
 [assembly: MelonGame("Hinterland", "TheLongDark")]
