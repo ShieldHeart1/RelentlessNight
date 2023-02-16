@@ -8,6 +8,7 @@ namespace RelentlessNight
     internal class SaveManager
     {
         internal const string rnSavePrefix = "relentlessnight";
+		private static string savedataKey = "RelentlessNight";
 
         internal static bool isFirstMenuInitialize = true;
 
@@ -76,7 +77,7 @@ namespace RelentlessNight
             {
                 if (!MenuManager.modEnabled || GameManager.m_ActiveScene == "MainMenu") return;
 
-                string modData = SaveGameSlots.LoadDataFromSlot(SaveGameSystem.GetCurrentSaveName(), "RelentlessNight");
+                string modData = SaveGameSlots.LoadDataFromSlot(SaveGameSystem.GetCurrentSaveName(), savedataKey);
                 if (modData != null)
                 {
                     ModSaveData data = JsonConvert.DeserializeObject<ModSaveData>(modData);
@@ -177,7 +178,7 @@ namespace RelentlessNight
             {
                 if (saveSlot.m_SaveSlotName.StartsWith(rnSavePrefix))
                 {
-                    return SaveGameSlots.LoadDataFromSlot(saveSlot.m_SaveSlotName, "Relentless Night");
+                    return SaveGameSlots.LoadDataFromSlot(saveSlot.m_SaveSlotName, savedataKey);
                 }
             }
             return null;
@@ -207,7 +208,7 @@ namespace RelentlessNight
                 lastTemperatureOffsetDay = Global.lastTemperatureOffsetDay,
                 dayTidalLocked = Global.dayTidalLocked,
             };
-            SaveGameSlots.SaveDataToSlot(gameMode, SaveGameSystem.m_CurrentEpisode, SaveGameSystem.m_CurrentGameId, name, "RelentlessNight", JsonConvert.SerializeObject(data));
+            SaveGameSlots.SaveDataToSlot(gameMode, SaveGameSystem.m_CurrentEpisode, SaveGameSystem.m_CurrentGameId, name, savedataKey, JsonConvert.SerializeObject(data));
         }
         internal static void LoadRnSaveFiles()
         {
