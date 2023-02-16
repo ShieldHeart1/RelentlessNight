@@ -1,4 +1,4 @@
-# Relentless Night V4.51
+# Relentless Night V4.52
 
 Relentless Night is a gameplay mod for The Long Dark that introduces a new sandbox scenario where the spin of the Earth is slowing down. Slowly but surely, days and nights are getting longer over time, leading to a world with continuously changing temperatures, weather patterns, wildlife changes, and more.
 
