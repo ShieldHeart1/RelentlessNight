@@ -71,12 +71,12 @@ namespace RelentlessNight
         }
         internal static void ResetWildlifePopulations()
         {
-            List<SpawnRegion> spawnRegions = GameManager.GetSpawnRegionManager().m_SpawnRegions;
+            Il2CppSystem.Collections.Generic.List<SpawnRegion> spawnRegions = GameManager.GetSpawnRegionManager().m_SpawnRegions;
             foreach(SpawnRegion spawnRegion in spawnRegions)
             {
                 spawnRegion.Start();
             }
-            List<IceFishingHole> iceFishingHoles = IceFishingHole.m_IceFishingHoles;
+			Il2CppSystem.Collections.Generic.List<IceFishingHole> iceFishingHoles = IceFishingHole.m_IceFishingHoles;
             foreach (IceFishingHole iceFishingHole in iceFishingHoles)
             {
                 iceFishingHole.Start();

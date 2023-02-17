@@ -27,8 +27,8 @@ namespace RelentlessNight
             }
         }
         // Ensures aurora-dependent indoor lights are active if in endgame and permemnant aurora is enabled
-        [HarmonyPatch(typeof(AuroraManager), "UpdateVisibility", null)]
-        internal static class AuroraManager_UpdateVisibility
+        [HarmonyPatch(typeof(AuroraManager), "Update", null)]
+        internal static class AuroraManager_Update
         {
             private static void Postfix(AuroraManager __instance)
             {

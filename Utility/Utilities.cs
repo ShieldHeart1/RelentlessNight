@@ -31,7 +31,7 @@ namespace RelentlessNight
         }
         internal static void PlayGameErrorAudio()
         {
-            GameAudioManager.PlaySound(GameManager.GetGameAudioManagerComponent().m_ErrorAudio, GameManager.GetGameAudioManagerComponent().gameObject);
+            GameAudioManager.PlaySound(GameAudioManager.Instance.m_ErrorAudio, GameAudioManager.Instance.gameObject);
         }
         internal static void DisallowActionWithGameMessage(string message)
         {

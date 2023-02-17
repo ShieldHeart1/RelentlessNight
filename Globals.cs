@@ -1,8 +1,13 @@
-﻿namespace RelentlessNight
+﻿global using Il2Cpp;
+global using Il2CppTLD.Gear;
+global using ModData;
+global using MelonLoader.TinyJSON;
+
+namespace RelentlessNight
 {
     public class Global
     {
-        internal const string RnVersion = "4.52";
+        internal const string RnVersion = "4.6.0";
 
         // RN globals representing current mod settings
         internal static int worldSpinDeclinePercent;
@@ -26,6 +31,9 @@
         // Additional globals to keep track of in order for proper save/load operation
         internal static int lastTemperatureOffsetDay;
         internal static int dayTidalLocked;
+
+		// new save manager
+		internal static ModDataManager dataManager = new ModDataManager("RelentlessNight");
 
         internal static void SetGameGlobalsForNewGame()
         {

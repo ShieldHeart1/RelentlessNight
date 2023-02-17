@@ -1,5 +1,6 @@
 ﻿using System;
 using HarmonyLib;
+using Il2Cpp;
 using UnityEngine;
 
 namespace RelentlessNight
@@ -16,9 +17,12 @@ namespace RelentlessNight
         {
             private static void Prefix(Panel_MainMenu __instance, int itemIndex)
             {
+				MelonLoader.MelonLogger.Warning("Panel_MainMenu_AddMenuItem");
+
                 if (__instance.IsSubMenuEnabled() || itemIndex != rnButtonIndex) return;
 
-                AddRnMainMenuButton(__instance, itemIndex);
+				MelonLoader.MelonLogger.Warning("AddRnMainMenuButton");
+				AddRnMainMenuButton(__instance, itemIndex);
             }
         }
         // Enables Relentless Night when user clicks on main menu "Relentless Night" button
@@ -71,7 +75,7 @@ namespace RelentlessNight
             {
                 if (!modEnabled) return;
 
-                currentName = "Relentless " + (InterfaceManager.m_Panel_OptionsMenu.m_State.m_NumGamesPlayed + 1).ToString();
+                currentName = "Relentless " + (Il2CppTLD.SaveState.ProfileState.Instance.m_NumGamesPlayed + 1).ToString();
                 titleLocID = "name relentless night game";
             }
         }
@@ -121,8 +125,8 @@ namespace RelentlessNight
         internal class Panel_PauseMenu_ConfigureMenu
         {
             private static void Postfix(Panel_PauseMenu __instance)
-            {
-                if (!modEnabled || !InterfaceManager.m_Panel_PauseMenu.IsEnabled()) return;
+			{
+                if (!modEnabled || !InterfaceManager.GetPanel<Panel_PauseMenu>().IsEnabled()) return;
 
                 AddRnTitleHeader(__instance);
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HarmonyLib;
+using Il2Cpp;
 using UnityEngine;
 
 namespace RelentlessNight
@@ -20,7 +21,7 @@ namespace RelentlessNight
                 MakeTorchLightingItemInteractible("electricdamage_temp");
             }
         }
-        [HarmonyPatch(typeof(PlayerManager), "GetInteractiveObjectDisplayText", new Type[] { typeof(GameObject) })]
+        [HarmonyPatch(typeof(PlayerManager), "GetInteractiveObjectDisplayText")]
         internal class PlayerManager_GetInteractiveObjectDisplayText
         {
             private static void Postfix(PlayerManager __instance, ref string __result)
@@ -42,7 +43,7 @@ namespace RelentlessNight
 
                 if (!GameManager.GetAuroraManager().AuroraIsActive() || !PlayerInteractingWithElectricLightSource(__instance) || !__instance.PlayerHoldingTorchThatCanBeLit()) return;
 
-                if (InterfaceManager.m_Panel_TorchLight != null) InterfaceManager.m_Panel_TorchLight.StartTorchIgnite(2f, string.Empty, true);
+                if (InterfaceManager.GetPanel<Panel_TorchLight>() != null) InterfaceManager.GetPanel<Panel_TorchLight>().StartTorchIgnite(2f, string.Empty, true);
             }
         }
         // Removes burn damage from stepping on wires, ensures player wont get burned trying to light torch from cable
@@ -81,7 +82,7 @@ namespace RelentlessNight
 
         private static bool PlayerInteractingWithElectricLightSource(PlayerManager __instance)
         {
-            GameObject itemUnderCrosshair = __instance.m_InteractiveObjectUnderCrosshair;
+            GameObject itemUnderCrosshair = __instance.GetInteractiveObjectUnderCrosshairs(0.25f);
 
             if (itemUnderCrosshair != null && (itemUnderCrosshair.name.ToLowerInvariant().Contains("outlet") || itemUnderCrosshair.name.ToLowerInvariant().Contains("socket") || itemUnderCrosshair.name.ToLowerInvariant().Contains("electricdamage_temp") || itemUnderCrosshair.name.ToLowerInvariant().Contains("cableset"))) return true;
 
