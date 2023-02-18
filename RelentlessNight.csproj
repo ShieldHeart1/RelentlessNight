@@ -2,6 +2,7 @@
 	<!--This is an xml comment. Comments have no impact on compiling.-->
 
 	<PropertyGroup>
+	<TheLongDarkPath>C:\Program Files (x86)\Steam\steamapps\common\TheLongDark</TheLongDarkPath>
 		<!--This is the .NET version the mod will be compiled with. Don't change it.-->
 		<TargetFramework>net6.0</TargetFramework>
 
@@ -37,4 +38,9 @@
 	    <HintPath>..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\Mods\ModData.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
+	
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="xcopy /y /d  &quot;$(TargetPath)&quot; &quot;$(TheLongDarkPath)\Mods&quot;" />
+	</Target>
+	
 </Project>

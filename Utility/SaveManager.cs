@@ -1,10 +1,11 @@
 ﻿using HarmonyLib;
+using static RelentlessNight.SaveManager;
 
 namespace RelentlessNight
 {
 	internal class SaveManager
 	{
-		internal const string rnSavePrefix = "relentlessnight";
+		internal const string rnSavePrefix = "RNight";
 
 		internal static bool isFirstMenuInitialize = true;
 
@@ -34,7 +35,7 @@ namespace RelentlessNight
 			public int dayTidalLocked;
 		}
 
-		[HarmonyPatch(typeof(Panel_MainMenu), "OnEnable", null)]
+		[HarmonyPatch(typeof(Panel_MainMenu), nameof(Panel_MainMenu.OnEnable))]
 		internal class Panel_MainMenu_OnEnable
 		{
 			private static void Postfix()
@@ -61,9 +62,8 @@ namespace RelentlessNight
 		{
 			private static void Postfix(SlotData slot)
 			{
-				if (!MenuManager.modEnabled) return;
-
-				//                SaveGlobalsToSaveFile(gameMode, name);
+				//if (!MenuManager.modEnabled) return;
+				//SaveGlobalsToSaveFile(gameMode, name);
 			}
 		}
 		[HarmonyPatch(typeof(SaveGameSystem), nameof(SaveGameSystem.RestoreGlobalData), new Type[] { typeof(string) })]
@@ -71,117 +71,91 @@ namespace RelentlessNight
 		{
 			private static void Postfix()
 			{
-				if (!MenuManager.modEnabled || GameManager.m_ActiveScene == "MainMenu") return;
+				//if (!MenuManager.modEnabled || GameManager.m_ActiveScene == "MainMenu") return;
 
-				//                string modData = SaveGameSlots.LoadDataFromSlot(SaveGameSystem.GetCurrentSaveName(), savedataKey);
-				string modData = Global.dataManager.Load();
-				if (modData != null)
-				{
-					//ModSaveData data = JsonConvert.DeserializeObject<ModSaveData>(modData);
-					ModSaveData data = JSON.Load(modData).Make<ModSaveData>();
+				////                string modData = SaveGameSlots.LoadDataFromSlot(SaveGameSystem.GetCurrentSaveName(), savedataKey);
+				//string modData = Global.dataManager.Load();
+				//if (modData != null)
+				//{
+				//	//ModSaveData data = JsonConvert.DeserializeObject<ModSaveData>(modData);
+				//	ModSaveData data = JSON.Load(modData).Make<ModSaveData>();
 
 
-					Global.SetOptionGlobalsFromSave(data);
-					Global.SetGameGlobalsFromSave(data);
-					MaybeUpdateOptionGlobalsForNewModVersion(data);
-					Settings.SetModSettingsToOptionGlobals();
-				}
-				else
-				{
-					Global.SetOptionGlobalsToRnClassic();
-					Global.SetGameGlobalsForNewGame();
-				}
+				//	Global.SetOptionGlobalsFromSave(data);
+				//	Global.SetGameGlobalsFromSave(data);
+				//	MaybeUpdateOptionGlobalsForNewModVersion(data);
+				//	Settings.SetModSettingsToOptionGlobals();
+				//}
+				//else
+				//{
+				//	Global.SetOptionGlobalsToRnClassic();
+				//	Global.SetGameGlobalsForNewGame();
+				//}
 			}
 		}
-		[HarmonyPatch(typeof(GameManager), "LaunchSandbox", null)]
+		[HarmonyPatch(typeof(GameManager), nameof(GameManager.LaunchSandbox))]
 		internal static class GameManager_LaunchSandbox
 		{
 			private static void Postfix()
 			{
 				if (!MenuManager.modEnabled) return;
-
 				Global.SetOptionGlobalsFromModOptions();
 			}
 		}
-		[HarmonyPatch(typeof(SaveGameSlots), "GetSlotPrefix", null)]
+		[HarmonyPatch(typeof(SaveGameSlots), nameof(SaveGameSlots.GetSlotPrefix), new Type[] { typeof(SaveSlotType) })]
 		internal class SaveGameSlots_GetSlotPrefix
 		{
 
-			private static bool Prefix(ref string __result)
+			private static void Postfix(ref string __result)
 			{
-				if (!MenuManager.modEnabled) return true;
-
+				if (!MenuManager.modEnabled) return;
 				__result = rnSavePrefix;
-				return false;
 			}
 		}
-		[HarmonyPatch(typeof(SaveGameSlots), "GetSaveSlotTypeFromName", null)]
+		[HarmonyPatch(typeof(SaveGameSlots), nameof(SaveGameSlots.GetSaveSlotTypeFromName), new Type[] { typeof(string) })]
 		internal class SaveGameSlots_GetSaveSlotTypeFromName
 		{
 
-			private static bool Prefix(ref SaveSlotType __result)
+			private static void Postfix(ref SaveSlotType __result)
 			{
-				if (!MenuManager.modEnabled) return true;
-
+				if (!MenuManager.modEnabled) return;
 				__result = SaveSlotType.SANDBOX;
-				return false;
 			}
 		}
-		[HarmonyPatch(typeof(SaveGameSlotHelper), "GetNumSaveSlots", null)]
-		internal class SaveGameSlotHelper_GetNumSaveSlots
+
+		[HarmonyPatch(typeof(SaveGameSlotHelper), nameof(SaveGameSlotHelper.GetSaveSlotInfoList), new Type[] { typeof(SaveSlotType) })]
+		internal class SaveGameSlotHelper_GetSaveSlotInfoList
 		{
-			private static bool Prefix(SaveSlotType saveSlotType, ref int __result)
+			private static void Postfix(SaveSlotType saveSlotType, ref Il2CppSystem.Collections.Generic.List<SaveSlotInfo> __result)
 			{
-				if (saveSlotType != SaveSlotType.SANDBOX) return true;
+				if (saveSlotType != SaveSlotType.SANDBOX)
+				{
+					return;
+				}
 
-				__result = GetNumSortedSlots();
-				return false;
+				Il2CppSystem.Collections.Generic.List<SaveSlotInfo> newList = new();
+
+				foreach (SaveSlotInfo slotInfo in __result)
+				{
+					if (MenuManager.modEnabled)
+					{
+						if (slotInfo.m_SaveSlotName.Contains(rnSavePrefix))
+						{
+							newList.Add(slotInfo);
+						}
+					}
+					else
+					{
+						if (!slotInfo.m_SaveSlotName.Contains(rnSavePrefix))
+						{
+							newList.Add(slotInfo);
+						}
+					}
+				}
+				__result = newList;
 			}
 		}
 
-		internal static int GetNumSortedSlots()
-		{
-			SaveGameSlotHelper.RefreshSandboxSaveSlots();
-			Il2CppSystem.Collections.Generic.List<SaveSlotInfo> sandboxAndRnSaveSlots = SaveGameSlotHelper.GetSaveSlotInfoList(SaveSlotType.SANDBOX);
-			Il2CppSystem.Collections.Generic.List<SaveSlotInfo> rnSaveSlots = new Il2CppSystem.Collections.Generic.List<SaveSlotInfo>();
-			Il2CppSystem.Collections.Generic.List<SaveSlotInfo> sandboxSaveSlots = new Il2CppSystem.Collections.Generic.List<SaveSlotInfo>();
-
-			for (int i = 0; i < sandboxAndRnSaveSlots.Count; i++)
-			{
-				if (sandboxAndRnSaveSlots[i].m_SaveSlotName.Contains(rnSavePrefix))
-				{
-					rnSaveSlots.Add(sandboxAndRnSaveSlots[i]);
-				}
-				else
-				{
-					sandboxSaveSlots.Add(sandboxAndRnSaveSlots[i]);
-				}
-			}
-			if (MenuManager.modEnabled)
-			{
-				SaveGameSlotHelper.m_SandboxSlots = rnSaveSlots;
-				return rnSaveSlots.Count;
-			}
-			else
-			{
-				SaveGameSlotHelper.m_SandboxSlots = sandboxSaveSlots;
-				return sandboxSaveSlots.Count;
-			}
-		}
-		//internal static string GetLastRnSaveData()
-		//{
-		//    SaveGameSlotHelper.RefreshSandboxSaveSlots();
-		//    List<SaveSlotInfo> sandboxSaveSlots = SaveGameSlotHelper.GetSaveSlotInfoList(SaveSlotType.SANDBOX);
-
-		//    foreach (SaveSlotInfo saveSlot in sandboxSaveSlots)
-		//    {
-		//        if (saveSlot.m_SaveSlotName.StartsWith(rnSavePrefix))
-		//        {
-		//            return SaveGameSlots.LoadDataFromSlot(saveSlot.m_SaveSlotName, savedataKey);
-		//        }
-		//    }
-		//    return null;
-		//}
 		internal static void SaveGlobalsToSaveFile(SaveSlotType gameMode, string name)
 		{
 #warning TODO - rework saving to mod settings and restore from there also
@@ -214,13 +188,16 @@ namespace RelentlessNight
 		}
 		internal static void LoadRnSaveFiles()
 		{
+			int c = 0;
 			foreach (FileInfo saveFile in GetAllGameSaveFiles())
 			{
 				if (IsCompatibleRnSave(saveFile.Name))
 				{
 					SaveGameDataPC.LoadData(saveFile.Name);
+					c++;
 				}
 			}
+			Utilities.ModLog("Relentless Night | Loaded " + c.ToString() + " saves");
 		}
 		internal static FileInfo[] GetAllGameSaveFiles()
 		{
@@ -233,8 +210,8 @@ namespace RelentlessNight
 		}
 		internal static bool IsIncompatibleRnSave(string fileName)
 		{
-			// Pre-4.40 save file name prefix
-			return fileName.StartsWith("ep1relentless");
+			// Pre-4.40 save file name prefix & pre 4.6.0
+			return (fileName.StartsWith("ep1relentless") || fileName.StartsWith("relentless"));
 		}
 		internal static void MaybeUpdateOptionGlobalsForNewModVersion(ModSaveData data)
 		{

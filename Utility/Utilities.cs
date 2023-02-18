@@ -25,11 +25,19 @@ namespace RelentlessNight
             }
         }
 
-        internal static void ModLog(string message)
-        {
-            Debug.Log("RN > " + message);
-        }
-        internal static void PlayGameErrorAudio()
+		internal static void ModLog(string message)
+		{
+			MelonLoader.MelonLogger.Msg(ConsoleColor.Cyan, "RN > " + message);
+		}
+		internal static void ModWarn(string message)
+		{
+			MelonLoader.MelonLogger.Warning("RN W > " + message);
+		}
+		internal static void ModError(string message)
+		{
+			MelonLoader.MelonLogger.Error("RN E > " + message);
+		}
+		internal static void PlayGameErrorAudio()
         {
             GameAudioManager.PlaySound(GameAudioManager.Instance.m_ErrorAudio, GameAudioManager.Instance.gameObject);
         }

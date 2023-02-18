@@ -161,8 +161,6 @@ namespace RelentlessNight
 
 		internal static void AddRnTitleHeaderToBasicMenu(BasicMenu basicMenu, bool addHeader = true)
 		{
-			Vector3 rnVector = new Vector3(0f, 0f, 0f);
-
 			if (addHeader == true)
 			{
 				basicMenu.UpdateTitle("Relentless Night " + Global.RnVersion, "See Options then Mod Settings to\nconfigure your Relentless Night game.", new Vector3(0f, 0f, 0f));
@@ -175,7 +173,6 @@ namespace RelentlessNight
 			basicMenu.m_TitleHeaderLabel.fontSize = 16;
 			basicMenu.m_TitleLabel.gameObject.transform.localPosition = new Vector3(65f, -125f, 0f);
 			basicMenu.m_TitleHeaderLabel.gameObject.transform.localPosition = new Vector3(65f, -160f, 0f);
-			basicMenu.name = "RN_Menu";
 		}
 	}
 }
