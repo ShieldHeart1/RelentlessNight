@@ -2,6 +2,7 @@
 global using Il2CppTLD.Gear;
 global using ModData;
 global using MelonLoader.TinyJSON;
+global using UnityEngine.SceneManagement;
 
 namespace RelentlessNight
 {
@@ -32,8 +33,8 @@ namespace RelentlessNight
         internal static int lastTemperatureOffsetDay;
         internal static int dayTidalLocked;
 
-		// new save manager
-		internal static ModDataManager dataManager = new ModDataManager("RelentlessNight");
+		// new save manager - Undecided at the moment
+		//internal static ModDataManager dataManager = new ModDataManager("RelentlessNight");
 
         internal static void SetGameGlobalsForNewGame()
         {

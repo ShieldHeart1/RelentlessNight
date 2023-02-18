@@ -183,8 +183,8 @@ namespace RelentlessNight
 				lastTemperatureOffsetDay = Global.lastTemperatureOffsetDay,
 				dayTidalLocked = Global.dayTidalLocked,
 			};
-			Global.dataManager.Save(JSON.Dump(data, EncodeOptions.NoTypeHints | EncodeOptions.PrettyPrint));
-			//            SaveGameSlots.SaveDataToSlot(gameMode, SaveGameSystem.m_CurrentEpisode, SaveGameSystem.m_CurrentGameId, name, savedataKey, JsonConvert.SerializeObject(data));
+			//Global.dataManager.Save(JSON.Dump(data, EncodeOptions.NoTypeHints | EncodeOptions.PrettyPrint));
+			//SaveGameSlots.SaveDataToSlot(gameMode, SaveGameSystem.m_CurrentEpisode, SaveGameSystem.m_CurrentGameId, name, savedataKey, JsonConvert.SerializeObject(data));
 		}
 		internal static void LoadRnSaveFiles()
 		{
@@ -197,7 +197,7 @@ namespace RelentlessNight
 					c++;
 				}
 			}
-			Utilities.ModLog("Relentless Night | Loaded " + c.ToString() + " saves");
+			Utilities.ModLog("Relentless Night | Loaded " + c.ToString() + " save(s)");
 		}
 		internal static FileInfo[] GetAllGameSaveFiles()
 		{
