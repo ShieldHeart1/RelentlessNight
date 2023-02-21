@@ -1,4 +1,8 @@
-# Relentless Night V4.52
+# Relentless Night V4.6.0
+
+**Requires**
+[ModSettings 1.9.0+](https://github.com/zeobviouslyfakeacc/ModSettings/releases)
+[ModData 1.2.0+](https://github.com/dommrogers/ModData/releases)
 
 Relentless Night is a gameplay mod for The Long Dark that introduces a new sandbox scenario where the spin of the Earth is slowing down. Slowly but surely, days and nights are getting longer over time, leading to a world with continuously changing temperatures, weather patterns, wildlife changes, and more.
 
@@ -10,7 +14,7 @@ Relentless Night will add a progress difficulty into survival mode that at first
 
 ## Installation Instructions
 
-1. Ensure you are using game version 1.99 or above (indicated top-left on game main menu).
+1. Ensure you are using game version **2.06** or above (indicated top-left on game main menu).
 
 2. Follow the instructions at the top of [Xpazemen’s list of TLD mods](http://xpazeman.com/tld-mod-list/).
 

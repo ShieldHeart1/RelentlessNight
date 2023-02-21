@@ -8,10 +8,11 @@ namespace RelentlessNight
 {
     public class Global
     {
-        internal const string RnVersion = "4.6.0";
+		internal const string RnVersion = "4.6.0";
+		internal const string RnBuildString = "(Build 20230221-1)";
 
-        // RN globals representing current mod settings
-        internal static int worldSpinDeclinePercent;
+		// RN globals representing current mod settings
+		internal static int worldSpinDeclinePercent;
         internal static bool endgameEnabled;        
         internal static int endgameDay;
         internal static bool endgameAuroraEnabled;
@@ -33,8 +34,8 @@ namespace RelentlessNight
         internal static int lastTemperatureOffsetDay;
         internal static int dayTidalLocked;
 
-		// new save manager - Undecided at the moment
-		//internal static ModDataManager dataManager = new ModDataManager("RelentlessNight");
+		// New save manager (ModData)
+		internal static ModDataManager dataManager = new ModDataManager("RelentlessNight");
 
         internal static void SetGameGlobalsForNewGame()
         {

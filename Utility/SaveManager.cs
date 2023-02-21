@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using static RelentlessNight.SaveManager;
 
 namespace RelentlessNight
 {
@@ -8,6 +7,8 @@ namespace RelentlessNight
 		internal const string rnSavePrefix = "RNight";
 
 		internal static bool isFirstMenuInitialize = true;
+
+		internal static List<string> deletedSaves = new();
 
 		internal class ModSaveData
 		{
@@ -43,56 +44,56 @@ namespace RelentlessNight
 				if (isFirstMenuInitialize)
 				{
 					Utilities.ModLog("Relentless Night V" + Global.RnVersion + " Loaded Successfully");
+					if (Global.RnBuildString != null)
+					{
+						Utilities.ModLog(Global.RnBuildString);
+					}
 					LoadRnSaveFiles();
 					isFirstMenuInitialize = false;
 				}
-				//string lastRnSaveData = GetLastRnSaveData();
-				//if (lastRnSaveData != null)
-				//{
-				//    ModSaveData data = JsonConvert.DeserializeObject<ModSaveData>(lastRnSaveData);
-
-				//    Global.SetOptionGlobalsFromSave(data);
-				//    MaybeUpdateOptionGlobalsForNewModVersion(data);
-				//    Settings.SetModSettingsToOptionGlobals();
-				//}
 			}
 		}
-		[HarmonyPatch(typeof(SaveGameSystem), nameof(SaveGameSystem.SaveGlobalData), new Type[] { typeof(SlotData) })]
-		internal class SaveGameSystem_SaveGlobalData
+		[HarmonyPatch(typeof(SaveGameSystem), nameof(SaveGameSystem.LoadSceneData), new Type[] { typeof(string), typeof(string) })]
+		internal class SaveGameSystem_LoadSceneData
 		{
-			private static void Postfix(SlotData slot)
+			private static void Postfix(string name, string sceneSaveName)
 			{
-				//if (!MenuManager.modEnabled) return;
-				//SaveGlobalsToSaveFile(gameMode, name);
+				if (!MenuManager.modEnabled) return;
+
+				string? modData = Global.dataManager.Load();
+
+				if (modData != null)
+				{
+					ModSaveData data = JSON.Load(modData).Make<ModSaveData>();
+					Global.SetOptionGlobalsFromSave(data);
+					Settings.SetModSettingsToOptionGlobals();
+				}
+				else
+				{
+					Global.SetGameGlobalsForNewGame();
+				}
 			}
 		}
-		[HarmonyPatch(typeof(SaveGameSystem), nameof(SaveGameSystem.RestoreGlobalData), new Type[] { typeof(string) })]
-		internal class SaveGameSystem_RestoreGlobalData
+		[HarmonyPatch(typeof(SaveGameSystem), nameof(SaveGameSystem.SaveSceneData), new Type[] { typeof(SlotData), typeof(string) })]
+		internal class SaveGameSystem_SaveSceneData
 		{
-			private static void Postfix()
+			private static void Postfix(SlotData slot, string sceneSaveName)
 			{
-				//if (!MenuManager.modEnabled || GameManager.m_ActiveScene == "MainMenu") return;
+				if (!MenuManager.modEnabled) return;
 
-				////                string modData = SaveGameSlots.LoadDataFromSlot(SaveGameSystem.GetCurrentSaveName(), savedataKey);
-				//string modData = Global.dataManager.Load();
-				//if (modData != null)
-				//{
-				//	//ModSaveData data = JsonConvert.DeserializeObject<ModSaveData>(modData);
-				//	ModSaveData data = JSON.Load(modData).Make<ModSaveData>();
+				SaveSettingsToSaveFile(slot.m_BaseName);
 
-
-				//	Global.SetOptionGlobalsFromSave(data);
-				//	Global.SetGameGlobalsFromSave(data);
-				//	MaybeUpdateOptionGlobalsForNewModVersion(data);
-				//	Settings.SetModSettingsToOptionGlobals();
-				//}
-				//else
-				//{
-				//	Global.SetOptionGlobalsToRnClassic();
-				//	Global.SetGameGlobalsForNewGame();
-				//}
 			}
 		}
+		[HarmonyPatch(typeof(SaveGameSystem), nameof(SaveGameSystem.DeleteSaveFiles), new Type[] { typeof(string) })]
+		private static class SaveGameSystem_DeleteSaveFiles
+		{
+			private static void Postfix(string name)
+			{
+				deletedSaves.Add(name);
+			}
+		}
+
 		[HarmonyPatch(typeof(GameManager), nameof(GameManager.LaunchSandbox))]
 		internal static class GameManager_LaunchSandbox
 		{
@@ -139,14 +140,14 @@ namespace RelentlessNight
 				{
 					if (MenuManager.modEnabled)
 					{
-						if (slotInfo.m_SaveSlotName.Contains(rnSavePrefix))
+						if (slotInfo.m_SaveSlotName.Contains(rnSavePrefix) && !deletedSaves.Contains(slotInfo.m_SaveSlotName))
 						{
 							newList.Add(slotInfo);
 						}
 					}
 					else
 					{
-						if (!slotInfo.m_SaveSlotName.Contains(rnSavePrefix))
+						if (!slotInfo.m_SaveSlotName.Contains(rnSavePrefix)&& !deletedSaves.Contains(slotInfo.m_SaveSlotName))
 						{
 							newList.Add(slotInfo);
 						}
@@ -156,7 +157,7 @@ namespace RelentlessNight
 			}
 		}
 
-		internal static void SaveGlobalsToSaveFile(SaveSlotType gameMode, string name)
+		internal static void SaveSettingsToSaveFile(string name)
 		{
 #warning TODO - rework saving to mod settings and restore from there also
 
@@ -183,8 +184,7 @@ namespace RelentlessNight
 				lastTemperatureOffsetDay = Global.lastTemperatureOffsetDay,
 				dayTidalLocked = Global.dayTidalLocked,
 			};
-			//Global.dataManager.Save(JSON.Dump(data, EncodeOptions.NoTypeHints | EncodeOptions.PrettyPrint));
-			//SaveGameSlots.SaveDataToSlot(gameMode, SaveGameSystem.m_CurrentEpisode, SaveGameSystem.m_CurrentGameId, name, savedataKey, JsonConvert.SerializeObject(data));
+			Global.dataManager.Save(JSON.Dump(data, EncodeOptions.NoTypeHints | EncodeOptions.PrettyPrint));
 		}
 		internal static void LoadRnSaveFiles()
 		{
