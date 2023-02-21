@@ -27,21 +27,7 @@ namespace RelentlessNight
 				MakeTorchLightingItemsInteractible();
 			}
 		}
-#warning TOOD - PlayerManager.GetInteractiveObjectDisplayText no longer gets called, replaced with interactions ?
-		//[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.GetInteractiveObjectDisplayText))]
-		//internal class PlayerManager_GetInteractiveObjectDisplayText
-		//{
-		//	private static void Postfix(PlayerManager __instance, ref string __result)
-		//	{
-		//		Utilities.ModLog("PlayerManager_GetInteractiveObjectDisplayText");
-		//		if (!MenuManager.modEnabled || !Global.electricTorchLightingEnabled) return;
 
-		//		if (PlayerInteractingWithElectricLightSource(__instance) && __instance.PlayerHoldingTorchThatCanBeLit())
-		//		{
-		//			__result = "Light Torch";
-		//		}
-		//	}
-		//}
 		[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.InteractiveObjectsProcessInteraction))]
 		internal static class PlayerManager_InteractiveObjectsProcessInteraction
 		{
@@ -54,6 +40,7 @@ namespace RelentlessNight
 				if (InterfaceManager.GetPanel<Panel_TorchLight>() != null) InterfaceManager.GetPanel<Panel_TorchLight>().StartTorchIgnite(2f, string.Empty, true);
 			}
 		}
+
 		// Removes burn damage from stepping on wires, ensures player wont get burned trying to light torch from cable
 		[HarmonyPatch(typeof(DamageTrigger), nameof(DamageTrigger.ApplyOneTimeDamage), new Type[] { typeof(GameObject), typeof(float) })]
 		internal class DamageTrigger_ApplyOneTimeDamage
@@ -66,6 +53,7 @@ namespace RelentlessNight
 				return false;
 			}
 		}
+
 		[HarmonyPatch(typeof(DamageTrigger), nameof(DamageTrigger.ApplyContinuousDamage), new Type[] { typeof(GameObject), typeof(float) })]
 		internal class DamageTrigger_ApplyContinousDamage
 		{
@@ -76,6 +64,7 @@ namespace RelentlessNight
 				return false;
 			}
 		}
+
 		// Prevents saving when moving over live wires, as burn damage is removed
 		[HarmonyPatch(typeof(DamageTrigger), nameof(DamageTrigger.OnTriggerExit))]
 		internal class DamageTrigger_OnTriggerExit
@@ -90,8 +79,6 @@ namespace RelentlessNight
 
 		private static bool PlayerInteractingWithElectricLightSource(PlayerManager __instance)
 		{
-			//			Utilities.ModLog("PlayerInteractingWithElectricLightSource");
-
 			float maxPickupRange = GameManager.GetGlobalParameters().m_MaxPickupRange;
 			float maxRange = __instance.ComputeModifiedPickupRange(maxPickupRange);
 
@@ -107,28 +94,7 @@ namespace RelentlessNight
 
 			return false;
 		}
-		//internal static void MakeTorchLightingItemInteractible(string objectName)
-		//{
-		//	//			Utilities.ModLog("MakeTorchLightingItemInteractible | " + objectName);
-		//	List<GameObject> rObjs = Utilities.GetRootObjects();
-		//	Dictionary<int, GameObject> found = new();
 
-		//	foreach (GameObject rootObj in rObjs)
-		//	{
-		//		found.Clear();
-		//		Utilities.GetChildrenWithName(rootObj, objectName, found);
-		//		if (found.Count > 0)
-		//		{
-		//			//					Utilities.ModLog("MakeTorchLightingItemInteractible | " + rootObj.name + " | " + found.Count);
-		//			foreach (KeyValuePair<int, GameObject> item in found)
-		//			{
-		//				GameObject child = item.Value;
-		//				child.layer = vp_Layer.InteractivePropNoCollideGear;
-		//				//						Utilities.ModLog("MakeTorchLightingItemInteractible | " + child.name + " | " + child.layer+" | "+ vp_Layer.InteractivePropNoCollideGear);
-		//			}
-		//		}
-		//	}
-		//}
 		internal static void MakeTorchLightingItemsInteractible()
 		{
 			List<GameObject> rObjs = Utilities.GetRootObjects();
