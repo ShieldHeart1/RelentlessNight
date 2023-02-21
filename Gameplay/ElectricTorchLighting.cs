@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Il2CppTLD.Interactions;
 using UnityEngine;
 
 namespace RelentlessNight
@@ -23,10 +24,6 @@ namespace RelentlessNight
 			{
 				if (!MenuManager.modEnabled) return;
 
-				//MakeTorchLightingItemInteractible("socket");
-				//MakeTorchLightingItemInteractible("outlet");
-				//MakeTorchLightingItemInteractible("cableset");
-				//MakeTorchLightingItemInteractible("electricdamage_temp");
 				MakeTorchLightingItemsInteractible();
 			}
 		}
@@ -146,7 +143,11 @@ namespace RelentlessNight
 					foreach (KeyValuePair<int, GameObject> item in found)
 					{
 						item.Value.layer = vp_Layer.InteractivePropNoCollideGear;
-						// TODO - add hover text here
+						SimpleInteraction interaction = item.Value.gameObject.AddComponent<SimpleInteraction>();
+						LocalizedString loStr = new();
+						loStr.m_LocalizationID = "GAMEPLAY_Light";
+						interaction.m_DefaultHoverText = loStr;
+						interaction.enabled = true;
 					}
 				}
 			}
