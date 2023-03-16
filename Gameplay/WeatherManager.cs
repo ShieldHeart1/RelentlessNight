@@ -16,10 +16,10 @@ namespace RelentlessNight
                 if (!MenuManager.modEnabled) return;
 
                 int dayNumber = GameManager.GetTimeOfDayComponent().GetDayNumber();
-                WeatherSet m_CurrentWeatherSet = __instance.m_CurrentWeatherSet;
+                WeatherSetData m_CurrentWeatherSetData = __instance.m_CurrentWeatherSet;
 
-                MaybeEliminateDenseFog(m_CurrentWeatherSet, dayNumber);
-                MaybeEliminateLightFog(m_CurrentWeatherSet, dayNumber);
+                MaybeEliminateDenseFog(m_CurrentWeatherSetData, dayNumber);
+                MaybeEliminateLightFog(m_CurrentWeatherSetData, dayNumber);
             }
         }
         [HarmonyPatch(typeof(Wind), "StartRandomPhase", null)]
@@ -48,18 +48,18 @@ namespace RelentlessNight
             }
         }
 
-        internal static void MaybeEliminateDenseFog(WeatherSet currentWeatherSet, int dayNumber)
+        internal static void MaybeEliminateDenseFog(WeatherSetData currentWeatherSetData, int dayNumber)
         {
             if (Global.worldSpinDeclinePercent * dayNumber > denseFogEliminationThreshold)
             {
-                currentWeatherSet.m_DenseFogAsNextSelectionWeight = 0;
+				currentWeatherSetData.m_DenseFogAsNextSelectionWeight = 0;
             }
         }
-        internal static void MaybeEliminateLightFog(WeatherSet currentWeatherSet, int dayNumber)
+        internal static void MaybeEliminateLightFog(WeatherSetData currentWeatherSetData, int dayNumber)
         {
             if (Global.worldSpinDeclinePercent * dayNumber > lightFogEliminationThreshold)
             {
-                currentWeatherSet.m_LightFogAsNextSelectionWeight = 0;
+				currentWeatherSetData.m_LightFogAsNextSelectionWeight = 0;
             }
         }
         internal static bool ShouldSetPermanentAuroraForEndGame()

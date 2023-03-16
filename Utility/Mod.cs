@@ -4,7 +4,7 @@ namespace RelentlessNight
 {
     internal class Mod : MelonMod
     {
-        public override void OnApplicationStart()
+        public override void OnInitializeMelon()
         {
             Settings.OnLoad();
         }

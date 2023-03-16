@@ -1,108 +1,37 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E8E9CD58-FA51-4AA6-841D-86DBE0295AFA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RelentlessNight</RootNamespace>
-    <AssemblyName>RelentlessNight</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2Cppmscorlib">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MelonLoader, Version=0.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\MelonLoader.dll</HintPath>
-    </Reference>
-    <Reference Include="ModSettings, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\Mods\ModSettings.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Json, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Managed\System.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="UnhollowerBaseLib, Version=0.4.15.4, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Il2CppAssemblyUnhollower\UnhollowerBaseLib.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnhollowerRuntimeLib, Version=0.4.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Il2CppAssemblyUnhollower\UnhollowerRuntimeLib.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.JSONSerializeModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Gameplay\BurnDurationManager.cs" />
-    <Compile Include="Gameplay\CarcassMoving.cs" />
-    <Compile Include="Gameplay\ElectricTorchLighting.cs" />
-    <Compile Include="Gameplay\VanillaBugFixes.cs" />
-    <Compile Include="Gameplay\RealisticFreezing.cs" />
-    <Compile Include="Gameplay\AfflictionManager.cs" />
-    <Compile Include="Gameplay\NightActivityManager.cs" />
-    <Compile Include="Gameplay\TimeManager.cs" />
-    <Compile Include="Gameplay\WeatherManager.cs" />
-    <Compile Include="Gameplay\TemperatureManager.cs" />
-    <Compile Include="Gameplay\HeatRetentionManager.cs" />
-    <Compile Include="Gameplay\WildlifeManager.cs" />
-    <Compile Include="Globals.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\SaveManager.cs" />
-    <Compile Include="Utility\Utilities.cs" />
-    <Compile Include="Utility\Mod.cs" />
-    <Compile Include="Utility\Settings.cs" />
-    <Compile Include="Utility\MenuManager.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<!--This is an xml comment. Comments have no impact on compiling.-->
+
+	<PropertyGroup>
+		<!--This is the .NET version the mod will be compiled with. Don't change it.-->
+		<TargetFramework>net6.0</TargetFramework>
+
+		<!--This tells the compiler to use the latest C# version.-->
+		<LangVersion>Latest</LangVersion>
+
+		<!--This adds global usings for a few common System namespaces.-->
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<!--This enables nullable annotation and analysis. It's good coding form.-->
+		<Nullable>enable</Nullable>
+
+		<!--This tells the compiler to use assembly attributes instead of generating its own.-->
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+		<!--PDB files give line numbers in stack traces (errors). This is useful for debugging. There are 3 options:-->
+		<!--full has a pdb file created beside the dll.-->
+		<!--embedded has the pdb data embedded within the dll. This is useful because bug reports will then have line numbers.-->
+		<!--none skips creation of pdb data.-->
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<!--This is the of packages that the mod references.-->
+	<ItemGroup>
+		<!--This package contains almost everything a person could possibly need to reference while modding.-->
+		<PackageReference Include="ds5678.Modding.TLD.Il2CppAssemblies.Windows" Version="2.6.0" />
+		<PackageReference Include="ds5678.Modding.TLD.ModSettings" Version="1.9.0" />
+		<PackageReference Include="stblade.Modding.TLD.ModData" Version="1.5.0" />
+		<!--The package version here in this template may be outdated and need to be updated. Visual Studio can update package versions automatically.-->
+		<!--If the mod references any other mods (such as ModSettings), that NuGet package will also need to be listed here.-->
+	</ItemGroup>
+	
 </Project>

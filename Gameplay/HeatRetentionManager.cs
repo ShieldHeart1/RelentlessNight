@@ -229,18 +229,18 @@ namespace RelentlessNight
                 GameAudioManager.PlayGUIError();
                 return;
             }
-            GameObject m_FireContainer = __instance.m_FireContainer;
-            if (!m_FireContainer)
-            {
-                GameAudioManager.PlayGUIError();
-                return;
-            }
-            Fire m_Fire = __instance.m_Fire;
-            if (!m_Fire)
-            {
-                return;
-            }
-            if (m_Fire.FireShouldBlowOutFromWind())
+			//GameObject m_FireContainer = __instance.m_FireContainer;
+			//if (!m_FireContainer)
+			//{
+			//	GameAudioManager.PlayGUIError();
+			//	return;
+			//}
+			Fire m_Fire = __instance.m_FireplaceInteraction.Fire;
+			if (!m_Fire)
+			{
+				return;
+			}
+			if (m_Fire.FireShouldBlowOutFromWind())
             {
                 Utilities.DisallowActionWithGameMessage("GAMEPLAY_TooWindyToAddFuel");
                 return;
@@ -262,7 +262,7 @@ namespace RelentlessNight
             if (selectedFuelSource.m_ResearchItem && !selectedFuelSource.m_ResearchItem.IsResearchComplete())
             {
                 __instance.m_ResearchItemToBurn = selectedFuelSource;
-                InterfaceManager.m_Panel_Confirmation.ShowBurnResearchNotification(new Action(() => __instance.ForceBurnResearchItem()));
+                InterfaceManager.GetPanel<Panel_Confirmation>().ShowBurnResearchNotification(new Action(() => __instance.ForceBurnResearchItem()));
                 return;
             }
             if (selectedFuelSource == GameManager.GetPlayerManagerComponent().m_ItemInHands)
