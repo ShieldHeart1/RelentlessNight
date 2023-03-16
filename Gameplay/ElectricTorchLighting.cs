@@ -17,6 +17,8 @@ namespace RelentlessNight
 			"electricdamage_temp",
 			};
 
+		private static GameObject? lookingAt = null;
+
 		[HarmonyPatch(typeof(MissionServicesManager), nameof(MissionServicesManager.RegisterAnyMissionObjects))]
 		internal class MissionServicesManager_RegisterAnyMissionObjects
 		{
@@ -77,6 +79,41 @@ namespace RelentlessNight
 			}
 		}
 
+		[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.GetInteractiveObjectUnderCrosshairs), new Type[] { typeof(float) })]
+		internal class GetInteractiveObjectUnderCrosshairs
+		{
+			public static void Postfix(PlayerManager __instance, ref GameObject? __result)
+			{
+				if (__result == null || __result != lookingAt)
+				{
+					if (lookingAt != null)
+					{
+						SimpleInteraction si = lookingAt.GetComponent<SimpleInteraction>();
+						if (si != null)
+						{
+							si.enabled = false;
+							lookingAt = null;
+						}
+					}
+				}
+
+				if (
+					__result != null 
+					&& itemsCanLightTorch.Any(__result.name.ToLowerInvariant().Contains)
+					&& GameManager.GetAuroraManager().AuroraIsActive()
+					&& __instance.PlayerHoldingTorchThatCanBeLit()
+					)
+				{
+					SimpleInteraction si = __result.GetComponent<SimpleInteraction>();
+					if (si != null && __result != lookingAt)
+					{
+						si.enabled = true;
+						lookingAt = __result;
+					}
+				}
+			}
+		}
+
 		private static bool PlayerInteractingWithElectricLightSource(PlayerManager __instance)
 		{
 			float maxPickupRange = GameManager.GetGlobalParameters().m_MaxPickupRange;
@@ -113,7 +150,7 @@ namespace RelentlessNight
 						LocalizedString loStr = new();
 						loStr.m_LocalizationID = "GAMEPLAY_Light";
 						interaction.m_DefaultHoverText = loStr;
-						interaction.enabled = true;
+						interaction.enabled = false;
 					}
 				}
 			}

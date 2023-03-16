@@ -114,33 +114,33 @@ namespace RelentlessNight
         }
         internal static float GetCurrentRnDayLength()
         {
-            float currentDay = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() / 24f;
+			float currentDay = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() / 24f;
             float ticksAddedPerDay = Global.worldSpinDeclinePercent * 72f;
 
             return ((ticksInNormalDay + currentDay * ticksAddedPerDay) / Utilities.devTimeSpeedMultiplier) * GameManager.GetExperienceModeManagerComponent().GetTimeOfDayScale();
         }
         internal static void SetTimeToMidnight()
         {
-            GameManager.GetTimeOfDayComponent().SetNormalizedTime(0f);
+			GameManager.GetTimeOfDayComponent().SetNormalizedTime(0f);
         }
         internal static bool GameInEndgame()
         {
-            return Global.endgameEnabled && GameManager.GetTimeOfDayComponent().IsNight() && GameManager.GetTimeOfDayComponent().GetDayNumber() >= Global.endgameDay;
+			return Global.endgameEnabled && GameManager.GetTimeOfDayComponent().IsNight() && GameManager.GetTimeOfDayComponent().GetDayNumber() >= Global.endgameDay;
         }
         internal static bool GameStartedAtEndgame()
         {
-            return Global.endgameEnabled && Global.endgameDay == 1;
+			return Global.endgameEnabled && Global.endgameDay == 1;
         }
         // Indicates to player that they are now in the endgame through viewing the time widget, white is the default game color
         internal static void MaybeChangeMoonColorInTimeWidget(TimeWidget __instance)
         {
             if (GameInEndgame())
             {
-                __instance.m_MoonSprite.color = Color.blue;
+				__instance.m_MoonSprite.color = Color.blue;
             }
             else
             {
-                __instance.m_MoonSprite.color = Color.white;
+				__instance.m_MoonSprite.color = Color.white;
             }
         }
         internal static void CaptureVanillaHours(float m_ElapsedHoursAccumulator, float m_ElapsedHours)

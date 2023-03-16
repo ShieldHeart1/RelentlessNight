@@ -159,8 +159,6 @@ namespace RelentlessNight
 
 		internal static void SaveSettingsToSaveFile(string name)
 		{
-#warning TODO - rework saving to mod settings and restore from there also
-
 			ModSaveData data = new ModSaveData
 			{
 				worldSpinDeclinePercent = Global.worldSpinDeclinePercent,
