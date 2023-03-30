@@ -107,7 +107,7 @@ namespace RelentlessNight
 				}
 			}
 		}
-		[HarmonyPatch(typeof(LoadScene), nameof(LoadScene.Activate))]
+		[HarmonyPatch(typeof(LoadScene), nameof(LoadScene.Activate), new Type[] { typeof(bool)})]
 		internal class LoadScene_Activate
 		{
 			private static void Postfix()
