@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using HarmonyLib;
 using Il2CppAK;
@@ -396,6 +396,21 @@ namespace RelentlessNight
 				}
 			}
 			return true;
+		}
+		internal static void ResetCarcassMoving()
+		{
+			Utilities.ModLog("ResetCarcassMoving");
+
+			Panel_BodyHarvest panelBodyHarvest = InterfaceManager.GetPanel<Panel_BodyHarvest>();
+
+			if (moveCarcassBtnObj != null)
+			{
+				RemoveCarcassMoveButton(panelBodyHarvest);
+			}
+			isCarryingCarcass = false;
+			bodyHarvest = null;
+			carcassObj = null;
+			Utilities.ModLog("..Done");
 		}
 	}
 }

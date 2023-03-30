@@ -22,6 +22,7 @@ namespace RelentlessNight
 				uConsole.RegisterCommand("rn_scene", new Action(ModLogActiveScene));
 				uConsole.RegisterCommand("rn_panels", new Action(ModLogListActivePanels));
 				uConsole.RegisterCommand("rn_fires", new Action(ModLogListFires));
+				uConsole.RegisterCommand("rn_reset_carcass_moving", new Action(CarcassMoving.ResetCarcassMoving));
 			}
 		}
 
