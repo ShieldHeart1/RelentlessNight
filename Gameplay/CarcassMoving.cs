@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using HarmonyLib;
 using Il2CppAK;
@@ -60,6 +60,14 @@ namespace RelentlessNight
 						if (moveCarcassBtnObj == null)
 						{
 							AddCarcassMoveButton(__instance);
+						}
+					} else
+					{
+						// extra check to remove carcass move button
+						// would appear if you select a valid carcass and then open screen on an invalid one.
+						if (moveCarcassBtnObj != null)
+						{
+							RemoveCarcassMoveButton(__instance);
 						}
 					}
 				}
@@ -295,7 +303,7 @@ namespace RelentlessNight
 		}
 		internal static bool IsMovableCarcass(BodyHarvest bodyHarvest)
 		{
-			return (bodyHarvest.name.Contains("Stag") || bodyHarvest.name.Contains("Deer") || bodyHarvest.name.Contains("Wolf")) && !bodyHarvest.name.Contains("Quarter");
+			return (bodyHarvest.name.Contains("Doe") || bodyHarvest.name.Contains("Stag") || bodyHarvest.name.Contains("Deer") || bodyHarvest.name.Contains("Wolf")) && !bodyHarvest.name.Contains("Quarter");
 		}
 		internal static void OnMoveCarcass()
 		{
