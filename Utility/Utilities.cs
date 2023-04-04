@@ -64,37 +64,6 @@ namespace RelentlessNight
 			return rootObj;
 		}
 
-		//internal static List<GameObject> GetRootObjects()
-		//{
-		//	List<GameObject> rootObj = new List<GameObject>();
-		//	for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
-		//	{
-		//		GameObject[] sceneObj = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).GetRootGameObjects();
-
-		//		foreach (GameObject obj in sceneObj)
-		//		{
-		//			rootObj.Add(obj);
-		//		}
-		//	}
-		//	return rootObj;
-		//}
-
-		//internal static void GetChildrenWithName(GameObject obj, string name, Dictionary<int, GameObject> found)
-		//{
-		//	if (obj.transform.childCount > 0)
-		//	{
-		//		for (int i = 0; i < obj.transform.childCount; i++)
-		//		{
-		//			GameObject child = obj.transform.GetChild(i).gameObject;
-		//			if (child.name.ToLower().Contains(name) && !found.ContainsKey(child.GetInstanceID()))
-		//			{
-		//				found.Add(child.GetInstanceID(), child);
-		//			}
-		//			GetChildrenWithName(child, name, found);
-		//		}
-		//	}
-		//}
-
 		internal static void GetChildrenWithNameArray(GameObject obj, string[] lookup, Dictionary<int, GameObject> found)
 		{
 			if (obj.transform.childCount > 0)
@@ -110,22 +79,6 @@ namespace RelentlessNight
 				}
 			}
 		}
-
-		//internal static void MakeSceneItemInteractible(string objectName)
-		//{
-		//	List<GameObject> rObjs = GetRootObjects();
-		//	List<GameObject> result = new List<GameObject>();
-
-		//	foreach (GameObject rootObj in rObjs)
-		//	{
-		//		GetChildrenWithName(rootObj, objectName, result);
-
-		//		if (result.Count > 0)
-		//		{
-		//			foreach (GameObject child in result) child.layer = 12;
-		//		}
-		//	}
-		//}
 
 		internal static void ModLogIsRnActive()
 		{
