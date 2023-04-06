@@ -175,4 +175,21 @@ namespace RelentlessNight
 			basicMenu.m_TitleHeaderLabel.gameObject.transform.localPosition = new Vector3(65f, -160f, 0f);
 		}
 	}
+
+	[HarmonyPatch(typeof(Panel_Sandbox), nameof(Panel_Sandbox.ConfigureMenu))]
+	internal class Panel_Sandbox_ConfigureMenu
+	{
+		private static void Prefix()
+		{
+			if (!modEnabled)
+			{
+				return;
+			}
+			if (SaveGameSlotHelper.GetSaveSlotInfoList(SaveSlotType.SANDBOX).Count == 0)
+			{
+				SaveGameSlotHelper.m_SandboxSlots.Clear();
+			}
+		}
+	}
+	
 }
