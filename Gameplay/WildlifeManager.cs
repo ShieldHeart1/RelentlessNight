@@ -80,7 +80,7 @@ namespace RelentlessNight
 			Il2CppSystem.Collections.Generic.List<IceFishingHole> iceFishingHoles = IceFishingHole.s_IceFishingHoles;
             foreach (IceFishingHole iceFishingHole in iceFishingHoles)
             {
-                iceFishingHole.ResetCatchParameters();
+                iceFishingHole.m_NextCatch.ResetParameters();
             }
         }
     }
