@@ -259,7 +259,7 @@ namespace RelentlessNight
 			{
 				if (!MenuManager.modEnabled) return;
 
-				if (__instance.m_AiWolf != null || __instance.m_AiStag != null)
+				if (__instance.BaseDeer != null || __instance.BaseWolf != null)
 				{
 					//Ensures kills land on left side when dead - prevents camera orientation bug when reviewing dropped carcasses in harvest panel and simplifies positioning
 					side = BaseAi.DamageSide.DamageSideLeft;
