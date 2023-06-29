@@ -2,6 +2,7 @@
 using Il2CppSystem.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
+using static RelentlessNight.WildlifeManager;
 
 namespace RelentlessNight
 {
@@ -41,9 +42,9 @@ namespace RelentlessNight
                 if (!MenuManager.modEnabled || Global.minWildlifePercent == 100) return;
 
                 __instance.m_ChanceSpawnCarcassOnRoll *= CalculateWildlifePopulationMultiplier();
-            }
-        }
-        [HarmonyPatch(typeof(IceFishingHole), "Start", null)]
+			}
+		}
+        [HarmonyPatch(typeof(IceFishingHole), nameof(IceFishingHole.StartFishing), null)]
         internal static class IceFishingHole_Start
         { 
             private static void Postfix(IceFishingHole __instance)
@@ -76,10 +77,10 @@ namespace RelentlessNight
             {
                 spawnRegion.Start();
             }
-			Il2CppSystem.Collections.Generic.List<IceFishingHole> iceFishingHoles = IceFishingHole.m_IceFishingHoles;
+			Il2CppSystem.Collections.Generic.List<IceFishingHole> iceFishingHoles = IceFishingHole.s_IceFishingHoles;
             foreach (IceFishingHole iceFishingHole in iceFishingHoles)
             {
-                iceFishingHole.Start();
+                iceFishingHole.ResetCatchParameters();
             }
         }
     }

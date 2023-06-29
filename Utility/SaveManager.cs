@@ -79,6 +79,8 @@ namespace RelentlessNight
 		{
 			private static void Postfix(SlotData slot, string sceneSaveName)
 			{
+				Utilities.ModLog("SaveGameSystem.SaveSceneData");
+
 				if (!MenuManager.modEnabled) return;
 
 				SaveSettingsToSaveFile(slot.m_BaseName);
@@ -159,6 +161,8 @@ namespace RelentlessNight
 
 		internal static void SaveSettingsToSaveFile(string name)
 		{
+			Utilities.ModLog("Relentless Night | SaveSettingsToSaveFile");
+
 			ModSaveData data = new ModSaveData
 			{
 				worldSpinDeclinePercent = Global.worldSpinDeclinePercent,
@@ -182,7 +186,8 @@ namespace RelentlessNight
 				lastTemperatureOffsetDay = Global.lastTemperatureOffsetDay,
 				dayTidalLocked = Global.dayTidalLocked,
 			};
-			Global.dataManager.Save(JSON.Dump(data, EncodeOptions.NoTypeHints | EncodeOptions.PrettyPrint));
+			bool saved = Global.dataManager.Save(JSON.Dump(data, EncodeOptions.NoTypeHints | EncodeOptions.PrettyPrint));
+			Utilities.ModLog("Relentless Night | Global.dataManager.Save "+ saved.ToString());
 		}
 		internal static void LoadRnSaveFiles()
 		{

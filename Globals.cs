@@ -8,8 +8,8 @@ namespace RelentlessNight
 {
     public class Global
     {
-		internal const string RnVersion = "4.6.3";
-		internal const string RnBuildString = "(Build 20230406-1)";
+		internal const string RnVersion = "4.7.0";
+		internal const string RnBuildString = "(Release)";
 
 		// RN globals representing current mod settings
 		internal static int worldSpinDeclinePercent;
