@@ -212,11 +212,11 @@ namespace RelentlessNight
         // OnFeedFire of the Panel_FeedFire class is a large method, it's been patched and integrated here with RN logic following the last mono assembly.
         internal static void Panel_FeedFire_OnFeedFireRewrite(Panel_FeedFire __instance)
         {
-            if (__instance.ProgressBarIsActive())
-            {
-                GameAudioManager.PlayGUIError();
-                return;
-            }
+            //if (__instance.ProgressBarIsActive())
+            //{
+            //    GameAudioManager.PlayGUIError();
+            //    return;
+            //}
             GearItem selectedFuelSource = __instance.GetSelectedFuelSource();
             if (selectedFuelSource == null)
             {

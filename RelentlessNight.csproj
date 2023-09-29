@@ -22,12 +22,13 @@
 		<!--embedded has the pdb data embedded within the dll. This is useful because bug reports will then have line numbers.-->
 		<!--none skips creation of pdb data.-->
 		<DebugType>embedded</DebugType>
+		<BaseOutputPath>C:\Program Files (x86)\Steam\steamapps\common\TheLongDark\Mods\_BUILDS\</BaseOutputPath>
 	</PropertyGroup>
 
 	<!--This is the of packages that the mod references.-->
 	<ItemGroup>
 		<!--This package contains almost everything a person could possibly need to reference while modding.-->
-		<PackageReference Include="STBlade.Modding.TLD.Il2CppAssemblies.Windows" Version="2.19.0" />
+		<PackageReference Include="STBlade.Modding.TLD.Il2CppAssemblies.Windows" Version="2.23.0" />
 		<PackageReference Include="stblade.Modding.TLD.ModData" Version="1.5.1" />
 		<PackageReference Include="STBlade.Modding.TLD.ModSettings" Version="1.9.0" />
 		<!--The package version here in this template may be outdated and need to be updated. Visual Studio can update package versions automatically.-->
